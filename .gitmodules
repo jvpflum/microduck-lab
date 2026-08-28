@@ -1,0 +1,4 @@
+[submodule "upstream/microduck_rl"]
+	path = upstream/microduck_rl
+	url = https://github.com/pollen-robotics/microduck_rl.git
+	branch = develop
