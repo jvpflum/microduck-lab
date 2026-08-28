@@ -19,5 +19,6 @@ verification_status=0
 sudo docker update --restart=unless-stopped qwen38-hermes-vllm
 sudo docker start qwen38-hermes-vllm
 systemctl --user start reachy-local-backend.service
+hermes cron resume 7443b5d995b6
 
 exit "${verification_status}"
