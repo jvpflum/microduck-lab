@@ -51,6 +51,27 @@ Do not run a full training job concurrently with memory-heavy inference
 services. This system uses unified memory; the preflight blocks when less than
 20 GiB is available or swap usage exceeds 50%.
 
+## Train a roller-skating policy
+
+Qualify Pollen's official passive-wheel environment before a long run:
+
+```bash
+make skate-smoke
+make verify-skate-artifact
+```
+
+Then train the skating baseline:
+
+```bash
+make train-skate
+```
+
+The default is 4,096 environments and 5,000 PPO iterations. Override either
+setting with `DUCKLAB_ENVS` and `DUCKLAB_ITERATIONS`, as with walking. The
+policy learns the upstream roller command semantics: coast at zero, push with
+a positive forward command, brake with a negative command, and track heading.
+Artifact verification rehearses the policy contract against the roller model.
+
 ## Direct upstream commands
 
 ```bash

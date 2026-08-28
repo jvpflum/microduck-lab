@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Validate the deployable policy contract and CPU MuJoCo model."""
 
+import argparse
 import json
 from pathlib import Path
-import sys
 
 import mujoco
 import numpy as np
@@ -11,7 +11,12 @@ import onnx
 import onnxruntime as ort
 
 
-policy_path = Path(sys.argv[1]).resolve()
+parser = argparse.ArgumentParser()
+parser.add_argument("policy", type=Path)
+parser.add_argument("--roller", action="store_true")
+args = parser.parse_args()
+
+policy_path = args.policy.resolve()
 onnx_model = onnx.load(policy_path)
 onnx.checker.check_model(onnx_model)
 
@@ -32,7 +37,8 @@ for observation in (
     if action.shape != (1, 14) or not np.isfinite(action).all():
         raise SystemExit("ONNX inference returned invalid actions")
 
-scene_path = Path("src/mjlab_microduck/robot/microduck/scene.xml")
+scene_name = "scene_rollers.xml" if args.roller else "scene.xml"
+scene_path = Path("src/mjlab_microduck/robot/microduck") / scene_name
 model = mujoco.MjModel.from_xml_path(str(scene_path))
 data = mujoco.MjData(model)
 for _ in range(100):
@@ -53,5 +59,6 @@ print(json.dumps({
     "output_shape": output_meta.shape,
     "finite_inference": True,
     "cpu_mujoco_steps": 100,
+    "robot_model": "rollers" if args.roller else "feet",
     "metadata_keys": sorted(metadata),
 }, indent=2, sort_keys=True))
