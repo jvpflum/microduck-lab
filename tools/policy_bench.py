@@ -510,7 +510,11 @@ class Bench:
 
     def render_dashboard(self) -> Path:
         registry = read_json(self.registry_path)
-        manifests = sorted(self.manifests(), key=lambda item: item["created_at"], reverse=True)
+        all_manifests = sorted(self.manifests(), key=lambda item: item["created_at"], reverse=True)
+        # Smoke launches validate wiring for a few iterations; they are not
+        # user-facing training jobs and should never inflate the run count.
+        manifests = [item for item in all_manifests if item.get("experiment_kind", "training") != "smoke"]
+        hidden_smoke = len(all_manifests) - len(manifests)
         def experiment_key(manifest: dict[str, Any]) -> str:
             return manifest.get("experiment_id") or f"{manifest.get('task', 'unknown')}:{manifest.get('source_run_dir', manifest['run_id'])}"
 
@@ -564,7 +568,8 @@ class Bench:
         ) or "<li>No promoted policies yet</li>"
         content = (
             f"<p>Offline policy lineage, evaluation, comparison, promotion, and interactive play. "
-            f"Showing {len(manifests)} checkpoint snapshots across {len(experiments)} distinct experiments.</p>"
+            f"Showing {len(experiments)} training runs across {len(manifests)} saved versions. "
+            f"{hidden_smoke} smoke-test snapshots are hidden.</p>"
             "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
             "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
             f"<h2>Registry</h2><ul>{champions}</ul>"
