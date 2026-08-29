@@ -541,16 +541,17 @@ class Bench:
                     f"<td>{score if score is not None else '—'}</td><td>{len(manifest.get('evaluations', []))}</td>"
                     f"<td>{'★' if manifest.get('starred') else '—'}</td>"
                     f"<td><a href='runs/{html.escape(manifest['run_id'])}/report.html'>Details</a> "
-                    f"<button class='play' data-run-id='{html.escape(manifest['run_id'])}'>▶ Play</button> "
                     f"<button class='star' data-run-id='{html.escape(manifest['run_id'])}'>{'Unstar' if manifest.get('starred') else '★ Star'}</button></td></tr>"
                 )
+            latest = max(group, key=lambda item: item.get("latest_iteration") or -1)
             experiment_rows.append(
                 "<tr>"
                 f"<td>{html.escape(label)}</td><td>{html.escape(newest['task'])}</td>"
                 f"<td>{html.escape(newest.get('experiment_kind', 'training'))}</td>"
                 f"<td>{state}</td><td>{len(group)}</td>"
                 f"<td>{max(item.get('latest_iteration') or -1 for item in group)}</td>"
-                "<td><details><summary>Open run</summary>"
+                f"<td><button class='play' data-run-id='{html.escape(latest['run_id'])}'>▶ Play latest ({latest.get('latest_iteration')})</button> "
+                "<details><summary>Saved versions</summary>"
                 "<table><tr><th>Saved version</th><th>Stage</th><th>Score</th><th>Evaluations</th><th>Star</th><th>Actions</th></tr>"
                 + "".join(snapshots)
                 + "</table></details></td></tr>"
@@ -567,7 +568,7 @@ class Bench:
             "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
             "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
             f"<h2>Registry</h2><ul>{champions}</ul>"
-            "<h2>Training runs</h2><p>Each row is one training run. Open a run to see its saved versions and test one.</p>"
+            "<h2>Training runs</h2><p>Each row is one training run. <strong>Play latest</strong> always tests the highest saved iteration. Open <em>Saved versions</em> only to inspect older versions.</p>"
             "<table><tr><th>Training run</th><th>Skill</th><th>Kind</th><th>Source state</th><th>Saved versions</th><th>Latest version</th><th>Open</th></tr>"
             + "".join(experiment_rows)
             + "</table>"
