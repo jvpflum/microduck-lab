@@ -510,50 +510,50 @@ class Bench:
 
     def render_dashboard(self) -> Path:
         registry = read_json(self.registry_path)
-        rows = []
         manifests = sorted(self.manifests(), key=lambda item: item["created_at"], reverse=True)
-        experiments = {manifest.get("experiment_id", manifest["run_id"]) for manifest in manifests}
+        def experiment_key(manifest: dict[str, Any]) -> str:
+            return manifest.get("experiment_id") or f"{manifest.get('task', 'unknown')}:{manifest.get('source_run_dir', manifest['run_id'])}"
+
+        experiments = {experiment_key(manifest) for manifest in manifests}
         active_experiments = active_training_experiments()
         grouped: dict[str, list[dict[str, Any]]] = {}
         for manifest in manifests:
-            grouped.setdefault(manifest.get("experiment_id", manifest["run_id"]), []).append(manifest)
+            grouped.setdefault(experiment_key(manifest), []).append(manifest)
         experiment_rows = []
         for group in grouped.values():
             newest = group[0]
-            label = newest.get("experiment_label", newest["source_run_dir"].rsplit("/", 1)[-1])
-            state = "active" if label.replace("-smoke", "") in active_experiments else "finished/snapshot"
+            label = newest.get("experiment_label") or newest["source_run_dir"].rsplit("/", 1)[-1]
+            state = "active" if newest.get("experiment_kind") == "training" and label in active_experiments else "finished/snapshot"
+            snapshots = []
+            for manifest in sorted(group, key=lambda item: item.get("latest_iteration") or -1, reverse=True):
+                score = None
+                for evaluation in manifest.get("evaluations", []):
+                    try:
+                        evaluation_data = read_json(Path(evaluation["path"]))
+                        score = evaluation_data.get("policy_bench_score", {}).get("overall")
+                        if score is None:
+                            score = score_evaluation(evaluation_data, manifest["task"]).get("overall")
+                    except (OSError, KeyError, TypeError, json.JSONDecodeError):
+                        pass
+                snapshots.append(
+                    "<tr>"
+                    f"<td>{manifest.get('latest_iteration')}</td><td>{html.escape(manifest['stage'])}</td>"
+                    f"<td>{score if score is not None else '—'}</td><td>{len(manifest.get('evaluations', []))}</td>"
+                    f"<td>{'★' if manifest.get('starred') else '—'}</td>"
+                    f"<td><a href='runs/{html.escape(manifest['run_id'])}/report.html'>Details</a> "
+                    f"<button class='play' data-run-id='{html.escape(manifest['run_id'])}'>▶ Play</button> "
+                    f"<button class='star' data-run-id='{html.escape(manifest['run_id'])}'>{'Unstar' if manifest.get('starred') else '★ Star'}</button></td></tr>"
+                )
             experiment_rows.append(
                 "<tr>"
                 f"<td>{html.escape(label)}</td><td>{html.escape(newest['task'])}</td>"
                 f"<td>{html.escape(newest.get('experiment_kind', 'training'))}</td>"
                 f"<td>{state}</td><td>{len(group)}</td>"
-                f"<td>{max(item.get('latest_iteration') or -1 for item in group)}</td></tr>"
-            )
-        for manifest in manifests:
-            run_dir = self.runs_dir / manifest["run_id"]
-            report = run_dir / "report.html"
-            if not report.exists():
-                self.render_run_report(manifest["run_id"])
-            score = None
-            for evaluation in manifest.get("evaluations", []):
-                try:
-                    evaluation_data = read_json(Path(evaluation["path"]))
-                    score = evaluation_data.get("policy_bench_score", {}).get("overall")
-                    if score is None:
-                        score = score_evaluation(evaluation_data, manifest["task"]).get("overall")
-                except (OSError, KeyError, TypeError, json.JSONDecodeError):
-                    pass
-            rows.append(
-                "<tr>"
-                f"<td>{'★ ' if manifest.get('starred') else ''}<a href='runs/{html.escape(manifest['run_id'])}/report.html'>{html.escape(manifest.get('experiment_label', manifest['run_id']))}</a></td>"
-                f"<td>{html.escape(manifest['task'])}</td><td><span class='badge'>{html.escape(manifest['stage'])}</span></td>"
-                f"<td>{html.escape(manifest.get('experiment_kind', 'training'))}</td>"
-                f"<td>{manifest.get('latest_iteration')}</td><td>{len(manifest.get('evaluations', []))}</td>"
-                f"<td>{score if score is not None else '—'}</td>"
-                f"<td>{'yes' if manifest.get('has_exported_policy') else 'no'}</td>"
-                f"<td>{'active experiment' if manifest.get('experiment_label', '').replace('-smoke', '') in active_experiments else 'finished/snapshot'}</td>"
-                f"<td><button class='play' data-run-id='{html.escape(manifest['run_id'])}'>▶ Play</button> "
-                f"<button class='star' data-run-id='{html.escape(manifest['run_id'])}'>{'Unstar' if manifest.get('starred') else '★ Star'}</button></td></tr>"
+                f"<td>{max(item.get('latest_iteration') or -1 for item in group)}</td>"
+                "<td><details><summary>Open run</summary>"
+                "<table><tr><th>Saved version</th><th>Stage</th><th>Score</th><th>Evaluations</th><th>Star</th><th>Actions</th></tr>"
+                + "".join(snapshots)
+                + "</table></details></td></tr>"
             )
         champions = "".join(
             f"<li><strong>{html.escape(task)}</strong>: "
@@ -567,13 +567,9 @@ class Bench:
             "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
             "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
             f"<h2>Registry</h2><ul>{champions}</ul>"
-            "<h2>Experiments</h2><p>An experiment is one training invocation. Checkpoints from the same invocation are grouped below.</p>"
-            "<table><tr><th>Experiment</th><th>Skill</th><th>Kind</th><th>Source state</th><th>Snapshots</th><th>Latest iteration</th></tr>"
+            "<h2>Training runs</h2><p>Each row is one training run. Open a run to see its saved versions and test one.</p>"
+            "<table><tr><th>Training run</th><th>Skill</th><th>Kind</th><th>Source state</th><th>Saved versions</th><th>Latest version</th><th>Open</th></tr>"
             + "".join(experiment_rows)
-            + "</table>"
-            + "<h2>Checkpoint snapshots</h2><p>Choose any immutable checkpoint and press Play. The controller and Viser open in new tabs.</p>"
-            + "<table><tr><th>Checkpoint snapshot</th><th>Skill</th><th>Stage</th><th>Kind</th><th>Iteration</th><th>Evals</th><th>Score</th><th>ONNX</th><th>Source state</th><th>Action</th></tr>"
-            + "".join(rows)
             + "</table>"
             + "<h2>DuckLab Assistant</h2><div class='panel'><div id='chat-log' class='chat-log'>"
             + "<p><strong>DuckLab:</strong> Tell me what you want to do. Try “train swizzle for 8000 iterations with 4096 environments”.</p>"

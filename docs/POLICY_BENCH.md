@@ -139,25 +139,31 @@ launch, so manually stop an existing terminal-launched Viser session first.
 
 ### DuckLab Assistant
 
-The dashboard chat accepts guarded, structured requests such as:
+The dashboard lists one row per human-level training run. Click **Open run** to
+expand its saved versions; checkpoint files stay out of the main view.
+
+The dashboard chat accepts plain-language goals such as:
 
 ```text
 train swizzle for 8000 iterations with 4096 environments
+help me train MicroDuck to skate backwards
+help me train MicroDuck to do a backflip
 play iteration 2250
 what is running?
 stop the viewer
 ```
 
-Training language is parsed into a bounded task, iteration count, and parallel
-environment count. The proposed configuration is shown back to the user and
-requires a separate **Confirm training launch** click. Full training is refused
-while another training process is detected. No arbitrary shell text is ever
-executed.
+Codex on the Spark can translate a natural-language goal into a validated task
+plan. Only registered simulator tasks (currently walking, roller skating, and
+swizzle skating) can become a launch action; a goal such as a backflip receives
+an honest explanation that its environment and reward still need to be added.
+The proposed configuration is shown back to the user and requires a separate
+**Confirm training launch** click. Full training is refused while another
+training process is detected. No arbitrary shell text is ever executed.
 
-This first assistant is deliberately deterministic and local rather than an
-LLM with permission to execute commands. A local open-weights model can later
-improve conversational planning, but validated actions and confirmation gates
-will remain the only path to launching processes.
+Codex is an interpreter, not an executor: its JSON is schema-checked, bounds are
+re-checked, and the existing allowlisted launcher is the only process path. Set
+`DUCKLAB_CODEX=0` for the deterministic offline parser.
 
 Reports and controls contain no external JavaScript, fonts, analytics, or
 network calls. Training continues in its own process if the dashboard closes.

@@ -12,6 +12,7 @@ import signal
 import socket
 import subprocess
 import threading
+import shutil
 import time
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -100,6 +101,49 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
     if not 1 <= environments <= 8192:
         return {"error": "Parallel environments must be between 1 and 8,192."}
     return {"task": task, "iterations": iterations, "environments": environments}
+
+
+def codex_training_plan(message: str) -> dict[str, Any] | None:
+    """Ask the local Codex CLI to classify a request, then validate its JSON.
+
+    Codex is an interpreter here, never an executor: the returned task must be
+    one of TASKS and numeric values are checked again before the UI can launch.
+    Set DUCKLAB_CODEX=0 to force the deterministic parser (useful offline).
+    """
+    if os.environ.get("DUCKLAB_CODEX", "1").lower() in {"0", "false", "no"}:
+        return None
+    codex = os.environ.get("DUCKLAB_CODEX_BIN") or shutil.which("codex")
+    if not codex:
+        return None
+    prompt = (
+        "You are the MicroDuck training assistant. Return JSON only, with keys "
+        "task, iterations, environments, supported, reply. task must be one of "
+        "swizzle, roller, walking, or custom. Choose custom for a skill that has "
+        "no registered simulator task. Never invent a runnable task. Defaults are "
+        "8000 iterations and 4096 environments. Keep reply under 240 characters.\n"
+        f"User request: {message}"
+    )
+    try:
+        result = subprocess.run(
+            [codex, "exec", "--skip-git-repo-check", "--sandbox", "read-only", prompt],
+            cwd=str(LAB_ROOT), capture_output=True, text=True, timeout=20, check=False,
+        )
+        raw = result.stdout.strip().splitlines()
+        candidates = [line.strip().removeprefix("```json").removesuffix("```").strip() for line in raw]
+        data = next((json.loads(line) for line in reversed(candidates) if line.startswith("{")), None)
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError, ValueError):
+        return None
+    if not isinstance(data, dict) or data.get("task") not in TASKS:
+        return {"unsupported": True, "reply": data.get("reply") if isinstance(data, dict) else None}
+    try:
+        iterations = int(data.get("iterations", TASKS[data["task"]]["default_iterations"]))
+        environments = int(data.get("environments", 4096))
+    except (TypeError, ValueError):
+        return None
+    if not 5 <= iterations <= 100_000 or not 1 <= environments <= 8192:
+        return None
+    return {"task": data["task"], "iterations": iterations, "environments": environments,
+            "reply": str(data.get("reply") or "I mapped that to a validated training task.")}
 
 
 class ProcessManager:
@@ -371,13 +415,23 @@ class DashboardServer(ThreadingHTTPServer):
         request = parse_training_request(text)
         if request is not None:
             if "error" in request:
+                planned = codex_training_plan(text)
+                if planned and planned.get("unsupported"):
+                    return {"kind": "message", "reply": planned.get("reply") or
+                            "I understand the goal, but that skill does not have a registered simulator task yet. Add the task and reward first, then I can train it."}
+                if planned:
+                    request = planned
+                else:
+                    return {"kind": "message", "reply": request["error"]}
+            if "error" in request:
                 return {"kind": "message", "reply": request["error"]}
             active = running_training_processes()
             warning = " A training process is already running, so launch will remain blocked." if active else ""
             return {
                 "kind": "confirm-training",
                 "reply": (
-                    f"Ready to train {request['task']} for {request['iterations']:,} iterations "
+                    f"{request.get('reply', 'Ready to train.')} "
+                    f"Configuration: {request['task']} for {request['iterations']:,} iterations "
                     f"with {request['environments']:,} parallel environments.{warning}"
                 ),
                 "action": request,
@@ -405,8 +459,9 @@ class DashboardServer(ThreadingHTTPServer):
         return {
             "kind": "message",
             "reply": (
-                "I currently understand: ‘train swizzle for 8000 iterations with 4096 environments’, "
-                "‘play iteration 2250’, ‘what is running?’, and ‘stop the viewer’."
+                "Tell me a goal in plain English, such as ‘train MicroDuck to skate backwards’. "
+                "I’ll map it to a registered task, show the plan, and wait for your confirmation. "
+                "I also understand play, status, and stop viewer."
             ),
         }
 
