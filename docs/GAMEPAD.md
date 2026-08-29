@@ -26,7 +26,20 @@ Open both pages locally:
 
 Connect the Xbox controller to the operator computer, press a controller button
 so the browser discovers it, and click **Arm controller**. The controller bridge
-overrides Viser's generated command only while armed.
+overrides Viser's generated command only while armed. No Viser checkbox or
+Twist toggle is required.
+
+The page prefers controllers that expose the browser's standard gamepad
+mapping, but it no longer assumes the first connected device or one fixed axis
+layout. Use the **Controller** menu when more than one device is present. If an
+unmapped controller does not respond automatically, move its stick and watch
+**Raw axes**, then choose the changing axis under **Propulsion source** or
+**Heading source**. The choice is saved in the browser.
+
+For an end-to-end check, arm the page and hold **Hold to test forward**, or use
+`W`/`S`. The **Sending** line must become nonzero and MicroDuck should respond
+without controller hardware. This distinguishes a browser mapping problem from
+a simulator bridge problem.
 
 ## Mapping
 

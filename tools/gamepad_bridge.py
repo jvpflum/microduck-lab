@@ -12,6 +12,10 @@ from pathlib import Path
 from typing import Any, Protocol
 
 
+class ControllerOwnershipError(ValueError):
+    """Raised when a background controller tab tries to overwrite the owner."""
+
+
 class ViewerControls(Protocol):
     def request_reset(self) -> None: ...
     def request_toggle_pause(self) -> None: ...
@@ -26,6 +30,10 @@ class GamepadCommand:
     heading: float
     emergency_stop: bool
     updated_at: float
+    gamepad_id: str
+    mapping: str
+    axes: tuple[float, ...]
+    client_id: str
 
     @property
     def override(self) -> bool:
@@ -43,6 +51,11 @@ class GamepadState:
         self._emergency_stop = False
         self._updated_at = 0.0
         self._buttons = {"reset": False, "pause": False}
+        self._gamepad_id = ""
+        self._mapping = ""
+        self._axes: tuple[float, ...] = ()
+        self._client_id = ""
+        self._client_seen_at = 0.0
         self._viewer: ViewerControls | None = None
 
     def bind_viewer(self, viewer: ViewerControls) -> None:
@@ -52,12 +65,28 @@ class GamepadState:
     def update(self, payload: dict[str, Any]) -> None:
         callbacks: list[str] = []
         now = time.monotonic()
+        raw_axes = payload.get("axes", [])
+        if not isinstance(raw_axes, list):
+            raise ValueError("axes must be an array")
+        axes = tuple(max(-1.0, min(1.0, float(value))) for value in raw_axes[:16])
+        client_id = str(payload.get("client_id") or "legacy")[:120]
+        takeover = bool(payload.get("takeover", False))
         with self._lock:
+            owner_expired = now - self._client_seen_at > 1.5
+            if self._client_id and self._client_id != client_id and not owner_expired and not takeover:
+                raise ControllerOwnershipError(
+                    "Another controller tab owns this simulator. Click Arm controller in this tab to take control."
+                )
+            self._client_id = client_id
+            self._client_seen_at = now
             self._armed = bool(payload.get("armed", False))
             self._connected = bool(payload.get("connected", False))
             self._emergency_stop = bool(payload.get("emergency_stop", False))
             self._command_x = max(-1.0, min(1.0, float(payload.get("command_x", 0.0))))
             self._heading = max(-1.0, min(1.0, float(payload.get("heading", 0.0))))
+            self._gamepad_id = str(payload.get("gamepad_id", ""))[:240]
+            self._mapping = str(payload.get("mapping", ""))[:40]
+            self._axes = axes
             self._updated_at = now
 
             for name in ("reset", "pause"):
@@ -87,6 +116,10 @@ class GamepadState:
                 heading=0.0 if safe_zero else self._heading,
                 emergency_stop=self._emergency_stop,
                 updated_at=self._updated_at,
+                gamepad_id=self._gamepad_id,
+                mapping=self._mapping,
+                axes=self._axes,
+                client_id=self._client_id,
             )
 
 
@@ -141,7 +174,14 @@ class GamepadBridge:
                     payload = json.loads(self.rfile.read(length))
                     if not isinstance(payload, dict):
                         raise ValueError("payload must be an object")
+                    if not str(payload.get("client_id", "")).strip():
+                        raise ControllerOwnershipError(
+                            "This controller tab is outdated. Close it and reopen the Xbox controller from Policy Bench."
+                        )
                     bridge.state.update(payload)
+                except ControllerOwnershipError as exc:
+                    self.send_bytes(str(exc).encode(), "text/plain", HTTPStatus.CONFLICT)
+                    return
                 except (ValueError, TypeError, json.JSONDecodeError) as exc:
                     self.send_bytes(str(exc).encode(), "text/plain", HTTPStatus.BAD_REQUEST)
                     return
