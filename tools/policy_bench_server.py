@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import math
 import mimetypes
@@ -69,6 +70,7 @@ RESOURCE_PROFILES = {
     "training-priority": "Training priority · pause vLLM until training exits",
 }
 RESOURCE_MARKER = LAB_ROOT / "policy-bench" / "training-priority.json"
+DEMONSTRATIONS_DIR = LAB_ROOT / "reports" / "demonstrations"
 
 
 @dataclass
@@ -393,6 +395,7 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
 class ProcessManager:
     def __init__(self, bench: Bench):
         self.bench = bench
+        self.control_token = ""
         self.lock = threading.Lock()
         self.viewers: dict[str, ViewerSession] = {}
         self.training: subprocess.Popen[bytes] | None = None
@@ -539,6 +542,7 @@ class ProcessManager:
             "preview_slot": preview["slot"],
             "preview_loco": preview["loco"],
             "preview_label": preview["label"],
+            "capture_token": self.control_token,
         }
         if "period" in preview:
             params["preview_period"] = preview["period"]
@@ -807,9 +811,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.headers.get("X-Policy-Bench-Token", ""), self.server.control_token
         )
 
-    def _read_json(self) -> dict[str, Any]:
+    def _read_json(self, max_bytes: int = 65_536) -> dict[str, Any]:
         length = int(self.headers.get("Content-Length", "0"))
-        if length <= 0 or length > 65_536:
+        if length <= 0 or length > max_bytes:
             raise ValueError("Invalid request size")
         value = json.loads(self.rfile.read(length))
         if not isinstance(value, dict):
@@ -933,8 +937,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self._send_json({"error": "Invalid control token"}, HTTPStatus.FORBIDDEN)
             return
         try:
-            body = self._read_json()
-            if self.path == "/api/play":
+            body = self._read_json(2_500_000 if self.path == "/api/demonstrations" else 65_536)
+            if self.path == "/api/demonstrations":
+                self._send_json(self.server.save_demonstration(body), HTTPStatus.CREATED)
+            elif self.path == "/api/play":
                 self._send_json(self.server.manager.launch_simulator(str(body.get("run_id", ""))))
             elif self.path == "/api/watch-training":
                 self._send_json(self.server.manager.launch_training_viewer(str(body.get("run_id", ""))))
@@ -962,9 +968,41 @@ class DashboardServer(ThreadingHTTPServer):
 
     def __init__(self, address: tuple[str, int], bench: Bench):
         self.bench = bench
-        self.manager = ProcessManager(bench)
         self.control_token = secrets.token_urlsafe(32)
+        self.manager = ProcessManager(bench)
+        self.manager.control_token = self.control_token
         super().__init__(address, lambda *args, **kwargs: DashboardHandler(*args, directory=str(bench.state_dir), **kwargs))
+
+    def save_demonstration(self, body: dict[str, Any]) -> dict[str, Any]:
+        """Validate and persist an arena state/action trajectory."""
+        skill = re.sub(r"[^a-z0-9_-]+", "-", str(body.get("skill", "demo")).lower()).strip("-")
+        frames = body.get("frames")
+        if not skill or not isinstance(frames, list) or not 25 <= len(frames) <= 400:
+            raise ValueError("Demonstration must contain 25-400 frames and a valid skill")
+        for frame in frames:
+            if not isinstance(frame, dict):
+                raise ValueError("Invalid demonstration frame")
+            for field in ("qpos", "qvel", "action", "command"):
+                values = frame.get(field)
+                if not isinstance(values, list) or len(values) > 128 or not values:
+                    raise ValueError(f"Invalid {field} trajectory")
+                if any(not isinstance(value, (int, float)) or not math.isfinite(value) for value in values):
+                    raise ValueError(f"Non-finite value in {field} trajectory")
+        DEMONSTRATIONS_DIR.mkdir(parents=True, exist_ok=True)
+        stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        destination = DEMONSTRATIONS_DIR / f"{skill}-{stamp}.json"
+        suffix = 2
+        while destination.exists():
+            destination = DEMONSTRATIONS_DIR / f"{skill}-{stamp}-{suffix}.json"
+            suffix += 1
+        destination.write_text(json.dumps(body, separators=(",", ":")))
+        return {
+            "saved": True,
+            "skill": skill,
+            "frames": len(frames),
+            "seconds": round(len(frames) / float(body.get("control_hz", 50)), 2),
+            "path": str(destination.relative_to(LAB_ROOT)),
+        }
 
     def chat(self, message: str) -> dict[str, Any]:
         text = message.strip()

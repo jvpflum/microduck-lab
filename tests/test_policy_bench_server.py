@@ -238,6 +238,31 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(params["preview_period"], ["3.0"])
         self.assertEqual(params["preview_end"], ["1.0"])
 
+    def test_arena_demonstration_is_validated_and_saved(self) -> None:
+        frames = [
+            {
+                "t": index / 50,
+                "qpos": [0.0, 0.0, 0.2],
+                "qvel": [0.0, 0.0, 0.0],
+                "action": [0.0] * 14,
+                "command": [0.0] * 13,
+                "mode": "walk",
+                "loco": "rollers",
+            }
+            for index in range(25)
+        ]
+        fake_server = object.__new__(server.DashboardServer)
+        with mock.patch.object(server, "LAB_ROOT", self.root), \
+             mock.patch.object(server, "DEMONSTRATIONS_DIR", self.root / "reports" / "demonstrations"):
+            result = fake_server.save_demonstration(
+                {"skill": "Backflip!", "control_hz": 50, "frames": frames}
+            )
+        saved = self.root / result["path"]
+        self.assertTrue(saved.is_file())
+        self.assertEqual(result["skill"], "backflip")
+        self.assertEqual(result["frames"], 25)
+        self.assertEqual(json.loads(saved.read_text())["frames"], frames)
+
     @mock.patch.object(server, "port_available", side_effect=lambda port: port != 8080)
     def test_play_skips_an_occupied_port_pair(self, _port) -> None:
         manager = server.ProcessManager(self.bench)

@@ -171,12 +171,13 @@ still runs thousands of environments headlessly; this lightweight sample is
 refreshed by reopening the button after a newer checkpoint is saved and never
 replaces the finished-model arena.
 
-The live viewer continuously buffers six seconds of motion. To capture a useful
-manual maneuver, select the robot under **Scene → Environment**, choose a skill
-under **Demonstration recorder**, perform the maneuver, and immediately click
-**Save last attempt**. It writes the last five seconds of joint positions,
-velocities, actions, and timing to `reports/demonstrations/` for curriculum or
-motion-imitation work. Failed attempts can simply be left unsaved.
+The main colorful arena continuously buffers six seconds of MuJoCo state and
+policy actions. After landing a useful manual backflip, immediately click
+**Replay → Save backflip**. The button uploads the previous six seconds to
+`reports/demonstrations/` for motion imitation and reference tracking; failed
+attempts can simply be left unsaved. The gray live-training viewer retains its
+engineering recorder as well: choose the robot under **Scene → Environment**
+and use **Demonstration recorder → Save last attempt**.
 **Evaluate** runs the exported ONNX policy
 through Pollen's CPU MuJoCo runtime and adds a scored forward/reverse/coast/
 heading evaluation to the run. Its local DuckLab Assistant
@@ -204,7 +205,8 @@ model, press a button on the controller so the browser detects it, and drive
 with the left stick. This is Pollen's controller implementation and is the
 default test path. No Viser or controller port forwarding is required. Custom
 policy previews start with a clean floor; use the in-arena **Ball on / Ball
-off** control when a ball is useful.
+off** control when a ball is useful. That choice persists when the robot is
+reset, so repeated flip attempts keep a clean floor.
 
 ### Debug an exact custom checkpoint
 

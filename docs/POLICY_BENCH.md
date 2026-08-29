@@ -152,6 +152,10 @@ Connect with `ssh microduck-spark`, then open `http://localhost:8091`.
 **Open simulator** on a finished run verifies its immutable ONNX artifact and
 opens it in Pollen's colorful browser arena through the dashboard tunnel. The
 arena selects feet/rollers and the correct policy slot automatically.
+It also keeps a rolling six-second physics buffer. **Replay → Save backflip**
+stores the previous six seconds of qpos, qvel, policy actions, and commands on
+the Spark under `reports/demonstrations/`; **Ball off** persists across robot
+resets for repeated clean-floor attempts.
 
 Active jobs have a different action: **Watch training live** launches six
 sample environments from the newest checkpoint in mjlab/Viser. The actual PPO
