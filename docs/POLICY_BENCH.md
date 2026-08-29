@@ -133,7 +133,6 @@ arena without reconnecting:
 Host microduck-spark
     HostName <spark-address>
     User ducklab-user
-    LocalForward 8070 localhost:8070
     LocalForward 8091 localhost:8091
     LocalForward 8080 localhost:8080
     LocalForward 8090 localhost:8090
@@ -151,7 +150,8 @@ Host microduck-spark
 
 Connect with `ssh microduck-spark`, then open `http://localhost:8091`. The
 recommended **Open factory playground** action opens Pollen's official arena at
-`http://localhost:8070` with its native gamepad implementation. For a custom
+`http://localhost:8091/factory/` through the same dashboard tunnel, with its
+native gamepad implementation. For a custom
 candidate, **Open checkpoint debugger** validates that exact saved checkpoint,
 assigns it an isolated Viser/controller pair, and opens its combined controller
 view. The **Checkpoint debuggers** section is

@@ -49,7 +49,7 @@ make import-pollen-baselines
 make bench-dashboard
 ```
 
-Forward ports 8091 and 8070 over SSH, open `http://localhost:8091`, then click
+Forward port 8091 over SSH, open `http://localhost:8091`, then click
 **Open factory playground**. In the arena, hold D-pad up for about one second
 to switch between walking and rollers; the left stick drives and turns.
 
@@ -160,7 +160,7 @@ sim-qualified swizzle checkpoint after verifying its hash. See
 Connect from your laptop with the dashboard and factory arena forwarded:
 
 ```bash
-ssh -L 8091:localhost:8091 -L 8070:localhost:8070 <ssh-user>@<spark-address>
+ssh -L 8091:localhost:8091 <ssh-user>@<spark-address>
 ```
 
 Open `http://localhost:8091`, click **Open factory playground**, press a button

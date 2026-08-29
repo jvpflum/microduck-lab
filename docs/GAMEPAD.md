@@ -6,7 +6,7 @@ Pollen's official browser arena is the default controller path. Forward the
 dashboard and arena from the operator computer:
 
 ```bash
-ssh -L 8091:localhost:8091 -L 8070:localhost:8070 <ssh-user>@<spark-address>
+ssh -L 8091:localhost:8091 <ssh-user>@<spark-address>
 ```
 
 Open <http://localhost:8091> and select **Open factory playground**. Press any

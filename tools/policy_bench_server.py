@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import mimetypes
 import os
 import re
 import secrets
@@ -19,8 +20,12 @@ from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote, urlsplit
 
 from policy_bench import Bench, DEFAULT_STATE, FACTORY_ARENA_URL, LAB_ROOT, UPSTREAM, sha256
+
+
+FACTORY_ARENA_DIST = LAB_ROOT / "upstream" / "microduck-simulator" / "app" / "dist"
 
 
 TASKS = {
@@ -585,7 +590,42 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             raise ValueError("JSON body must be an object")
         return value
 
+    def _serve_factory_arena(self) -> None:
+        """Serve Pollen's built browser arena through the dashboard tunnel."""
+        request_path = unquote(urlsplit(self.path).path)
+        if request_path == "/factory":
+            self.send_response(HTTPStatus.MOVED_PERMANENTLY)
+            self.send_header("Location", "/factory/")
+            self.end_headers()
+            return
+        relative = request_path.removeprefix("/factory/")
+        target = (FACTORY_ARENA_DIST / relative).resolve()
+        arena_root = FACTORY_ARENA_DIST.resolve()
+        if target != arena_root and arena_root not in target.parents:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        if target.is_dir():
+            target = target / "index.html"
+        if not target.is_file():
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        payload = target.read_bytes()
+        if target.name == "index.html":
+            payload = payload.replace(b'src="/', b'src="/factory/').replace(
+                b'href="/', b'href="/factory/'
+            )
+        content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Cache-Control", "no-store" if target.name == "index.html" else "public, max-age=3600")
+        self.end_headers()
+        self.wfile.write(payload)
+
     def do_GET(self) -> None:  # noqa: N802
+        if urlsplit(self.path).path in {"/factory", "/factory/"} or urlsplit(self.path).path.startswith("/factory/"):
+            self._serve_factory_arena()
+            return
         if self.path == "/api/status":
             self._send_json(self.server.manager.status())
             return

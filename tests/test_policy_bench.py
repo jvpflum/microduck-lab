@@ -128,6 +128,7 @@ class PolicyBenchTests(unittest.TestCase):
         self.assertIn("Drive arena", content)
         self.assertIn("Open checkpoint debugger", content)
         self.assertIn("Open factory playground", content)
+        self.assertIn("http://localhost:8091/factory/?boot=1", content)
         self.assertIn("Deployment check", content)
         self.assertIn("Resource mode", content)
         self.assertIn("Pollen stack", content)

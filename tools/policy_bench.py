@@ -23,8 +23,8 @@ UPSTREAM = LAB_ROOT / "upstream" / "microduck_rl"
 POLLEN_RUNTIME = LAB_ROOT / "upstream" / "microduck"
 POLLEN_SIMULATOR = LAB_ROOT / "upstream" / "microduck-simulator"
 DEFAULT_STATE = LAB_ROOT / "policy-bench"
-FACTORY_ARENA_PORT = int(os.environ.get("DUCKLAB_ARENA_PORT", "8070"))
-FACTORY_ARENA_URL = f"http://localhost:{FACTORY_ARENA_PORT}/?boot=1"
+DASHBOARD_PORT = int(os.environ.get("DUCKLAB_BENCH_PORT", "8091"))
+FACTORY_ARENA_URL = f"http://localhost:{DASHBOARD_PORT}/factory/?boot=1"
 SCHEMA_VERSION = 1
 STAGES = ("experimental", "evaluated", "sim-qualified", "hardware-candidate", "production")
 
