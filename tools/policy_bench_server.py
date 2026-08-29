@@ -24,7 +24,16 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import quote, unquote, urlsplit
 
-from policy_bench import Bench, DEFAULT_STATE, FACTORY_ARENA_URL, LAB_ROOT, UPSTREAM, sha256
+from policy_bench import (
+    Bench,
+    DEFAULT_STATE,
+    FACTORY_ARENA_URL,
+    LAB_ROOT,
+    UPSTREAM,
+    display_experiment_label,
+    display_task_name,
+    sha256,
+)
 
 
 FACTORY_ARENA_DIST = LAB_ROOT / "upstream" / "microduck-simulator" / "app" / "dist"
@@ -45,11 +54,6 @@ TASKS = {
         "play_task": "Mjlab-Velocity-Flat-MicroDuck",
         "train_script": LAB_ROOT / "scripts" / "train-baseline.sh",
         "default_iterations": 4000,
-    },
-    "hop": {
-        "play_task": "Mjlab-RollerHop-Flat-MicroDuck",
-        "train_script": LAB_ROOT / "scripts" / "train-hop.sh",
-        "default_iterations": 1500,
     },
     "backflip": {
         "play_task": "Mjlab-RollerBackflip-Flat-MicroDuck",
@@ -310,10 +314,18 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
     lowered = message.lower()
     if not re.search(r"\b(train|training|learn)\b", lowered):
         return None
-    if "backflip" in lowered or "back flip" in lowered:
+    if "frontflip" in lowered or "front flip" in lowered:
         task = "backflip"
+    elif "backflip" in lowered or "back flip" in lowered:
+        return {
+            "error": "Backflip is not registered yet. The current airborne rotation task is a front flip.",
+            "no_fallback": True,
+        }
     elif "hop" in lowered or "jump" in lowered:
-        task = "hop"
+        return {
+            "error": "Hop training was retired. The active maneuver program is Front flip.",
+            "no_fallback": True,
+        }
     elif "roller" in lowered:
         task = "roller"
     elif "swizzle" in lowered or "skate" in lowered:
@@ -321,7 +333,7 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
     elif "walk" in lowered:
         task = "walking"
     else:
-        return {"error": "Tell me which skill to train: backflip, hop, swizzle, roller, or walking."}
+        return {"error": "Tell me which skill to train: front flip, swizzle, roller, or walking."}
     iteration_match = re.search(r"([\d,]+)\s*(?:iterations?|iters?)\b", lowered)
     environment_match = re.search(r"([\d,]+)\s*(?:environments?|envs?)\b", lowered)
     iterations = (
@@ -365,7 +377,8 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
     prompt = (
         "You are the MicroDuck training assistant. Return JSON only, with keys "
         "task, iterations, environments, resource_profile, supported, reply. task must be one of "
-        "backflip, hop, swizzle, roller, walking, or custom. Choose custom for a skill that has "
+        "front flip, swizzle, roller, walking, or custom. The internal task token for front flip is "
+        "backflip for legacy compatibility; never use it for a real backward flip. Choose custom for a skill that has "
         "no registered simulator task. Never invent a runnable task. Defaults are "
         "8000 iterations and 4096 environments. resource_profile must be shared "
         "or training-priority; use training-priority for overnight or maximum-throughput "
@@ -452,7 +465,10 @@ class ProcessManager:
                         "run_id": item["run_id"],
                         "task": item["task"],
                         "iteration": item.get("latest_iteration"),
-                        "label": item.get("experiment_label"),
+                        "label": display_experiment_label(
+                            str(item.get("task", "unknown")),
+                            str(item.get("experiment_label") or "Training run"),
+                        ),
                     }
                     for item in registered
                     if item.get("experiment_label") in active_names
@@ -518,17 +534,10 @@ class ProcessManager:
             "walking": {"slot": "walk", "loco": "legs", "label": "Run"},
             "roller": {"slot": "drive", "loco": "rollers", "label": "Drive"},
             "swizzle": {"slot": "drive", "loco": "rollers", "label": "Swizzle"},
-            "hop": {
-                "slot": "crouch",
-                "loco": "rollers",
-                "label": "Hop",
-                "period": "3.0",
-                "end": "1.0",
-            },
             "backflip": {
                 "slot": "crouch",
                 "loco": "rollers",
-                "label": "Backflip",
+                "label": "Front Flip",
                 "period": "4.0",
                 "end": "1.0",
             },
@@ -599,6 +608,7 @@ class ProcessManager:
         with self.lock:
             self._reap_finished_locked()
             label = manifest.get("experiment_label") or Path(manifest["source_run_dir"]).name
+            label = display_experiment_label(task, label)
             if replace_experiment:
                 # A new live checkpoint supersedes the old preview for the
                 # same training job. Keep at most one six-robot preview so a
@@ -904,6 +914,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         request_path = unquote(urlsplit(self.path).path)
         relative = request_path.removeprefix("/runs/")
         root = self.server.bench.runs_dir.resolve()
+        parts = Path(relative).parts
+        if parts:
+            manifest_path = root / parts[0] / "manifest.json"
+            try:
+                if json.loads(manifest_path.read_text()).get("archived"):
+                    self.send_error(HTTPStatus.GONE, "This retired policy is archived")
+                    return
+            except (OSError, json.JSONDecodeError):
+                pass
         target = (root / relative).resolve()
         if not target.is_relative_to(root) or not target.is_file():
             self.send_error(HTTPStatus.NOT_FOUND)
@@ -1052,7 +1071,7 @@ class DashboardServer(ThreadingHTTPServer):
         request = parse_training_request(text)
         if request is not None:
             if "error" in request:
-                planned = codex_training_plan(text)
+                planned = None if request.get("no_fallback") else codex_training_plan(text)
                 if planned and planned.get("unsupported"):
                     return {"kind": "message", "reply": planned.get("reply") or
                             "I understand the goal, but that skill does not have a registered simulator task yet. Add the task and reward first, then I can train it."}
@@ -1068,7 +1087,7 @@ class DashboardServer(ThreadingHTTPServer):
                 "kind": "confirm-training",
                 "reply": (
                     f"{request.get('reply', 'Ready to train.')} "
-                    f"Configuration: {request['task']} for {request['iterations']:,} iterations "
+                    f"Configuration: {display_task_name(request['task'])} for {request['iterations']:,} iterations "
                     f"with {request['environments']:,} parallel environments in "
                     f"{request.get('resource_profile', 'shared')} mode.{warning}"
                 ),

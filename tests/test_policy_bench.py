@@ -161,6 +161,13 @@ class PolicyBenchTests(unittest.TestCase):
         self.assertIn("__CONTROL_TOKEN__", content)
         self.assertNotIn("https://", content)
 
+    def test_legacy_internal_flip_id_is_presented_as_front_flip(self) -> None:
+        self.assertEqual(policy_bench.display_task_name("backflip"), "Front flip")
+        self.assertEqual(
+            policy_bench.display_experiment_label("backflip", "roller-backflip-v1"),
+            "roller-frontflip-v1",
+        )
+
     def test_heuristic_score_is_transparent_and_bounded(self) -> None:
         evaluation = {
             "phases": {

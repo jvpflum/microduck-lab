@@ -81,17 +81,21 @@ class PolicyBenchServerTests(unittest.TestCase):
         request = server.parse_training_request("train swizzle overnight for 8000 iterations")
         self.assertEqual(request["resource_profile"], "training-priority")
 
-    def test_jump_request_maps_to_registered_hop_task(self) -> None:
+    def test_jump_request_explains_retired_hop_task(self) -> None:
         request = server.parse_training_request("train a roller jump overnight")
-        self.assertEqual(request["task"], "hop")
-        self.assertEqual(request["iterations"], 1500)
-        self.assertEqual(request["resource_profile"], "training-priority")
+        self.assertIn("retired", request["error"])
+        self.assertTrue(request["no_fallback"])
 
-    def test_backflip_request_maps_to_registered_backflip_task(self) -> None:
-        request = server.parse_training_request("train a rolling backflip overnight")
+    def test_frontflip_request_maps_to_legacy_internal_flip_task(self) -> None:
+        request = server.parse_training_request("train a rolling front flip overnight")
         self.assertEqual(request["task"], "backflip")
         self.assertEqual(request["iterations"], 2500)
         self.assertEqual(request["resource_profile"], "training-priority")
+
+    def test_backflip_does_not_silently_launch_frontflip(self) -> None:
+        request = server.parse_training_request("train a rolling backflip overnight")
+        self.assertIn("not registered", request["error"])
+        self.assertTrue(request["no_fallback"])
 
     def test_unknown_training_skill_requests_clarification(self) -> None:
         request = server.parse_training_request("train something cool")
@@ -229,20 +233,27 @@ class PolicyBenchServerTests(unittest.TestCase):
         )
         self.assertEqual(result["policy_sha256"], self.manifest["artifacts"]["policy"]["sha256"])
 
-    def test_hop_preview_uses_full_three_second_phase(self) -> None:
+    def test_retired_hop_is_not_available_in_product_simulator(self) -> None:
         hop_dir = self.root / "logs" / "roller_hop" / "hop-a"
         hop_dir.mkdir(parents=True)
         (hop_dir / "model_300.pt").write_bytes(b"hop-checkpoint")
         (hop_dir / "hop.onnx").write_bytes(b"hop-policy")
         hop = self.bench.register(hop_dir)
 
-        result = server.ProcessManager(self.bench).launch_simulator(hop["run_id"])
+        with self.assertRaisesRegex(ValueError, "not configured"):
+            server.ProcessManager(self.bench).launch_simulator(hop["run_id"])
+
+    def test_legacy_flip_policy_opens_as_front_flip(self) -> None:
+        flip_dir = self.root / "logs" / "roller_backflip" / "flip-a"
+        flip_dir.mkdir(parents=True)
+        (flip_dir / "model_300.pt").write_bytes(b"flip-checkpoint")
+        (flip_dir / "flip.onnx").write_bytes(b"flip-policy")
+        flip = self.bench.register(flip_dir)
+
+        result = server.ProcessManager(self.bench).launch_simulator(flip["run_id"])
         params = parse_qs(urlsplit(result["open_url"]).query)
+        self.assertEqual(params["preview_label"], ["Front Flip"])
         self.assertEqual(params["preview_slot"], ["crouch"])
-        self.assertEqual(params["preview_loco"], ["rollers"])
-        self.assertEqual(params["preview_label"], ["Hop"])
-        self.assertEqual(params["preview_period"], ["3.0"])
-        self.assertEqual(params["preview_end"], ["1.0"])
 
     def test_arena_demonstration_is_validated_and_saved(self) -> None:
         frames = [

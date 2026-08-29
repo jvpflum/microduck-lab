@@ -196,6 +196,18 @@ def infer_task(run_dir: Path) -> str:
     }.get(parent, parent.replace("velocity_", "") or "unknown")
 
 
+def display_task_name(task: str) -> str:
+    """Return the operator-facing name for legacy internal task IDs."""
+    return "Front flip" if task == "backflip" else task.replace("_", " ").title()
+
+
+def display_experiment_label(task: str, label: str) -> str:
+    """Correct the historical forward-rotation label without moving artifacts."""
+    if task == "backflip":
+        return re.sub("backflip", "frontflip", label, flags=re.IGNORECASE)
+    return label
+
+
 def checkpoint_iteration(path: Path) -> int:
     match = re.fullmatch(r"model_(\d+)\.pt", path.name)
     return int(match.group(1)) if match else -1
@@ -673,6 +685,7 @@ class Bench:
         for group in grouped.values():
             newest = group[0]
             label = newest.get("experiment_label") or newest["source_run_dir"].rsplit("/", 1)[-1]
+            label = display_experiment_label(str(newest.get("task", "unknown")), label)
             state = "active" if newest.get("experiment_kind") == "training" and label in active_experiments else "finished/snapshot"
             # Retries and discovery passes can snapshot the same iteration
             # more than once. That is useful provenance, but it is not another
@@ -716,7 +729,7 @@ class Bench:
                 active_rows.append(
                     "<article class='run-card'>"
                     f"<div><span class='status-dot'></span><strong>{html.escape(label)}</strong> "
-                    f"<span class='pill'>{html.escape(newest['task'])}</span>"
+                    f"<span class='pill'>{html.escape(display_task_name(newest['task']))}</span>"
                     f"<p class='muted active-checkpoint-copy'>4,096 environments train headless · view 6 evaluation robots using saved checkpoint {latest.get('latest_iteration')}</p></div>"
                     f"<button class='watch-training' data-run-id='{html.escape(latest['run_id'])}' "
                     f"data-label='Watch checkpoint {latest.get('latest_iteration')}'>Watch checkpoint {latest.get('latest_iteration')}</button></article>"
@@ -730,7 +743,7 @@ class Bench:
                 "<article class='finished-card'>"
                 "<div class='finished-card-top'><div>"
                 f"<h3>{html.escape(label)}</h3>"
-                f"<div class='run-tags'><span class='pill'>{html.escape(newest['task'])}</span>"
+                f"<div class='run-tags'><span class='pill'>{html.escape(display_task_name(newest['task']))}</span>"
                 f"<span class='kind-tag'>{'Factory baseline' if is_factory else ('Smoke check' if newest.get('experiment_kind') == 'smoke' else 'Training run')}</span>"
                 "<span class='complete-tag'>Finished</span></div></div>"
                 "<div class='launch-cluster'>"
@@ -741,7 +754,7 @@ class Bench:
                 "<div class='run-stats'>"
                 f"<div><small>{'Source' if is_factory else 'Latest iteration'}</small><strong>{'Pollen official' if is_factory else f'{latest_iteration:,}'}</strong></div>"
                 f"<div><small>Saved models</small><strong>{len(distinct_versions)}</strong></div>"
-                f"<div><small>Skill</small><strong>{html.escape(newest['task']).title()}</strong></div>"
+                f"<div><small>Skill</small><strong>{html.escape(display_task_name(newest['task']))}</strong></div>"
                 f"<div><small>Upstream</small><strong>{html.escape(str(latest.get('source', {}).get('upstream', {}).get('commit') or 'unknown')[:8])}</strong></div></div>"
                 "<details class='saved-dropdown'><summary><span>Saved models</span>"
                 f"<span class='summary-count'>{len(distinct_versions)}</span><span class='chevron'>⌄</span></summary>"
@@ -752,7 +765,7 @@ class Bench:
             if state != "active":
                 finished_rows.append(row)
         champions = "".join(
-            f"<li><strong>{html.escape(task)}</strong>: "
+            f"<li><strong>{html.escape(display_task_name(task))}</strong>: "
             + ", ".join(f"{html.escape(stage)} = {html.escape(run_id)}" for stage, run_id in stages.items())
             + "</li>"
             for task, stages in registry.get("tasks", {}).items()
@@ -796,7 +809,8 @@ class Bench:
             + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
             + "function say(who,text){const p=document.createElement('p');const b=document.createElement('strong');b.textContent=who+': ';p.appendChild(b);p.appendChild(document.createTextNode(text));document.querySelector('#chat-log').appendChild(p);p.scrollIntoView();}"
             + "function shortRun(id){return id.length>54?id.slice(0,51)+'…':id;}"
-            + "function renderActiveRun(status){const box=document.querySelector('#active-run-list');const detected=status.training.detected||[];const candidates=status.training.candidates||[];const latest=candidates.reduce((best,item)=>!best||(item.iteration??-1)>(best.iteration??-1)?item:best,null);box.replaceChildren();if(!detected.length){const p=document.createElement('p');p.id='active-empty';p.textContent='No active training jobs.';box.appendChild(p);return;}const card=document.createElement('article');card.className='run-card';const info=document.createElement('div');const title=document.createElement('strong');title.textContent=(latest&&latest.label)||(status.training.config&&status.training.config.task)||'Training run';const pill=document.createElement('span');pill.className='pill';pill.textContent=(latest&&latest.task)||(status.training.config&&status.training.config.task)||'training';const copy=document.createElement('p');copy.className='muted active-checkpoint-copy';const envs=status.training.config&&status.training.config.environments;copy.textContent=(envs?Number(envs).toLocaleString():'Thousands of')+' environments train headless. '+(latest?'Watch 6 evaluation robots using saved checkpoint '+latest.iteration+'.':'The viewer unlocks as soon as the first checkpoint is saved.');info.append(title,document.createTextNode(' '),pill,copy);const button=document.createElement('button');button.className='watch-training';button.dataset.label=latest?'Watch checkpoint '+latest.iteration:'Waiting for checkpoint…';button.textContent=button.dataset.label;button.disabled=!latest;if(latest){button.dataset.runId=latest.run_id;button.onclick=()=>watchTraining(button);}card.append(info,button);box.appendChild(card);}"
+            + "function taskName(task){return task==='backflip'?'Front flip':String(task||'training').replaceAll('_',' ').replace(/\\b\\w/g,c=>c.toUpperCase())}"
+            + "function renderActiveRun(status){const box=document.querySelector('#active-run-list');const detected=status.training.detected||[];const candidates=status.training.candidates||[];const latest=candidates.reduce((best,item)=>!best||(item.iteration??-1)>(best.iteration??-1)?item:best,null);box.replaceChildren();if(!detected.length){const p=document.createElement('p');p.id='active-empty';p.textContent='No active training jobs.';box.appendChild(p);return;}const card=document.createElement('article');card.className='run-card';const info=document.createElement('div');const title=document.createElement('strong');title.textContent=(latest&&latest.label)||(status.training.config&&taskName(status.training.config.task))||'Training run';const pill=document.createElement('span');pill.className='pill';pill.textContent=taskName((latest&&latest.task)||(status.training.config&&status.training.config.task));const copy=document.createElement('p');copy.className='muted active-checkpoint-copy';const envs=status.training.config&&status.training.config.environments;copy.textContent=(envs?Number(envs).toLocaleString():'Thousands of')+' environments train headless. '+(latest?'Watch 6 evaluation robots using saved checkpoint '+latest.iteration+'.':'The viewer unlocks as soon as the first checkpoint is saved.');info.append(title,document.createTextNode(' '),pill,copy);const button=document.createElement('button');button.className='watch-training';button.dataset.label=latest?'Watch checkpoint '+latest.iteration:'Waiting for checkpoint…';button.textContent=button.dataset.label;button.disabled=!latest;if(latest){button.dataset.runId=latest.run_id;button.onclick=()=>watchTraining(button);}card.append(info,button);box.appendChild(card);}"
             + "function sessionCard(v){const card=document.createElement('article');card.className='session-card';const info=document.createElement('div');const title=document.createElement('strong');title.textContent=v.label||shortRun(v.run_id);title.title=v.run_id;const ports=document.createElement('p');ports.className='muted';ports.textContent=(v.kind==='training-preview'?'Live training snapshot · '+v.num_envs+' robots':'Engineering debugger')+(v.iteration!==null?' · checkpoint '+v.iteration:'')+' · port '+v.viser_port;info.append(title,ports);const actions=document.createElement('div');actions.className='session-actions';const open=document.createElement('a');open.href=v.open_url||v.viser_url;open.target='_blank';open.textContent=v.kind==='training-preview'?'Open live view':'Open debugger';const stop=document.createElement('button');stop.className='danger';stop.textContent='Stop';stop.onclick=async()=>{stop.disabled=true;try{await api('/api/stop-viewer',{run_id:v.run_id});await refreshStatus();}catch(e){alert(e.message);stop.disabled=false;}};actions.append(open,stop);card.append(info,actions);return card;}"
             + "function renderSessions(viewers){const box=document.querySelector('#viewer-sessions');box.replaceChildren();if(!viewers.length){const p=document.createElement('p');p.textContent='No simulations open.';box.appendChild(p);}else{viewers.forEach(v=>box.appendChild(sessionCard(v)));}const stopAll=document.querySelector('#stop-all-viewers');stopAll.disabled=!viewers.length;}"
             + "function drawReward(){const history=rewardScope==='full'?rewardSeries.full:rewardSeries.recent;const box=document.querySelector('#live-reward');if(!history||history.length<2){box.hidden=true;return;}box.hidden=false;document.querySelector('#reward-title').textContent=rewardScope==='full'?'Entire run · mean reward':'Recent mean reward';document.querySelector('#reward-scope').textContent=rewardScope==='full'?'Recent':'Entire run';const values=history.map(p=>p.reward),ordered=[...values].sort((a,b)=>a-b);const low=ordered[Math.floor((ordered.length-1)*.05)],high=ordered[Math.ceil((ordered.length-1)*.95)],span=high-low||1,clipped=values.filter(value=>value<low||value>high).length;const points=history.map((p,i)=>{const shown=Math.max(low,Math.min(high,p.reward));return(28+i*672/(history.length-1)).toFixed(1)+','+(145-(shown-low)*120/span).toFixed(1)}).join(' ');document.querySelector('#reward-line').setAttribute('points',points);const latest=history[history.length-1],sample=rewardScope==='full'&&rewardSeries.count>history.length?' · '+history.length+' plotted from '+rewardSeries.count+' points':'';document.querySelector('#reward-range').textContent=' · iteration '+history[0].iteration+' → '+latest.iteration+' · latest '+latest.reward.toFixed(2)+' · plotted range '+low.toFixed(2)+' to '+high.toFixed(2)+' · '+clipped+' outliers clipped'+sample;}function renderReward(progress){rewardSeries={recent:progress&&progress.reward_history||[],full:progress&&progress.reward_history_full||[],count:progress&&progress.reward_history_count||0};drawReward();}"

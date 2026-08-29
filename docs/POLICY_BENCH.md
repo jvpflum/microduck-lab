@@ -152,7 +152,7 @@ Connect with `ssh microduck-spark`, then open `http://localhost:8091`.
 **Open simulator** on a finished run verifies its immutable ONNX artifact and
 opens it in Pollen's colorful browser arena through the dashboard tunnel. The
 arena selects feet/rollers and the correct policy slot automatically.
-It also keeps a rolling six-second physics buffer. **Replay → Save backflip**
+It also keeps a rolling six-second physics buffer. **Replay → Save clip**
 stores the previous six seconds of qpos, qvel, policy actions, and commands on
 the Spark under `reports/demonstrations/`; **Ball off** persists across robot
 resets for repeated clean-floor attempts.
@@ -162,10 +162,8 @@ sample environments from the newest checkpoint in mjlab/Viser. The actual PPO
 trainer continues running thousands of environments headlessly; the viewer is
 a current checkpoint sample and never replaces the finished-model arena. A new
 checkpoint supersedes the prior live preview for that experiment so the port
-pool cannot fill during a long run. The live viewer also maintains a rolling
-motion buffer: choose a skill and click **Save last attempt** immediately after
-a successful manual maneuver to store five seconds under
-`reports/demonstrations/`.
+pool cannot fill during a long run. This observation-only viewer does not show
+recording controls; clips are captured in the interactive finished-model arena.
 
 Each finished skating run also offers **Deployment check** when it has an ONNX
 export. This is deliberately separate from the interactive training arena: it
@@ -219,7 +217,7 @@ The dashboard chat accepts plain-language goals such as:
 ```text
 train swizzle for 8000 iterations with 4096 environments
 help me train MicroDuck to skate backwards
-help me train MicroDuck to do a backflip
+help me train MicroDuck to do a front flip
 play iteration 2250
 what is running?
 stop the viewer
@@ -227,8 +225,8 @@ stop the viewer
 
 Codex on the Spark can translate a natural-language goal into a validated task
 plan. Only registered simulator tasks (currently walking, roller skating,
-swizzle, Roller Hop, and rolling backflip) can become a launch action. The
-backflip task uses the accepted demonstration only for reverse-curriculum
+swizzle, and rolling Front Flip) can become a launch action. The
+front-flip task uses the accepted demonstration only for reverse-curriculum
 resets and removes assistance before qualification.
 The proposed configuration is shown back to the user and requires a separate
 **Confirm training launch** click. Full training is refused while another

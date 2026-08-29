@@ -123,31 +123,12 @@ See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
 qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
 for active braking, spin, recovery, and supervisor design.
 
-## Train the Roller Hop skill
+## Train the rolling front flip
 
-Roller Hop is a separate one-shot policy layered on the same Pollen roller
-model, BAM actuator, 61D observations, domain randomization, and official ONNX
-export path. It targets a conservative 20 mm stationary jump and a quiet,
-upright two-skate landing.
-
-```bash
-make hop-smoke
-make train-hop
-```
-
-The full run defaults to 4,096 environments and 1,500 PPO iterations. On
-completion DuckLab verifies the ONNX artifact, registers it as a `hop` run,
-runs the headless hop battery, and assigns a transparent score. It is never
-automatically promoted. The dashboard assistant also accepts requests such as
-“train a roller jump overnight.” See [docs/ROLLER_HOP.md](docs/ROLLER_HOP.md)
-for the reward gates and release sequence.
-
-## Train the rolling backflip
-
-The backflip task uses the accepted arena capture as a reverse-curriculum reset
+The front-flip task uses the accepted arena capture as a reverse-curriculum reset
 distribution. It does not clone the mouse-assisted policy actions or reward
 time-indexed waypoints. Assistance decays to zero, while hard gates require
-two-skate takeoff, at least 300° of airborne backward rotation, no trunk/head
+two-skate takeoff, at least 300° of airborne forward rotation, no trunk/head
 floor contact, and an upright skate landing.
 
 ```bash
@@ -157,7 +138,10 @@ make train-backflip
 
 The full run defaults to 4,096 environments and 2,500 PPO iterations. Its
 unassisted viewer mode starts with forward roller momentum and no injected
-vertical or angular velocity.
+vertical or angular velocity. The `backflip` command and directory names are
+temporarily retained as legacy checkpoint identifiers; the product UI correctly
+labels the motion **Front flip**. The unsuccessful Hop experiment is archived
+and is not offered as a product skill.
 
 ### Compare and promote policies
 
@@ -178,9 +162,8 @@ The dashboard's **Open simulator** action opens Pollen's colorful browser arena
 with native gamepad support for both factory and custom models. For a custom
 saved model, Policy Bench verifies its immutable ONNX snapshot, loads that
 exact artifact into the correct policy slot, and selects feet or rollers
-automatically. Roller Hop keeps Pollen's factory drive policy for skating and
-uses the selected model for the hop: press Xbox **A** (or **X** / keyboard
-**R**) to trigger it. The older white Viser surface is retained only as an
+automatically. A finished Front Flip model uses Xbox **A**, keyboard **R**, or
+the visible **Do Front Flip** button. The older white Viser surface is retained only as an
 advanced engineering debugger and is never the dashboard's normal Play path.
 While a run is active, its separate **Watch training live** action opens a
 six-robot gray-tile mjlab view of the newest immutable checkpoint. The trainer
@@ -189,16 +172,14 @@ refreshed by reopening the button after a newer checkpoint is saved and never
 replaces the finished-model arena.
 
 The main colorful arena continuously buffers six seconds of MuJoCo state and
-policy actions. After landing a useful manual backflip, immediately click
-**Replay → Save backflip**. The button uploads the previous six seconds to
-`reports/demonstrations/` for motion imitation and reference tracking; failed
-attempts can simply be left unsaved. The gray live-training viewer retains its
-engineering recorder as well: choose the robot under **Scene → Environment**
-and use **Demonstration recorder → Save last attempt**.
+policy actions. After any useful manual maneuver, immediately click
+**Replay → Save clip**. The universal button uploads the previous six seconds
+to `reports/demonstrations/`; failed attempts can simply be left unsaved. The
+observation-only live-training viewer intentionally has no recorder.
 
 Accepted captures can be normalized with `tools/curate_demonstration.py`. The
 first validated reference is
-`datasets/demonstrations/backflip/rolling-backflip-v1.json`; its curation block
+`datasets/demonstrations/backflip/rolling-backflip-v1.json` (legacy path); its curation block
 records rotation, inversion, apex, landing stability, displacement, source
 hash, and the important constraint that externally assisted actions are motion
 references rather than behavior-cloning labels.

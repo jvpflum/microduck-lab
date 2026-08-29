@@ -36,6 +36,8 @@ _checkpoint_file = _argument_value("--checkpoint-file")
 _checkpoint_name = Path(_checkpoint_file).name if _checkpoint_file else "unknown checkpoint"
 _num_envs = int(_argument_value("--num-envs") or "1")
 _training_preview = os.environ.get("DUCKLAB_VIEW_KIND") == "training-preview"
+_display_task_id = _task_id.replace("RollerBackflip", "RollerFrontFlip")
+_display_checkpoint_name = _checkpoint_name.replace("backflip", "frontflip")
 
 
 def _viser_server_on_session_port(*args, **kwargs):
@@ -129,23 +131,19 @@ class GamepadViserPlayViewer(_ViserPlayViewer):
         self._server.gui.add_markdown(
             "### Dark Wing Duck Enterprise\n"
             f"**{'Live training snapshot' if _training_preview else 'Pollen microduck_rl · Mjlab'}**  \n"
-            f"Task: `{_task_id}`  \nCheckpoint: `{_checkpoint_name}`"
+            f"Task: `{_display_task_id}`  \nCheckpoint: `{_display_checkpoint_name}`"
             + (f"  \nRobots shown: **{_num_envs}**" if _training_preview else "")
         )
-        with self._server.gui.add_folder("Demonstration recorder"):
-            self._demo_label = self._server.gui.add_dropdown(
-                "Skill",
-                options=["Backflip", "Front flip", "Hop", "Other"],
-                initial_value="Backflip",
-            )
-            self._demo_status = self._server.gui.add_markdown(
-                "Recorder armed. Perform the move, then save the last five seconds."
-            )
-            save_demo = self._server.gui.add_button("Save last attempt")
+        if not _training_preview:
+            with self._server.gui.add_folder("Clip recorder"):
+                self._demo_status = self._server.gui.add_markdown(
+                    "Recorder armed. Perform any move, then save the last five seconds."
+                )
+                save_demo = self._server.gui.add_button("Save clip")
 
-            @save_demo.on_click
-            def _(_) -> None:
-                self._save_demo()
+                @save_demo.on_click
+                def _(_) -> None:
+                    self._save_demo()
         bridge.start()
         bridge.bind_viewer(self)
 
@@ -197,7 +195,7 @@ class GamepadViserPlayViewer(_ViserPlayViewer):
         # guard band for slow viewers.
         cutoff = samples[-1]["sim_time"] - 5.0
         samples = [sample for sample in samples if sample["sim_time"] >= cutoff]
-        safe_label = self._demo_label.value.lower().replace(" ", "-")
+        safe_label = "clip"
         output_dir = Path(
             os.environ.get("DUCKLAB_DEMO_DIR", str(Path.cwd() / "demonstrations"))
         )
@@ -213,11 +211,11 @@ class GamepadViserPlayViewer(_ViserPlayViewer):
             env_idx=np.asarray(env_idx),
             task=np.asarray(_task_id),
             checkpoint=np.asarray(_checkpoint_name),
-            skill=np.asarray(self._demo_label.value),
+            skill=np.asarray("clip"),
         )
         duration = samples[-1]["sim_time"] - samples[0]["sim_time"]
         self._demo_status.content = (
-            f"Saved **{self._demo_label.value}** · {duration:.1f}s · {len(samples)} frames  \n"
+            f"Saved clip · {duration:.1f}s · {len(samples)} frames  \n"
             f"`{output.name}`"
         )
         print(f"[demo] saved {output}", flush=True)
