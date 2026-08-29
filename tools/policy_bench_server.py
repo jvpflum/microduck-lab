@@ -394,6 +394,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
 
 class DashboardServer(ThreadingHTTPServer):
+    # Lets the dashboard restart cleanly after Ctrl-C or an SSH reconnect.
+    allow_reuse_address = True
+
     def __init__(self, address: tuple[str, int], bench: Bench):
         self.bench = bench
         self.manager = ProcessManager(bench)
