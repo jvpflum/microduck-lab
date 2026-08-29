@@ -516,6 +516,13 @@ class Bench:
         manifests = [item for item in all_manifests if item.get("experiment_kind", "training") != "smoke"]
         hidden_smoke = len(all_manifests) - len(manifests)
         def experiment_key(manifest: dict[str, Any]) -> str:
+            # A run name is the user-facing job identity. Resume attempts may
+            # create a new timestamped source directory, but must remain one
+            # training job in the UI.
+            label = manifest.get("experiment_label") or manifest.get("source_run_dir", "").rsplit("/", 1)[-1]
+            label = re.sub(r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_", "", label)
+            if label:
+                return f"{manifest.get('task', 'unknown')}:{label}"
             return manifest.get("experiment_id") or f"{manifest.get('task', 'unknown')}:{manifest.get('source_run_dir', manifest['run_id'])}"
 
         experiments = {experiment_key(manifest) for manifest in manifests}
