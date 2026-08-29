@@ -79,6 +79,9 @@ See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
 qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
 for active braking, spin, recovery, and supervisor design.
 
+The remote Viser launcher also includes a browser-based Xbox controller bridge.
+Forward ports 8080 and 8090, then follow [docs/GAMEPAD.md](docs/GAMEPAD.md).
+
 The default is 4,096 environments and 5,000 PPO iterations. Override either
 setting with `DUCKLAB_ENVS` and `DUCKLAB_ITERATIONS`, as with walking. The
 policy learns the upstream roller command semantics: coast at zero, push with
