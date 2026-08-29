@@ -108,6 +108,7 @@ async function send(payload) {
 }
 
 function loop() {
+  try {
   // GamepadList is not spreadable in every Chromium build. Array.from keeps
   // the 20 Hz command heartbeat alive instead of silently stopping the loop.
   const pads = navigator.getGamepads ? Array.from(navigator.getGamepads()).filter(Boolean) : [];
@@ -141,7 +142,13 @@ function loop() {
   $('xValue').textContent = (commandX >= 0 ? '+' : '') + commandX.toFixed(2);
   $('yawValue').textContent = (heading >= 0 ? '+' : '') + heading.toFixed(2);
   send({armed, connected, emergency_stop: emergency, command_x: commandX, heading, reset, pause});
-  setTimeout(loop, 50);
+  } catch (error) {
+    $('status').textContent = 'Gamepad API error: ' + error.message;
+    $('dot').classList.remove('ok');
+  } finally {
+    // Never let one browser Gamepad API exception kill the command heartbeat.
+    setTimeout(loop, 50);
+  }
 }
 window.addEventListener('error', event => {
   $('status').textContent = 'Controller page error: ' + event.message;
