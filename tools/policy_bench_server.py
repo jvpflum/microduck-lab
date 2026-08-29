@@ -637,11 +637,6 @@ class ProcessManager:
                 "--num-envs",
                 str(num_envs),
             ]
-            if num_envs > 1:
-                # Keep the independent worlds visually close together. They
-                # cannot collide across environments, so tighter spacing is a
-                # pure presentation improvement for the six-robot overview.
-                command.extend(["--env.scene.env-spacing", "0.75"])
             command.extend(["--device", "cpu", "--viewer", "viser"])
             environment = os.environ.copy()
             environment["WANDB_MODE"] = "disabled"
