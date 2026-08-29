@@ -337,7 +337,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         The browser intentionally polls /api/status, so logging every 200
         response quickly buries useful training and viewer messages.
         """
-        if args and str(args[0]).startswith("/api/"):
+        if args and "/api/" in str(args[0]):
             return
         super().log_message(format, *args)
 
