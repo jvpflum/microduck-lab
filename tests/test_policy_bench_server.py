@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 import tempfile
 import unittest
@@ -66,9 +67,18 @@ class PolicyBenchServerTests(unittest.TestCase):
         )
         self.assertEqual(
             request,
-            {"task": "swizzle", "iterations": 8000, "environments": 2048},
+            {
+                "task": "swizzle",
+                "iterations": 8000,
+                "environments": 2048,
+                "resource_profile": "shared",
+            },
         )
         self.assertIn("error", server.parse_training_request("train walking for 2 iterations"))
+
+    def test_overnight_request_uses_training_priority(self) -> None:
+        request = server.parse_training_request("train swizzle overnight for 8000 iterations")
+        self.assertEqual(request["resource_profile"], "training-priority")
 
     def test_unknown_training_skill_requests_clarification(self) -> None:
         request = server.parse_training_request("train something cool")
@@ -182,6 +192,19 @@ class PolicyBenchServerTests(unittest.TestCase):
             session.process.returncode = 0
         manager.status()
 
+    def test_deployment_check_returns_onnx_score(self) -> None:
+        result_path = self.root / "deployment.json"
+        result_path.write_text(json.dumps({"policy_bench_score": {"overall": 72.5}}))
+        manager = server.ProcessManager(self.bench)
+        with mock.patch.object(
+            self.bench,
+            "evaluate",
+            return_value={"suite": "deployment-v1", "path": str(result_path)},
+        ):
+            result = manager.run_deployment_check(self.manifest["run_id"])
+        self.assertEqual(result["score"], 72.5)
+        self.assertEqual(result["suite"], "deployment-v1")
+
     @mock.patch.object(server, "running_training_processes", return_value=[])
     @mock.patch.object(server.subprocess, "Popen", side_effect=FakeProcess)
     def test_training_launch_is_structured_and_disables_wandb(self, popen, _running) -> None:
@@ -195,7 +218,29 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(len(process.command), 1)
         self.assertEqual(process.kwargs["env"]["WANDB_MODE"], "disabled")
         self.assertEqual(process.kwargs["env"]["DUCKLAB_ITERATIONS"], "8000")
+        self.assertEqual(process.kwargs["env"]["DUCKLAB_RESOURCE_PROFILE"], "shared")
         process.returncode = 0
+        manager.status()
+
+    @mock.patch.object(server, "running_training_processes", return_value=[])
+    @mock.patch.object(server.subprocess, "Popen", side_effect=FakeProcess)
+    def test_training_priority_is_forwarded_to_launcher(self, _popen, _running) -> None:
+        manager = server.ProcessManager(self.bench)
+        result = manager.start_training(
+            {
+                "task": "swizzle",
+                "iterations": 8000,
+                "environments": 4096,
+                "resource_profile": "training-priority",
+            }
+        )
+        assert manager.training is not None
+        self.assertEqual(result["resource_profile"], "training-priority")
+        self.assertEqual(
+            manager.training.kwargs["env"]["DUCKLAB_RESOURCE_PROFILE"],
+            "training-priority",
+        )
+        manager.training.returncode = 0
         manager.status()
 
     @mock.patch.object(server, "running_training_processes", return_value=[{"pid": 42}])

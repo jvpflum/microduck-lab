@@ -53,6 +53,12 @@ VIEWER_PORT_PAIRS = (
     (8085, 8096),
 )
 
+RESOURCE_PROFILES = {
+    "shared": "Shared · keep vLLM and Hermes online",
+    "training-priority": "Training priority · pause vLLM until training exits",
+}
+RESOURCE_MARKER = LAB_ROOT / "policy-bench" / "training-priority.json"
+
 
 @dataclass
 class ViewerSession:
@@ -100,6 +106,21 @@ def running_training_processes() -> list[dict[str, Any]]:
         if re.search(r"(?:^|/)train\s+Mjlab-", command):
             matches.append({"pid": int(entry.name), "command": command.strip()})
     return sorted(matches, key=lambda item: item["pid"])
+
+
+def resource_status() -> dict[str, Any]:
+    """Return cheap, local resource-mode status for the polled dashboard."""
+    priority = RESOURCE_MARKER.is_file()
+    try:
+        with socket.create_connection(("127.0.0.1", 8000), timeout=0.08):
+            vllm_online = True
+    except OSError:
+        vllm_online = False
+    return {
+        "profile": "training-priority" if priority else "shared",
+        "label": RESOURCE_PROFILES["training-priority" if priority else "shared"],
+        "vllm_online": vllm_online,
+    }
 
 
 def cleanup_orphaned_dashboard_viewers(
@@ -201,7 +222,16 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
         return {"error": "Iterations must be between 5 and 100,000."}
     if not 1 <= environments <= 8192:
         return {"error": "Parallel environments must be between 1 and 8,192."}
-    return {"task": task, "iterations": iterations, "environments": environments}
+    priority_words = ("overnight", "maximum training", "max training", "training priority")
+    resource_profile = (
+        "training-priority" if any(word in lowered for word in priority_words) else "shared"
+    )
+    return {
+        "task": task,
+        "iterations": iterations,
+        "environments": environments,
+        "resource_profile": resource_profile,
+    }
 
 
 def codex_training_plan(message: str) -> dict[str, Any] | None:
@@ -218,10 +248,12 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
         return None
     prompt = (
         "You are the MicroDuck training assistant. Return JSON only, with keys "
-        "task, iterations, environments, supported, reply. task must be one of "
+        "task, iterations, environments, resource_profile, supported, reply. task must be one of "
         "swizzle, roller, walking, or custom. Choose custom for a skill that has "
         "no registered simulator task. Never invent a runnable task. Defaults are "
-        "8000 iterations and 4096 environments. Keep reply under 240 characters.\n"
+        "8000 iterations and 4096 environments. resource_profile must be shared "
+        "or training-priority; use training-priority for overnight or maximum-throughput "
+        "requests, otherwise shared. Keep reply under 240 characters.\n"
         f"User request: {message}"
     )
     try:
@@ -243,7 +275,11 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
         return None
     if not 5 <= iterations <= 100_000 or not 1 <= environments <= 8192:
         return None
+    resource_profile = str(data.get("resource_profile", "shared"))
+    if resource_profile not in RESOURCE_PROFILES:
+        resource_profile = "shared"
     return {"task": data["task"], "iterations": iterations, "environments": environments,
+            "resource_profile": resource_profile,
             "reply": str(data.get("reply") or "I mapped that to a validated training task.")}
 
 
@@ -255,6 +291,7 @@ class ProcessManager:
         self.training: subprocess.Popen[bytes] | None = None
         self.training_config: dict[str, Any] | None = None
         self.training_log = None
+        self.deployment_checks: set[str] = set()
 
     @staticmethod
     def _alive(process: subprocess.Popen[bytes] | None) -> bool:
@@ -296,7 +333,31 @@ class ProcessManager:
                     "detected": running_training_processes(),
                     "progress": training_progress(),
                 },
+                "resources": resource_status(),
             }
+
+    def run_deployment_check(self, run_id: str) -> dict[str, Any]:
+        manifest = self.bench.load_manifest(run_id)
+        if manifest.get("task") not in {"roller", "swizzle"}:
+            raise ValueError("Deployment Check is currently available for roller-skating policies only")
+        if not manifest.get("artifacts", {}).get("policy"):
+            raise ValueError("This saved model has no exported ONNX policy yet")
+        with self.lock:
+            if run_id in self.deployment_checks:
+                raise ValueError("A Deployment Check is already running for this model")
+            self.deployment_checks.add(run_id)
+        try:
+            record = self.bench.evaluate(run_id, "deployment-v1")
+        finally:
+            with self.lock:
+                self.deployment_checks.discard(run_id)
+        evaluation = json.loads(Path(record["path"]).read_text())
+        return {
+            "run_id": run_id,
+            "suite": record["suite"],
+            "score": evaluation.get("policy_bench_score", {}).get("overall"),
+            "report_url": f"runs/{run_id}/report.html",
+        }
 
     def launch_viewer(self, run_id: str) -> dict[str, Any]:
         manifest = self.bench.load_manifest(run_id)
@@ -441,12 +502,15 @@ class ProcessManager:
         task = config.get("task")
         iterations = config.get("iterations")
         environments = config.get("environments")
+        resource_profile = config.get("resource_profile", "shared")
         if task not in TASKS:
             raise ValueError("Unknown training task")
         if not isinstance(iterations, int) or not 5 <= iterations <= 100_000:
             raise ValueError("Iterations must be between 5 and 100,000")
         if not isinstance(environments, int) or not 1 <= environments <= 8192:
             raise ValueError("Parallel environments must be between 1 and 8,192")
+        if resource_profile not in RESOURCE_PROFILES:
+            raise ValueError("Resource profile must be shared or training-priority")
         with self.lock:
             self._reap_finished_locked()
             detected = running_training_processes()
@@ -461,6 +525,7 @@ class ProcessManager:
                     "DUCKLAB_ITERATIONS": str(iterations),
                     "DUCKLAB_ENVS": str(environments),
                     "WANDB_MODE": "disabled",
+                    "DUCKLAB_RESOURCE_PROFILE": resource_profile,
                 }
             )
             self.training = subprocess.Popen(
@@ -478,6 +543,7 @@ class ProcessManager:
                 "task": task,
                 "iterations": iterations,
                 "environments": environments,
+                "resource_profile": resource_profile,
                 "log": str(log_path),
             }
 
@@ -547,6 +613,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             body = self._read_json()
             if self.path == "/api/play":
                 self._send_json(self.server.manager.launch_viewer(str(body.get("run_id", ""))))
+            elif self.path == "/api/deployment-check":
+                self._send_json(self.server.manager.run_deployment_check(str(body.get("run_id", ""))))
             elif self.path == "/api/stop-viewer":
                 run_id = str(body.get("run_id", "")).strip() or None
                 self._send_json(self.server.manager.stop_viewer(run_id))
@@ -559,7 +627,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self._send_json(self.server.chat(str(body.get("message", ""))))
             else:
                 self._send_json({"error": "Unknown endpoint"}, HTTPStatus.NOT_FOUND)
-        except (ValueError, SystemExit, json.JSONDecodeError) as error:
+        except (ValueError, SystemExit, json.JSONDecodeError, subprocess.CalledProcessError) as error:
             self._send_json({"error": str(error)}, HTTPStatus.CONFLICT)
 
 
@@ -605,7 +673,8 @@ class DashboardServer(ThreadingHTTPServer):
                 "reply": (
                     f"{request.get('reply', 'Ready to train.')} "
                     f"Configuration: {request['task']} for {request['iterations']:,} iterations "
-                    f"with {request['environments']:,} parallel environments.{warning}"
+                    f"with {request['environments']:,} parallel environments in "
+                    f"{request.get('resource_profile', 'shared')} mode.{warning}"
                 ),
                 "action": request,
             }

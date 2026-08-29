@@ -30,3 +30,33 @@ require_uv() {
 prepare_dirs() {
     mkdir -p "${ARTIFACT_DIR}" "${REPORT_DIR}"
 }
+
+DUCKLAB_RESOURCE_ACTIVE=false
+
+activate_resource_profile() {
+    local profile="${DUCKLAB_RESOURCE_PROFILE:-shared}"
+    case "${profile}" in
+        shared)
+            echo "Resource profile: shared (vLLM stays online)."
+            ;;
+        training-priority)
+            "${LAB_ROOT}/scripts/resource-profile.sh" enter "$$"
+            DUCKLAB_RESOURCE_ACTIVE=true
+            ;;
+        *)
+            echo "Unknown DUCKLAB_RESOURCE_PROFILE: ${profile}" >&2
+            return 2
+            ;;
+    esac
+}
+
+restore_resource_profile() {
+    if [[ "${DUCKLAB_RESOURCE_ACTIVE}" == "true" ]]; then
+        "${LAB_ROOT}/scripts/resource-profile.sh" restore "$$" || true
+        DUCKLAB_RESOURCE_ACTIVE=false
+    fi
+}
+
+install_resource_profile_trap() {
+    trap 'training_status=$?; restore_resource_profile; exit "${training_status}"' EXIT
+}

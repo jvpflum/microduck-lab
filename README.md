@@ -34,7 +34,7 @@ make verify-artifact
 ```
 
 `make smoke` follows Pollen's required 64-environment, five-iteration gate.
-Weights & Biases defaults to offline mode so a cloud account is not required.
+Weights & Biases is disabled; Policy Bench remains the local system of record.
 Training automatically exports the final checkpoint through Pollen's official
 normalizer-aware ONNX path. `make verify-artifact` validates its 61-to-14
 contract, metadata, finite CPU inference, and a 100-step CPU MuJoCo rehearsal.
@@ -55,6 +55,17 @@ DUCKLAB_ENVS=2048 DUCKLAB_ITERATIONS=1000 make train-baseline
 Do not run a full training job concurrently with memory-heavy inference
 services. This system uses unified memory; the preflight blocks when less than
 20 GiB is available or swap usage exceeds 50%.
+
+The dashboard offers two explicit resource modes for new runs:
+
+- **Shared** keeps vLLM and Hermes inference online. It is the safe daytime
+  default, but inference traffic may reduce or vary training throughput.
+- **Training priority** temporarily stops the local Docker-backed vLLM service,
+  trains with the GPU reserved for RL, and restores vLLM plus the Hermes health
+  gate when training exits. Telegram/local model responses are unavailable
+  during that window. A hard-crash recovery marker is stored under
+  `policy-bench/training-priority.json`; run
+  `./scripts/resource-profile.sh restore` if manual recovery is ever required.
 
 ## Train a roller-skating policy
 
@@ -99,10 +110,13 @@ make bench-list
 make bench-dashboard
 ```
 
-The dashboard provides one-click **Open simulation** buttons that launch each
-selected model in an isolated Viser/controller session. Multiple saved policies
+The dashboard provides one-click **Drive training arena** buttons that launch
+each selected checkpoint in its exact Pollen mjlab task, with an isolated
+Viser/controller session. Multiple saved policies
 can remain open side by side, and the dashboard always shows which arena and
-controller belong together. Its local DuckLab Assistant
+controller belong together. **Deployment check** runs the exported ONNX policy
+through Pollen's CPU MuJoCo runtime and adds a scored forward/reverse/coast/
+heading evaluation to the run. Its local DuckLab Assistant
 can turn a request such as “train swizzle for 8000 iterations with 4096
 environments” into a validated configuration and an explicit confirmation
 button. It cannot execute arbitrary shell commands and blocks concurrent full
@@ -163,6 +177,11 @@ Artifact verification rehearses the policy contract against the roller model.
 
 Use the official `scripts/export.py` for every deployable ONNX file. It embeds
 the observation normalizer required by the 50 Hz robot runtime.
+
+Every immutable Policy Bench candidate records the DuckLab commit and the exact
+Pollen `microduck_rl` remote, branch, commit, and dirty state used to create it.
+The dashboard shows the current upstream revision and the per-run revision so a
+future upstream update cannot silently change the meaning of an older result.
 
 See [docs/V1.md](docs/V1.md) for v1.0 scope, qualification gates, and the
 arrival-day deployment plan.

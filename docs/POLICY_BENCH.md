@@ -143,13 +143,49 @@ Host microduck-spark
     LocalForward 8096 localhost:8096
 ```
 
-Connect with `ssh microduck-spark`, then open `http://localhost:8091`. **Open
-simulation** validates that exact saved model, assigns it an isolated arena and
-controller pair, and opens only its arena. The **Open simulations** section is
+Connect with `ssh microduck-spark`, then open `http://localhost:8091`. **Drive
+training arena** validates that exact saved checkpoint, assigns it an isolated
+arena/controller pair, and opens its combined controller view. The **Open simulations** section is
 the source of truth: it identifies every model, its ports, and provides explicit
 **Open arena**, **Open Xbox controller**, and **Stop** actions. Reopening a model
 reuses its own session; opening another model does not replace it. Up to six can
 be open concurrently.
+
+Each finished skating run also offers **Deployment check** when it has an ONNX
+export. This is deliberately separate from the interactive training arena: it
+runs the normalizer-aware ONNX through Pollen's CPU MuJoCo inference path at
+50 Hz, exercises settle, forward, coast, reverse, and heading phases, then
+stores the transparent score in the run report. Pollen's `infer_policy.py`
+viewer is a native desktop window rather than an SSH-forwardable browser UI;
+Policy Bench therefore uses its headless runtime path for repeatable deployment
+qualification and keeps mjlab/Viser for interactive driving.
+
+## Resource modes
+
+New jobs default to **Shared**, which leaves vLLM and Hermes inference online.
+Choose **Training priority** for an overnight/max-throughput run. Policy Bench
+then pauses the `qwen38-hermes-vllm` container before the trainer starts,
+disables its Docker auto-restart for the training window, and restores it after
+the trainer exits. The Hermes watchdog honors the live training marker instead
+of treating the intentional pause as a failure.
+
+The active mode and vLLM state are visible in the dashboard status. If the host
+hard-resets during a priority run, recover explicitly with:
+
+```bash
+./scripts/resource-profile.sh restore
+```
+
+Do not remove the marker by hand: it records whether vLLM was online before the
+run and therefore whether Policy Bench should restart it.
+
+## Upstream provenance
+
+Every candidate manifest records both repositories' commits and dirty states,
+plus the Pollen checkout's remote and branch. The control-room header shows the
+currently installed `microduck_rl` revision; each run card shows the revision
+that produced its saved model. Upstream changes should be pulled, tested, and
+pinned deliberately rather than automatically changing existing experiments.
 
 The dashboard never guesses that an occupied port belongs to the requested
 model. It skips externally occupied pairs and reports a clear error if the pool
