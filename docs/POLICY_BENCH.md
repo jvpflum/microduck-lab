@@ -227,9 +227,9 @@ stop the viewer
 
 Codex on the Spark can translate a natural-language goal into a validated task
 plan. Only registered simulator tasks (currently walking, roller skating,
-swizzle, and Roller Hop) can become a launch action; a goal such as a backflip
-receives an honest explanation that its environment and reward still need to
-be added.
+swizzle, Roller Hop, and rolling backflip) can become a launch action. The
+backflip task uses the accepted demonstration only for reverse-curriculum
+resets and removes assistance before qualification.
 The proposed configuration is shown back to the user and requires a separate
 **Confirm training launch** click. Full training is refused while another
 training process is detected. No arbitrary shell text is ever executed.

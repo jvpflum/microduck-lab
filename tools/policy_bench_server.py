@@ -51,6 +51,11 @@ TASKS = {
         "train_script": LAB_ROOT / "scripts" / "train-hop.sh",
         "default_iterations": 1500,
     },
+    "backflip": {
+        "play_task": "Mjlab-RollerBackflip-Flat-MicroDuck",
+        "train_script": LAB_ROOT / "scripts" / "train-backflip.sh",
+        "default_iterations": 2500,
+    },
 }
 
 # The dashboard itself owns 8091. Each simulation gets an isolated Viser and
@@ -305,7 +310,9 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
     lowered = message.lower()
     if not re.search(r"\b(train|training|learn)\b", lowered):
         return None
-    if "hop" in lowered or "jump" in lowered:
+    if "backflip" in lowered or "back flip" in lowered:
+        task = "backflip"
+    elif "hop" in lowered or "jump" in lowered:
         task = "hop"
     elif "roller" in lowered:
         task = "roller"
@@ -314,7 +321,7 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
     elif "walk" in lowered:
         task = "walking"
     else:
-        return {"error": "Tell me which skill to train: hop, swizzle, roller, or walking."}
+        return {"error": "Tell me which skill to train: backflip, hop, swizzle, roller, or walking."}
     iteration_match = re.search(r"([\d,]+)\s*(?:iterations?|iters?)\b", lowered)
     environment_match = re.search(r"([\d,]+)\s*(?:environments?|envs?)\b", lowered)
     iterations = (
@@ -358,7 +365,7 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
     prompt = (
         "You are the MicroDuck training assistant. Return JSON only, with keys "
         "task, iterations, environments, resource_profile, supported, reply. task must be one of "
-        "hop, swizzle, roller, walking, or custom. Choose custom for a skill that has "
+        "backflip, hop, swizzle, roller, walking, or custom. Choose custom for a skill that has "
         "no registered simulator task. Never invent a runnable task. Defaults are "
         "8000 iterations and 4096 environments. resource_profile must be shared "
         "or training-priority; use training-priority for overnight or maximum-throughput "
@@ -516,6 +523,13 @@ class ProcessManager:
                 "loco": "rollers",
                 "label": "Hop",
                 "period": "3.0",
+                "end": "1.0",
+            },
+            "backflip": {
+                "slot": "crouch",
+                "loco": "rollers",
+                "label": "Backflip",
+                "period": "4.0",
                 "end": "1.0",
             },
         }.get(task)

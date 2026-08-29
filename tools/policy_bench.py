@@ -192,6 +192,7 @@ def infer_task(run_dir: Path) -> str:
         "velocity_rollers": "roller",
         "velocity": "walking",
         "roller_hop": "hop",
+        "roller_backflip": "backflip",
     }.get(parent, parent.replace("velocity_", "") or "unknown")
 
 

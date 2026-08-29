@@ -87,6 +87,12 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(request["iterations"], 1500)
         self.assertEqual(request["resource_profile"], "training-priority")
 
+    def test_backflip_request_maps_to_registered_backflip_task(self) -> None:
+        request = server.parse_training_request("train a rolling backflip overnight")
+        self.assertEqual(request["task"], "backflip")
+        self.assertEqual(request["iterations"], 2500)
+        self.assertEqual(request["resource_profile"], "training-priority")
+
     def test_unknown_training_skill_requests_clarification(self) -> None:
         request = server.parse_training_request("train something cool")
         self.assertIn("error", request)

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 {swizzle|roller|walking|hop}" >&2
+    echo "Usage: $0 {swizzle|roller|walking|hop|backflip}" >&2
     exit 2
 fi
 
@@ -39,6 +39,13 @@ case "${task}" in
         roller_flag=(--roller)
         auto_score=true
         suite_args=(--suite hop-v1)
+        ;;
+    backflip)
+        experiment="roller_backflip"
+        bench_task="backflip"
+        roller_flag=(--roller)
+        auto_score=false
+        suite_args=()
         ;;
     *)
         echo "Unknown training task: ${task}" >&2

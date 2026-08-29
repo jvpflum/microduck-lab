@@ -142,6 +142,23 @@ automatically promoted. The dashboard assistant also accepts requests such as
 “train a roller jump overnight.” See [docs/ROLLER_HOP.md](docs/ROLLER_HOP.md)
 for the reward gates and release sequence.
 
+## Train the rolling backflip
+
+The backflip task uses the accepted arena capture as a reverse-curriculum reset
+distribution. It does not clone the mouse-assisted policy actions or reward
+time-indexed waypoints. Assistance decays to zero, while hard gates require
+two-skate takeoff, at least 300° of airborne backward rotation, no trunk/head
+floor contact, and an upright skate landing.
+
+```bash
+make backflip-smoke
+make train-backflip
+```
+
+The full run defaults to 4,096 environments and 2,500 PPO iterations. Its
+unassisted viewer mode starts with forward roller momentum and no injected
+vertical or angular velocity.
+
 ### Compare and promote policies
 
 MicroDuck Policy Bench provides an entirely open-source, offline workflow for

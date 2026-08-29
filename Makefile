@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 
-.PHONY: bootstrap build-pollen-arena preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke swizzle-smoke hop-smoke \
+.PHONY: bootstrap build-pollen-arena preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke swizzle-smoke hop-smoke backflip-smoke \
 	verify-artifact verify-skate-artifact evaluate-swizzle train-baseline train-skate \
-	train-swizzle train-hop import-pollen-baselines bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
+	train-swizzle train-hop train-backflip import-pollen-baselines bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -37,6 +37,9 @@ swizzle-smoke:
 hop-smoke:
 	./scripts/hop-smoke.sh
 
+backflip-smoke:
+	./scripts/backflip-smoke.sh
+
 verify-artifact:
 	./scripts/verify-artifact.sh
 
@@ -57,6 +60,9 @@ train-swizzle:
 
 train-hop:
 	./scripts/train-hop.sh
+
+train-backflip:
+	./scripts/train-backflip.sh
 
 import-pollen-baselines:
 	./scripts/import-pollen-baselines.sh
