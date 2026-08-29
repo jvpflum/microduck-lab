@@ -590,8 +590,7 @@ class Bench:
             for task, stages in registry.get("tasks", {}).items()
         ) or "<li>No promoted policies yet</li>"
         content = (
-            f"<p>Offline policy lineage, evaluation, comparison, promotion, and interactive play. "
-            f"Showing {len(experiments)} training runs across {len(manifests)} saved versions. "
+            f"<p>MicroDuck training control center. Showing {len(experiments)} training runs across {len(manifests)} saved versions. "
             f"{hidden_smoke} smoke-test snapshots are hidden.</p>"
             "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
             "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
