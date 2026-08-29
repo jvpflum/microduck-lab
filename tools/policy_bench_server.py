@@ -80,10 +80,11 @@ def training_progress() -> dict[str, Any] | None:
             text = path.read_text(errors="replace")
         except OSError:
             continue
-        iterations = re.findall(r"Iteration:\s*(\d+)", text)
+        iterations = re.findall(r"(?:Iteration:|Learning iteration)\s*(\d+)", text)
+        totals = re.findall(r"Learning iteration\s*\d+/(\d+)", text)
         eta = re.findall(r"ETA:\s*([^\n\r]+)", text)
         if iterations:
-            return {"log": str(path), "iteration": int(iterations[-1]), "eta": eta[-1].strip() if eta else None}
+            return {"log": str(path), "iteration": int(iterations[-1]), "total": int(totals[-1]) if totals else None, "eta": eta[-1].strip() if eta else None}
     return None
 
 

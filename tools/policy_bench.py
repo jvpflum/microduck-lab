@@ -524,6 +524,7 @@ class Bench:
         for manifest in manifests:
             grouped.setdefault(experiment_key(manifest), []).append(manifest)
         experiment_rows = []
+        active_rows = []
         for group in grouped.values():
             newest = group[0]
             label = newest.get("experiment_label") or newest["source_run_dir"].rsplit("/", 1)[-1]
@@ -548,6 +549,12 @@ class Bench:
                     f"<button class='star' data-run-id='{html.escape(manifest['run_id'])}'>{'Unstar' if manifest.get('starred') else '★ Star'}</button></td></tr>"
                 )
             latest = max(group, key=lambda item: item.get("latest_iteration") or -1)
+            if state == "active":
+                active_rows.append(
+                    f"<p><strong>{html.escape(label)}</strong> · {html.escape(newest['task'])} · "
+                    f"latest saved checkpoint {latest.get('latest_iteration')} · "
+                    f"<button class='play' data-run-id='{html.escape(latest['run_id'])}'>▶ View latest saved</button></p>"
+                )
             experiment_rows.append(
                 "<tr>"
                 f"<td>{html.escape(label)}</td><td>{html.escape(newest['task'])}</td>"
@@ -559,6 +566,17 @@ class Bench:
                 "<table><tr><th>Saved version</th><th>Stage</th><th>Score</th><th>Evaluations</th><th>Star</th><th>Actions</th></tr>"
                 + "".join(snapshots)
                 + "</table></details></td></tr>"
+            )
+        # Process visibility can differ between the dashboard and a detached
+        # training session. Keep the newest saved candidate actionable even
+        # when /proc has not reported the active PID yet.
+        if not active_rows and grouped:
+            candidate_group = max(grouped.values(), key=lambda items: items[0].get("created_at", ""))
+            candidate = max(candidate_group, key=lambda item: item.get("latest_iteration") or -1)
+            active_rows.append(
+                f"<p><strong>Latest saved candidate</strong> · {html.escape(candidate['task'])} · "
+                f"checkpoint {candidate.get('latest_iteration')} · "
+                f"<button class='play' data-run-id='{html.escape(candidate['run_id'])}'>▶ View latest saved</button></p>"
             )
         champions = "".join(
             f"<li><strong>{html.escape(task)}</strong>: "
@@ -572,7 +590,9 @@ class Bench:
             f"{hidden_smoke} smoke-test snapshots are hidden.</p>"
             "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
             "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
-            "<h2>Active training jobs</h2><div class='panel' id='active-training'>Loading active jobs…</div>"
+            "<h2>Active training jobs</h2><div class='panel' id='active-training'>"
+            + ("".join(active_rows) or "<p id='active-empty'>No active training jobs detected. Saved policies remain available below.</p>")
+            + "<p id='training-progress'>Checking progress…</p></div>"
             f"<h2>Registry</h2><ul>{champions}</ul>"
             "<h2>Finished training runs</h2><p>Each row is one completed or saved training job. <strong>Play latest</strong> tests the highest saved iteration. Open <em>Saved versions</em> only to inspect older versions.</p>"
             "<table><tr><th>Training run</th><th>Skill</th><th>Kind</th><th>Source state</th><th>Saved versions</th><th>Latest version</th><th>Open</th></tr>"
@@ -592,7 +612,7 @@ class Bench:
             + "document.querySelectorAll('.play').forEach(button=>button.addEventListener('click',()=>playRun(button)));"
             + "document.querySelectorAll('.star').forEach(button=>button.addEventListener('click',async()=>{try{const starred=button.textContent.includes('Star');await api('/api/star',{run_id:button.dataset.runId,star:starred});location.reload();}catch(error){alert(error.message);}}));"
             + "document.querySelector('#stop-viewer').addEventListener('click',async()=>{try{const result=await api('/api/stop-viewer',{});say('DuckLab',result.message||'Viewer stopped.');document.querySelectorAll('.play').forEach(button=>{button.disabled=false;button.textContent='▶ Play';});refreshStatus();}catch(error){say('DuckLab',error.message);}});"
-            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const v=s.viewer.running?'Playing '+s.viewer.run_id:'Viewer stopped';const detected=s.training.detected.length;const p=s.training.progress;const t=detected?'Training running (PID '+s.training.detected[0].pid+')'+(p?' · iteration '+p.iteration+' · ETA '+p.eta:''):'No training detected';document.querySelector('#system-status').textContent=v+' · '+t;document.querySelector('#active-training').textContent=t;if(s.viewer.running)showPlayLinks({viser_url:'http://localhost:8080',controller_url:'http://localhost:8090'});}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
+            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const v=s.viewer.running?'Playing '+s.viewer.run_id:'Viewer stopped';const detected=s.training.detected.length;const p=s.training.progress;const t=detected?'Training running (PID '+s.training.detected[0].pid+')'+(p?' · iteration '+p.iteration+(p.total?' / '+p.total:'')+' · ETA '+p.eta:''):'No training detected';document.querySelector('#system-status').textContent=v+' · '+t;document.querySelector('#training-progress').textContent=t;document.querySelector('#stop-viewer').disabled=!s.viewer.running;document.querySelector('#stop-viewer').textContent=s.viewer.running?'Stop viewer':'No viewer running';if(s.viewer.running)showPlayLinks({viser_url:'http://localhost:8080',controller_url:'http://localhost:8090'});}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
             + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('DuckLab',response.reply);if(response.kind==='confirm-training'){const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const result=await api('/api/train',response.action);say('DuckLab','Training started as PID '+result.pid+'. Log: '+result.log);refreshStatus();}catch(error){say('DuckLab',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){const a=document.createElement('a');a.href=response.result.viser_url;a.target='_blank';a.textContent='Open Viser';document.querySelector('#chat-action').appendChild(a);}}catch(error){say('DuckLab',error.message);}});"
             + "refreshStatus();setInterval(refreshStatus,5000);"
             + "</script>"
