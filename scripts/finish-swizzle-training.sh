@@ -28,6 +28,8 @@ if [[ -n "${policy_path}" && -f "${policy_path}" ]]; then
         if [[ -n "${bench_run}" ]]; then
             "${lab_root}/scripts/policy-bench.sh" evaluate "${bench_run}" \
                 || verification_status=$?
+            "${lab_root}/scripts/policy-bench.sh" metrics "${bench_run}" \
+                || verification_status=$?
         fi
     fi
 else

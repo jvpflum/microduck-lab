@@ -19,6 +19,11 @@
     "schema_version": {"const": 1},
     "run_id": {"type": "string", "minLength": 1},
     "task": {"type": "string", "minLength": 1},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "experiment_label": {"type": "string", "minLength": 1},
+    "experiment_kind": {"enum": ["smoke", "training"]},
+    "starred": {"type": "boolean"},
+    "star_note": {"type": "string"},
     "stage": {
       "enum": ["experimental", "evaluated", "sim-qualified", "hardware-candidate", "production"]
     },

@@ -336,6 +336,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self._send_json(self.server.manager.launch_viewer(str(body.get("run_id", ""))))
             elif self.path == "/api/stop-viewer":
                 self._send_json(self.server.manager.stop_viewer())
+            elif self.path == "/api/star":
+                run_id = str(body.get("run_id", ""))
+                self._send_json(self.server.bench.star(run_id) if body.get("star", True) else self.server.bench.unstar(run_id))
             elif self.path == "/api/train":
                 self._send_json(self.server.manager.start_training(body))
             elif self.path == "/api/chat":

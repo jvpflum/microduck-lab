@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 .PHONY: bootstrap preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke swizzle-smoke \
 	verify-artifact verify-skate-artifact evaluate-swizzle train-baseline train-skate \
-	train-swizzle bench-discover bench-list bench-dashboard verify
+	train-swizzle bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -57,5 +57,17 @@ bench-list:
 
 bench-dashboard:
 	./scripts/serve-policy-bench.sh
+
+bench-metrics:
+	@test -n "$(RUN)" || (echo 'Usage: make bench-metrics RUN=<run-id>' >&2; exit 2)
+	./scripts/policy-bench.sh metrics "$(RUN)"
+
+bench-score:
+	@test -n "$(RUN)" || (echo 'Usage: make bench-score RUN=<run-id>' >&2; exit 2)
+	./scripts/policy-bench.sh score "$(RUN)"
+
+bench-star:
+	@test -n "$(RUN)" || (echo 'Usage: make bench-star RUN=<run-id>' >&2; exit 2)
+	./scripts/policy-bench.sh star "$(RUN)" --note "$(NOTE)"
 
 verify: preflight test smoke verify-artifact

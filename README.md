@@ -8,6 +8,11 @@ adds guarded setup, validation, smoke-training, and baseline-training commands.
 It does not fork or alter the robot's observation contract, actuator model,
 domain randomization, or ONNX export path.
 
+The product goal is a simple robotics teaching loop—sign in, describe a skill,
+train, understand the result, promote a policy, and drive the robot. See
+[docs/PRODUCT_VISION.md](docs/PRODUCT_VISION.md) for the user-facing contract
+and staged platform roadmap.
+
 ## Requirements
 
 - Linux ARM64 DGX Spark / GB10 with working NVIDIA drivers
@@ -90,6 +95,7 @@ make bench-discover
 make bench-list
 ./scripts/policy-bench.sh evaluate <run-id>
 ./scripts/policy-bench.sh compare <candidate-run-id> <baseline-run-id>
+./scripts/policy-bench.sh metrics <run-id>
 make bench-dashboard
 ```
 

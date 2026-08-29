@@ -122,6 +122,18 @@ class PolicyBenchTests(unittest.TestCase):
         self.assertIn("__CONTROL_TOKEN__", content)
         self.assertNotIn("https://", content)
 
+    def test_heuristic_score_is_transparent_and_bounded(self) -> None:
+        evaluation = {
+            "phases": {
+                "forward": {"mean_forward_speed_mps": 0.3, "both_blades_grounded_fraction": 1.0, "tilt_max_deg": 0.0, "mean_action_acceleration": 0.0, "mean_abs_lateral_speed_mps": 0.0, "estimated_swizzle_cycles": 8},
+                "reverse": {"mean_forward_speed_mps": -0.3, "both_blades_grounded_fraction": 1.0, "tilt_max_deg": 0.0, "mean_action_acceleration": 0.0, "mean_abs_lateral_speed_mps": 0.0, "estimated_swizzle_cycles": 8},
+            }
+        }
+        score = policy_bench.score_evaluation(evaluation, "swizzle")
+        self.assertGreaterEqual(score["overall"], 0.0)
+        self.assertLessEqual(score["overall"], 100.0)
+        self.assertIn("reverse_tracking", score["components"])
+
 
 if __name__ == "__main__":
     unittest.main()

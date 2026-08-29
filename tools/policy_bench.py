@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import html
+import importlib.util
 import json
 import os
 import re
@@ -22,6 +23,34 @@ UPSTREAM = LAB_ROOT / "upstream" / "microduck_rl"
 DEFAULT_STATE = LAB_ROOT / "policy-bench"
 SCHEMA_VERSION = 1
 STAGES = ("experimental", "evaluated", "sim-qualified", "hardware-candidate", "production")
+
+
+def bounded_score(value: float, target: float, tolerance: float) -> float:
+    return max(0.0, min(1.0, 1.0 - abs(value - target) / tolerance))
+
+
+def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
+    """Return a transparent 0-100 heuristic; it is not an auto-promotion gate."""
+    phases = evaluation.get("phases", {})
+    forward = phases.get("forward", {})
+    reverse = phases.get("reverse", {})
+    powered = [phases[name] for name in ("forward", "reverse", "heading_left", "heading_right") if name in phases]
+    if not forward:
+        return {"overall": None, "label": "not scorable", "components": {}, "weights": {}}
+    components = {
+        "forward_tracking": bounded_score(float(forward.get("mean_forward_speed_mps", 0.0)), 0.3, 0.3),
+        "ground_contact": sum(float(item.get("both_blades_grounded_fraction", 0.0)) for item in powered) / max(1, len(powered)),
+        "stability": max(0.0, 1.0 - max(float(item.get("tilt_max_deg", 90.0)) for item in powered) / 20.0),
+        "smoothness": max(0.0, 1.0 - sum(float(item.get("mean_action_acceleration", 1.0)) for item in powered) / max(1, len(powered)) / 0.08),
+        "low_lateral_slip": max(0.0, 1.0 - sum(float(item.get("mean_abs_lateral_speed_mps", 1.0)) for item in powered) / max(1, len(powered)) / 0.1),
+    }
+    weights = {"forward_tracking": 0.25, "ground_contact": 0.2, "stability": 0.2, "smoothness": 0.15, "low_lateral_slip": 0.2}
+    if task == "swizzle" and reverse:
+        components["reverse_tracking"] = bounded_score(abs(float(reverse.get("mean_forward_speed_mps", 0.0))), 0.3, 0.3)
+        components["swizzle_cycles"] = min(1.0, sum(float(phases.get(name, {}).get("estimated_swizzle_cycles", 0.0)) for name in ("forward", "reverse")) / 16.0)
+        weights = {"forward_tracking": 0.2, "reverse_tracking": 0.2, "ground_contact": 0.15, "stability": 0.15, "smoothness": 0.1, "low_lateral_slip": 0.1, "swizzle_cycles": 0.1}
+    overall = 100.0 * sum(components[key] * weights[key] for key in weights) / sum(weights.values())
+    return {"overall": round(overall, 2), "label": "heuristic simulation score", "components": {key: round(value * 100.0, 2) for key, value in components.items()}, "weights": weights}
 
 
 def utc_now() -> str:
@@ -113,6 +142,36 @@ def make_run_id(run_dir: Path, task: str, iteration: int | None) -> str:
     return f"{task}-{safe_name}-{suffix}"
 
 
+def experiment_kind(run_dir: Path) -> str:
+    return "smoke" if "smoke" in run_dir.name.lower() else "training"
+
+
+def experiment_id(run_dir: Path, task: str) -> str:
+    return f"{task}:{run_dir.name}"
+
+
+def experiment_label(run_dir: Path) -> str:
+    return re.sub(r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_", "", run_dir.name)
+
+
+def active_training_experiments() -> set[str]:
+    experiments: set[str] = set()
+    proc = Path("/proc")
+    if not proc.is_dir():
+        return tasks
+    for entry in proc.iterdir():
+        if not entry.name.isdigit() or int(entry.name) == os.getpid():
+            continue
+        try:
+            command = (entry / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
+        except (OSError, PermissionError):
+            continue
+        match = re.search(r"--agent\.run-name\s+([^\s]+)", command)
+        if match:
+            experiments.add(match.group(1))
+    return experiments
+
+
 def snapshot_artifact(source: Path | None, destination_dir: Path) -> dict[str, Any] | None:
     if source is None:
         return None
@@ -160,7 +219,20 @@ class Bench:
         run_id = make_run_id(run_dir, task, iteration)
         existing = self.manifest_path(run_id)
         if existing.exists():
-            return read_json(existing)
+            previous = read_json(existing)
+            changed = False
+            for key, value in {
+                "experiment_id": experiment_id(run_dir, task),
+                "experiment_label": experiment_label(run_dir),
+                "experiment_kind": experiment_kind(run_dir),
+            }.items():
+                if previous.get(key) != value:
+                    previous[key] = value
+                    changed = True
+            if changed:
+                previous["updated_at"] = utc_now()
+                self.save_manifest(previous)
+            return previous
         created_at = utc_now()
         snapshot_dir = self.runs_dir / run_id / "artifacts"
         parameters = []
@@ -172,7 +244,12 @@ class Bench:
             "schema_version": SCHEMA_VERSION,
             "run_id": run_id,
             "task": task,
+            "experiment_id": experiment_id(run_dir, task),
+            "experiment_label": experiment_label(run_dir),
+            "experiment_kind": experiment_kind(run_dir),
             "stage": "experimental",
+            "starred": False,
+            "star_note": "",
             "created_at": created_at,
             "updated_at": utc_now(),
             "source_run_dir": str(run_dir),
@@ -208,6 +285,7 @@ class Bench:
         manifest = self.load_manifest(run_id)
         metrics_path = metrics_path.resolve()
         metrics = read_json(metrics_path)
+        metrics["policy_bench_score"] = score_evaluation(metrics, manifest["task"])
         destination = self.runs_dir / run_id / "evaluations" / f"{suite}.json"
         write_json(destination, metrics)
         record = {
@@ -230,6 +308,46 @@ class Bench:
         self.render_dashboard()
         return record
 
+    def score(self, run_id: str, suite: str) -> dict[str, Any]:
+        manifest = self.load_manifest(run_id)
+        evaluation = self.evaluation(manifest, suite)
+        score = score_evaluation(evaluation, manifest["task"])
+        evaluation["policy_bench_score"] = score
+        for item in manifest["evaluations"]:
+            if item["suite"] == suite:
+                path = Path(item["path"])
+                write_json(path, evaluation)
+                item["sha256"] = sha256(path)
+        manifest["updated_at"] = utc_now()
+        self.save_manifest(manifest)
+        self.render_run_report(run_id)
+        self.render_dashboard()
+        return score
+
+    def star(self, run_id: str, note: str = "") -> dict[str, Any]:
+        manifest = self.load_manifest(run_id)
+        for other in self.manifests():
+            if other.get("task") == manifest["task"] and other.get("starred") and other["run_id"] != run_id:
+                other["starred"] = False
+                other["updated_at"] = utc_now()
+                self.save_manifest(other)
+        manifest["starred"] = True
+        manifest["star_note"] = note
+        manifest["updated_at"] = utc_now()
+        self.save_manifest(manifest)
+        self.render_run_report(run_id)
+        self.render_dashboard()
+        return manifest
+
+    def unstar(self, run_id: str) -> dict[str, Any]:
+        manifest = self.load_manifest(run_id)
+        manifest["starred"] = False
+        manifest["updated_at"] = utc_now()
+        self.save_manifest(manifest)
+        self.render_run_report(run_id)
+        self.render_dashboard()
+        return manifest
+
     def evaluate(self, run_id: str, suite: str) -> dict[str, Any]:
         manifest = self.load_manifest(run_id)
         policy = manifest["artifacts"].get("policy")
@@ -248,6 +366,20 @@ class Bench:
             check=True,
         )
         return self.attach_evaluation(run_id, output, suite)
+
+    def metrics(self, run_id: str) -> Path:
+        manifest = self.load_manifest(run_id)
+        source_dir = Path(manifest["source_run_dir"])
+        reader = load_metrics_module()
+        data = reader.collect_metrics(source_dir)
+        output = self.runs_dir / run_id / "metrics.json"
+        write_json(output, data)
+        manifest["metrics"] = {"path": str(output), "sha256": sha256(output), "scalar_count": data["scalar_count"]}
+        manifest["updated_at"] = utc_now()
+        self.save_manifest(manifest)
+        self.render_run_report(run_id)
+        self.render_dashboard()
+        return output
 
     def evaluation(self, manifest: dict[str, Any], suite: str) -> dict[str, Any]:
         matches = [item for item in manifest.get("evaluations", []) if item["suite"] == suite]
@@ -348,13 +480,28 @@ class Bench:
             f"<li><a href='{html.escape(os.path.relpath(path, self.runs_dir / run_id))}'>{html.escape(path.stem)}</a></li>"
             for path in sorted((self.runs_dir / run_id / "comparisons").glob("*.html"))
         ) or "<li>No comparisons generated</li>"
+        charts = f"<p>No TensorBoard curves ingested yet. Run <code>policy-bench.sh metrics {html.escape(run_id)}</code>.</p>"
+        metrics_record = manifest.get("metrics")
+        if metrics_record and Path(metrics_record["path"]).is_file():
+            metrics_data = read_json(Path(metrics_record["path"]))
+            preferred = [
+                "Train/mean_reward", "Train/mean_episode_length", "Perf/total_fps",
+                "Loss/value", "Loss/surrogate", "Episode_Reward/upright",
+                "Episode_Reward/grounded", "Metrics/twist/error_vel_xy",
+            ]
+            charts = "".join(
+                metric_svg(tag, metrics_data["scalars"][tag])
+                for tag in preferred if tag in metrics_data.get("scalars", {})
+            ) or "<p>No preferred scalar curves found.</p>"
         body = page(
             manifest["run_id"],
-            f"<p><span class='badge'>{html.escape(manifest['stage'])}</span> Task: {html.escape(manifest['task'])}</p>"
+            f"<p><span class='badge'>{html.escape(manifest['stage'])}</span> Task: {html.escape(manifest['task'])} · "
+            f"{'★ Starred' if manifest.get('starred') else 'Not starred'}</p>"
             f"<p>Iteration: {manifest.get('latest_iteration')} · ONNX export: {manifest.get('has_exported_policy')}</p>"
             f"<p class='mono'>{html.escape(manifest['source_run_dir'])}</p>"
             f"<h2>Evaluations</h2><table><tr><th>Suite</th><th>Created</th><th>Data</th></tr>{rows}</table>"
             f"<h2>Comparisons</h2><ul>{comparison_rows}</ul>"
+            f"<h2>Training curves</h2>{charts}"
             f"<h2>Manifest</h2><pre>{html.escape(json.dumps(manifest, indent=2, sort_keys=True))}</pre>",
         )
         output = self.runs_dir / run_id / "report.html"
@@ -364,18 +511,49 @@ class Bench:
     def render_dashboard(self) -> Path:
         registry = read_json(self.registry_path)
         rows = []
-        for manifest in sorted(self.manifests(), key=lambda item: item["created_at"], reverse=True):
+        manifests = sorted(self.manifests(), key=lambda item: item["created_at"], reverse=True)
+        experiments = {manifest.get("experiment_id", manifest["run_id"]) for manifest in manifests}
+        active_experiments = active_training_experiments()
+        grouped: dict[str, list[dict[str, Any]]] = {}
+        for manifest in manifests:
+            grouped.setdefault(manifest.get("experiment_id", manifest["run_id"]), []).append(manifest)
+        experiment_rows = []
+        for group in grouped.values():
+            newest = group[0]
+            label = newest.get("experiment_label", newest["source_run_dir"].rsplit("/", 1)[-1])
+            state = "active" if label.replace("-smoke", "") in active_experiments else "finished/snapshot"
+            experiment_rows.append(
+                "<tr>"
+                f"<td>{html.escape(label)}</td><td>{html.escape(newest['task'])}</td>"
+                f"<td>{html.escape(newest.get('experiment_kind', 'training'))}</td>"
+                f"<td>{state}</td><td>{len(group)}</td>"
+                f"<td>{max(item.get('latest_iteration') or -1 for item in group)}</td></tr>"
+            )
+        for manifest in manifests:
             run_dir = self.runs_dir / manifest["run_id"]
             report = run_dir / "report.html"
             if not report.exists():
                 self.render_run_report(manifest["run_id"])
+            score = None
+            for evaluation in manifest.get("evaluations", []):
+                try:
+                    evaluation_data = read_json(Path(evaluation["path"]))
+                    score = evaluation_data.get("policy_bench_score", {}).get("overall")
+                    if score is None:
+                        score = score_evaluation(evaluation_data, manifest["task"]).get("overall")
+                except (OSError, KeyError, TypeError, json.JSONDecodeError):
+                    pass
             rows.append(
                 "<tr>"
-                f"<td><a href='runs/{html.escape(manifest['run_id'])}/report.html'>{html.escape(manifest['run_id'])}</a></td>"
+                f"<td>{'★ ' if manifest.get('starred') else ''}<a href='runs/{html.escape(manifest['run_id'])}/report.html'>{html.escape(manifest.get('experiment_label', manifest['run_id']))}</a></td>"
                 f"<td>{html.escape(manifest['task'])}</td><td><span class='badge'>{html.escape(manifest['stage'])}</span></td>"
+                f"<td>{html.escape(manifest.get('experiment_kind', 'training'))}</td>"
                 f"<td>{manifest.get('latest_iteration')}</td><td>{len(manifest.get('evaluations', []))}</td>"
+                f"<td>{score if score is not None else '—'}</td>"
                 f"<td>{'yes' if manifest.get('has_exported_policy') else 'no'}</td>"
-                f"<td><button class='play' data-run-id='{html.escape(manifest['run_id'])}'>▶ Play</button></td></tr>"
+                f"<td>{'active experiment' if manifest.get('experiment_label', '').replace('-smoke', '') in active_experiments else 'finished/snapshot'}</td>"
+                f"<td><button class='play' data-run-id='{html.escape(manifest['run_id'])}'>▶ Play</button> "
+                f"<button class='star' data-run-id='{html.escape(manifest['run_id'])}'>{'Unstar' if manifest.get('starred') else '★ Star'}</button></td></tr>"
             )
         champions = "".join(
             f"<li><strong>{html.escape(task)}</strong>: "
@@ -384,12 +562,17 @@ class Bench:
             for task, stages in registry.get("tasks", {}).items()
         ) or "<li>No promoted policies yet</li>"
         content = (
-            "<p>Offline policy lineage, evaluation, comparison, promotion, and interactive play.</p>"
+            f"<p>Offline policy lineage, evaluation, comparison, promotion, and interactive play. "
+            f"Showing {len(manifests)} checkpoint snapshots across {len(experiments)} distinct experiments.</p>"
             "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
             "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
             f"<h2>Registry</h2><ul>{champions}</ul>"
-            "<h2>Runs</h2><p>Choose any immutable checkpoint and press Play. The controller and Viser open in new tabs.</p>"
-            "<table><tr><th>Run</th><th>Task</th><th>Stage</th><th>Iteration</th><th>Evals</th><th>ONNX</th><th>Action</th></tr>"
+            "<h2>Experiments</h2><p>An experiment is one training invocation. Checkpoints from the same invocation are grouped below.</p>"
+            "<table><tr><th>Experiment</th><th>Skill</th><th>Kind</th><th>Source state</th><th>Snapshots</th><th>Latest iteration</th></tr>"
+            + "".join(experiment_rows)
+            + "</table>"
+            + "<h2>Checkpoint snapshots</h2><p>Choose any immutable checkpoint and press Play. The controller and Viser open in new tabs.</p>"
+            + "<table><tr><th>Checkpoint snapshot</th><th>Skill</th><th>Stage</th><th>Kind</th><th>Iteration</th><th>Evals</th><th>Score</th><th>ONNX</th><th>Source state</th><th>Action</th></tr>"
             + "".join(rows)
             + "</table>"
             + "<h2>DuckLab Assistant</h2><div class='panel'><div id='chat-log' class='chat-log'>"
@@ -403,6 +586,7 @@ class Bench:
             + "function showPlayLinks(result){const box=document.querySelector('#play-links');box.innerHTML='<strong>Viewer ready:</strong> <a target=\"_blank\" href=\"'+result.viser_url+'\">Open Viser</a> · <a target=\"_blank\" href=\"'+result.controller_url+'\">Open Xbox controller</a>'; }"
             + "async function playRun(button){const viser=window.open('about:blank','microduck-viser');const controller=window.open('about:blank','microduck-controller');button.disabled=true;button.textContent='Starting…';try{const result=await api('/api/play',{run_id:button.dataset.runId});if(viser)viser.location=result.viser_url;if(controller)controller.location=result.controller_url;showPlayLinks(result);button.textContent='Running';setTimeout(refreshStatus,1000);}catch(error){if(viser)viser.close();if(controller)controller.close();alert(error.message);button.disabled=false;button.textContent='▶ Play';}}"
             + "document.querySelectorAll('.play').forEach(button=>button.addEventListener('click',()=>playRun(button)));"
+            + "document.querySelectorAll('.star').forEach(button=>button.addEventListener('click',async()=>{try{const starred=button.textContent.includes('Star');await api('/api/star',{run_id:button.dataset.runId,star:starred});location.reload();}catch(error){alert(error.message);}}));"
             + "document.querySelector('#stop-viewer').addEventListener('click',async()=>{try{const result=await api('/api/stop-viewer',{});say('DuckLab',result.message||'Viewer stopped.');document.querySelectorAll('.play').forEach(button=>{button.disabled=false;button.textContent='▶ Play';});refreshStatus();}catch(error){say('DuckLab',error.message);}});"
             + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const v=s.viewer.running?'Playing '+s.viewer.run_id:'Viewer stopped';const detected=s.training.detected.length;const t=detected?'Training running (PID '+s.training.detected[0].pid+')':'No training detected';document.querySelector('#system-status').textContent=v+' · '+t;if(s.viewer.running)showPlayLinks({viser_url:'http://localhost:8080',controller_url:'http://localhost:8090'});}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
             + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('DuckLab',response.reply);if(response.kind==='confirm-training'){const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const result=await api('/api/train',response.action);say('DuckLab','Training started as PID '+result.pid+'. Log: '+result.log);refreshStatus();}catch(error){say('DuckLab',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){const a=document.createElement('a');a.href=response.result.viser_url;a.target='_blank';a.textContent='Open Viser';document.querySelector('#chat-action').appendChild(a);}}catch(error){say('DuckLab',error.message);}});"
@@ -425,6 +609,17 @@ def flatten_numbers(value: Any, prefix: str = "") -> dict[str, float]:
     return output
 
 
+def load_metrics_module():
+    path = LAB_ROOT / "tools" / "rl_metrics.py"
+    spec = importlib.util.spec_from_file_location("microduck_rl_metrics", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Cannot load metrics reader: {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def page(title: str, body: str) -> str:
     return f"""<!doctype html><html lang='en'><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'><title>{html.escape(title)}</title>
@@ -433,8 +628,30 @@ a{{color:#65c7ff}}table{{width:100%;border-collapse:collapse}}th,td{{padding:9px
 .badge{{background:#1f6f50;border-radius:999px;padding:3px 9px}}pre,.mono{{font-family:ui-monospace,monospace;overflow:auto;background:#171d23;padding:12px}}
 .panel{{background:#171d23;border:1px solid #34404b;border-radius:10px;padding:14px;margin:12px 0}}button{{background:#1f8a63;color:white;border:0;border-radius:7px;padding:8px 12px;cursor:pointer}}
 button:disabled{{opacity:.55;cursor:wait}}form{{display:flex;gap:8px}}input{{flex:1;background:#0d1115;color:#edf2f7;border:1px solid #51606e;border-radius:7px;padding:10px}}
-.chat-log{{max-height:280px;overflow:auto}}#chat-action{{margin-top:10px}}#chat-action a{{margin-left:10px}}</style></head>
+.chat-log{{max-height:280px;overflow:auto}}#chat-action{{margin-top:10px}}#chat-action a{{margin-left:10px}}
+.chart{{background:#171d23;border:1px solid #34404b;border-radius:10px;padding:10px;margin:12px 0}}.chart svg{{display:block;width:100%;height:auto}}.muted{{color:#9aa7b2;font-size:.9em}}</style></head>
 <body><h1>{html.escape(title)}</h1>{body}</body></html>"""
+
+
+def metric_svg(tag: str, points: list[dict[str, float]]) -> str:
+    if not points:
+        return ""
+    width, height, pad = 720, 180, 28
+    values = [point["value"] for point in points]
+    low, high = min(values), max(values)
+    span = high - low or 1.0
+    polyline = " ".join(
+        f"{pad + index * (width - 2 * pad) / max(1, len(points) - 1):.1f},"
+        f"{height - pad - (point['value'] - low) / span * (height - 2 * pad):.1f}"
+        for index, point in enumerate(points)
+    )
+    return (
+        f"<div class='chart'><strong>{html.escape(tag)}</strong> "
+        f"<span class='muted'>step {int(points[0]['step'])} → {int(points[-1]['step'])}; {low:.4g} → {high:.4g}</span>"
+        f"<svg viewBox='0 0 {width} {height}' role='img' aria-label='{html.escape(tag)} curve'>"
+        f"<polyline fill='none' stroke='#65c7ff' stroke-width='2' points='{polyline}'/>"
+        f"<line x1='{pad}' y1='{height-pad}' x2='{width-pad}' y2='{height-pad}' stroke='#34404b'/></svg></div>"
+    )
 
 
 def render_comparison_html(result: dict[str, Any], output: Path) -> None:
@@ -470,6 +687,16 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate = commands.add_parser("evaluate", help="Run the deployment-rehearsal evaluation")
     evaluate.add_argument("run_id")
     evaluate.add_argument("--suite", default="skating-v1")
+    metrics = commands.add_parser("metrics", help="Ingest TensorBoard scalar curves for a run")
+    metrics.add_argument("run_id")
+    score = commands.add_parser("score", help="Compute the transparent heuristic score")
+    score.add_argument("run_id")
+    score.add_argument("--suite", default="skating-v1")
+    star = commands.add_parser("star", help="Star one candidate for a task")
+    star.add_argument("run_id")
+    star.add_argument("--note", default="")
+    unstar = commands.add_parser("unstar", help="Remove a candidate star")
+    unstar.add_argument("run_id")
     compare = commands.add_parser("compare", help="Compare two runs evaluated by the same suite")
     compare.add_argument("candidate")
     compare.add_argument("baseline")
@@ -514,6 +741,14 @@ def main() -> None:
     elif args.command == "evaluate":
         record = bench.evaluate(args.run_id, args.suite)
         print(record["path"])
+    elif args.command == "metrics":
+        print(bench.metrics(args.run_id))
+    elif args.command == "score":
+        print(json.dumps(bench.score(args.run_id, args.suite), indent=2, sort_keys=True))
+    elif args.command == "star":
+        print(f"Starred {bench.star(args.run_id, args.note)['run_id']}")
+    elif args.command == "unstar":
+        print(f"Unstarred {bench.unstar(args.run_id)['run_id']}")
     elif args.command == "compare":
         result = bench.compare(args.candidate, args.baseline, args.suite)
         print(json.dumps(result, indent=2, sort_keys=True))

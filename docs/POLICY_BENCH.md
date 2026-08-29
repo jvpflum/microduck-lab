@@ -5,6 +5,10 @@ candidates. It snapshots model bytes, records their hashes and source commits,
 attaches deployment-rehearsal evaluations, compares candidates, and promotes a
 reviewed policy through explicit safety stages.
 
+It is the engineering backbone beneath the simple product flow described in
+[PRODUCT_VISION.md](PRODUCT_VISION.md); advanced users can use its CLI while a
+future guided UI hides these details.
+
 It does not use W&B, a hosted registry, an account, telemetry, or network
 access. Future training launched by the lab sets `WANDB_MODE=disabled`; the
 upstream project's compatibility hooks remain untouched but inactive. Policy
@@ -45,6 +49,12 @@ Run the skating deployment-rehearsal battery for a registered candidate:
 ./scripts/policy-bench.sh evaluate <run-id>
 ```
 
+Ingest the TensorBoard scalar stream and render local SVG curves:
+
+```bash
+./scripts/policy-bench.sh metrics <run-id>
+```
+
 After two candidates have evaluations from the same suite:
 
 ```bash
@@ -56,6 +66,21 @@ run. Deltas are deliberately descriptive rather than automatically labeled
 good or bad: higher speed can be good while higher tilt or action acceleration
 is a regression. Stable task-specific gates should be added only after mature
 policies establish reviewed baselines.
+
+Each evaluated checkpoint receives a transparent 0–100 heuristic score. It
+combines command tracking, ground contact, stability, smoothness, lateral slip,
+and (for swizzle) reverse tracking and stroke cycles. Component scores and
+weights are visible in the evaluation JSON; the score is a triage aid, never an
+automatic promotion decision. Use the star button to keep a human shortlist.
+Only one candidate per skill is starred at a time:
+
+```bash
+./scripts/policy-bench.sh star <run-id> --note "Best reverse stability so far"
+./scripts/policy-bench.sh unstar <run-id>
+```
+
+Equivalent convenience targets are available as `make bench-metrics RUN=…`,
+`make bench-score RUN=…`, and `make bench-star RUN=… NOTE='…'`.
 
 ## Review and promote
 
