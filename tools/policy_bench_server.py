@@ -395,7 +395,6 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
 class ProcessManager:
     def __init__(self, bench: Bench):
         self.bench = bench
-        self.control_token = ""
         self.lock = threading.Lock()
         self.viewers: dict[str, ViewerSession] = {}
         self.training: subprocess.Popen[bytes] | None = None
@@ -542,7 +541,6 @@ class ProcessManager:
             "preview_slot": preview["slot"],
             "preview_loco": preview["loco"],
             "preview_label": preview["label"],
-            "capture_token": self.control_token,
         }
         if "period" in preview:
             params["preview_period"] = preview["period"]
@@ -844,6 +842,12 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             payload = payload.replace(b'src="/', b'src="/factory/').replace(
                 b'href="/', b'href="/factory/'
             )
+            capture_script = (
+                b"<script>globalThis.__DUCKLAB_CAPTURE_TOKEN__="
+                + json.dumps(self.server.control_token).encode("utf-8")
+                + b"</script>"
+            )
+            payload = payload.replace(b"</head>", capture_script + b"</head>")
             # Keep the pinned open-source arena intact while removing Pollen's
             # storefront CTA from DuckLab's locally served product surface.
             # :has() targets the complete Shop HUD plate, not only its anchor.
@@ -970,7 +974,6 @@ class DashboardServer(ThreadingHTTPServer):
         self.bench = bench
         self.control_token = secrets.token_urlsafe(32)
         self.manager = ProcessManager(bench)
-        self.manager.control_token = self.control_token
         super().__init__(address, lambda *args, **kwargs: DashboardHandler(*args, directory=str(bench.state_dir), **kwargs))
 
     def save_demonstration(self, body: dict[str, Any]) -> dict[str, Any]:
