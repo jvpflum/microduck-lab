@@ -623,8 +623,21 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.wfile.write(payload)
 
     def do_GET(self) -> None:  # noqa: N802
-        if urlsplit(self.path).path in {"/factory", "/factory/"} or urlsplit(self.path).path.startswith("/factory/"):
+        request_path = urlsplit(self.path).path
+        if request_path in {"/factory", "/factory/"} or request_path.startswith("/factory/"):
             self._serve_factory_arena()
+            return
+        # Pollen's app intentionally uses page-relative fetch URLs. Some
+        # browser APIs resolve those against the origin root after the bundle
+        # is mounted below /factory/, so preserve the upstream paths as local
+        # aliases instead of patching Pollen's source.
+        if request_path.startswith(("/robot/", "/policies/", "/assets/", "/bundle/")):
+            original_path = self.path
+            self.path = f"/factory/{request_path.lstrip('/')}"
+            try:
+                self._serve_factory_arena()
+            finally:
+                self.path = original_path
             return
         if self.path == "/api/status":
             self._send_json(self.server.manager.status())
