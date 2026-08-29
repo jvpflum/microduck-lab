@@ -2,6 +2,12 @@
 
 import atexit
 import os
+import sys
+
+# Keep the gamepad HTTP thread responsive while the CPU viewer performs its
+# physics/inference loop. The default interpreter switch interval is too coarse
+# on the Spark for timely controller packets.
+sys.setswitchinterval(0.001)
 
 from gamepad_bridge import GamepadBridge
 
@@ -32,7 +38,7 @@ GuiApi.add_slider = _add_slider_clamped
 
 bridge = GamepadBridge(
     port=int(os.environ.get("DUCKLAB_GAMEPAD_PORT", "8090")),
-    timeout_s=float(os.environ.get("DUCKLAB_GAMEPAD_TIMEOUT", "2.0")),
+    timeout_s=float(os.environ.get("DUCKLAB_GAMEPAD_TIMEOUT", "5.0")),
 )
 atexit.register(bridge.close)
 
