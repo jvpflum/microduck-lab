@@ -35,7 +35,7 @@ atexit.register(bridge.close)
 
 # The roller and swizzle tasks both use this command type. Preserve its normal
 # training/play update, then apply the controller override only while armed.
-from mjlab_microduck.tasks.mdp import RelativeHeadingVelocityCommand, VelocityCommandCommandOnly
+from mjlab_microduck.tasks.mdp import VelocityCommandCommandOnly
 
 
 def _apply_gamepad(self):
@@ -46,23 +46,18 @@ def _apply_gamepad(self):
         self.vel_command_b[:, 2] = command.heading
 
 
-_update_velocity_command = VelocityCommandCommandOnly._update_command
+_compute_velocity_command = VelocityCommandCommandOnly.compute
 
 
-def _update_velocity_with_gamepad(self):
-    _update_velocity_command(self)
-    _apply_gamepad(self)
-
-_update_relative_heading = RelativeHeadingVelocityCommand._update_command
-
-
-def _update_relative_heading_with_gamepad(self):
-    _update_relative_heading(self)
+def _compute_velocity_with_gamepad(self, dt):
+    # mjlab applies its Viser joystick sliders at the end of compute(). Apply
+    # the browser controller after that step so static slider values cannot
+    # overwrite an armed Xbox command.
+    _compute_velocity_command(self, dt)
     _apply_gamepad(self)
 
 
-VelocityCommandCommandOnly._update_command = _update_velocity_with_gamepad
-RelativeHeadingVelocityCommand._update_command = _update_relative_heading_with_gamepad
+VelocityCommandCommandOnly.compute = _compute_velocity_with_gamepad
 
 import mjlab.scripts.play as play_module
 
