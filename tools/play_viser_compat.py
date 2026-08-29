@@ -35,13 +35,10 @@ atexit.register(bridge.close)
 
 # The roller and swizzle tasks both use this command type. Preserve its normal
 # training/play update, then apply the controller override only while armed.
-from mjlab_microduck.tasks.mdp import RelativeHeadingVelocityCommand
-
-_update_relative_heading = RelativeHeadingVelocityCommand._update_command
+from mjlab_microduck.tasks.mdp import RelativeHeadingVelocityCommand, VelocityCommandCommandOnly
 
 
-def _update_relative_heading_with_gamepad(self):
-    _update_relative_heading(self)
+def _apply_gamepad(self):
     command = bridge.state.snapshot()
     if command.override:
         self.vel_command_b[:, 0] = command.command_x
@@ -49,6 +46,22 @@ def _update_relative_heading_with_gamepad(self):
         self.vel_command_b[:, 2] = command.heading
 
 
+_update_velocity_command = VelocityCommandCommandOnly._update_command
+
+
+def _update_velocity_with_gamepad(self):
+    _update_velocity_command(self)
+    _apply_gamepad(self)
+
+_update_relative_heading = RelativeHeadingVelocityCommand._update_command
+
+
+def _update_relative_heading_with_gamepad(self):
+    _update_relative_heading(self)
+    _apply_gamepad(self)
+
+
+VelocityCommandCommandOnly._update_command = _update_velocity_with_gamepad
 RelativeHeadingVelocityCommand._update_command = _update_relative_heading_with_gamepad
 
 import mjlab.scripts.play as play_module
