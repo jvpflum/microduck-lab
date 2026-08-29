@@ -89,6 +89,8 @@ class GamepadStateTests(unittest.TestCase):
         self.assertIn("driveSource", text)
         self.assertIn("Hold to test forward", text)
         self.assertIn("Raw axes", text)
+        self.assertIn("Resume controls", text)
+        self.assertNotIn("pad.buttons[1]", text)
         self.assertNotIn("https://", text)
 
 

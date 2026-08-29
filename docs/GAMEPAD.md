@@ -48,7 +48,8 @@ a simulator bridge problem.
 - `X`: coast/zero command while held;
 - `A`: reset the environment;
 - `Start`: pause/play;
-- `B`: latch emergency zero.
+- on-screen **Emergency zero**: latch propulsion and heading at zero;
+- on-screen **Resume controls**: clear the emergency-zero latch.
 
 The page has separate semantics presets:
 
@@ -62,7 +63,8 @@ The page has separate semantics presets:
 Commands are clamped server-side. If the browser, controller, or network stops
 updating for 500 ms while armed, propulsion and heading are forced to zero. A
 disconnect also forces zero. Emergency zero is latched in the browser until the
-operator clears it.
+operator clicks **Resume controls**. It is deliberately not mapped to an Xbox
+face button, where an accidental press can silently disable driving.
 
 This is a simulation control surface, not a physical-robot safety system. A real
 deployment requires a hardware emergency stop, an independent runtime watchdog,

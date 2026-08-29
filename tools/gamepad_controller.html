@@ -44,7 +44,7 @@
     <div class="buttons">
       <button id="arm" disabled>Arm controller</button>
       <button id="estop" class="danger">Emergency zero</button>
-      <button id="clear" class="secondary">Clear e-stop</button>
+      <button id="clear" class="secondary">Resume controls</button>
     </div>
   </div>
 
@@ -106,7 +106,7 @@
       <div>Left stick: <span id="leftValue">0.00</span></div>
       <div>Right stick: <span id="rightValue">0.00</span></div>
     </div>
-    <p><strong>Controls:</strong> left stick Y, triggers, or <kbd>W</kbd>/<kbd>S</kbd> = propulsion; right stick X or <kbd>A</kbd>/<kbd>D</kbd> = heading; controller <kbd>X</kbd> = coast; controller <kbd>A</kbd> = reset; <kbd>Start</kbd> = pause/play; controller <kbd>B</kbd> = latch emergency zero.</p>
+    <p><strong>Controls:</strong> left stick Y, triggers, or <kbd>W</kbd>/<kbd>S</kbd> = propulsion; right stick X or <kbd>A</kbd>/<kbd>D</kbd> = heading; controller <kbd>X</kbd> = coast; controller <kbd>A</kbd> = reset; <kbd>Start</kbd> = pause/play. Use the red on-screen button for emergency zero.</p>
     <p id="meaning" class="warn">This checkpoint interprets negative propulsion as braking, not reverse.</p>
   </div>
 </main>
@@ -140,8 +140,8 @@ $('arm').onclick = () => {
   if (armed) requestTakeover = true;
   $('arm').textContent = armed ? 'Disarm controller' : 'Arm controller';
 };
-$('estop').onclick = () => { emergency = true; };
-$('clear').onclick = () => { emergency = false; };
+$('estop').onclick = () => { emergency = true; requestTakeover = true; };
+$('clear').onclick = () => { emergency = false; requestTakeover = true; };
 
 for (const id of ['controller','driveSource','turnSource','invertDrive','invertTurn']) {
   $(id).addEventListener('change', () => localStorage.setItem('microduck-' + id, $(id).type === 'checkbox' ? String($(id).checked) : $(id).value));
@@ -282,7 +282,6 @@ async function loop() {
     commandX = drive * scale;
     heading = right * Number($('yaw').value);
     if (pad.buttons[2]?.pressed) commandX = 0; // X: coast
-    if (pad.buttons[1]?.pressed) emergency = true; // B: latched zero
     reset = Boolean(pad.buttons[0]?.pressed);       // A
     pause = Boolean(pad.buttons[9]?.pressed);       // Start
     $('leftValue').textContent = drive.toFixed(2);
@@ -305,7 +304,7 @@ async function loop() {
   $('yawValue').textContent = (heading >= 0 ? '+' : '') + heading.toFixed(2);
   $('sendingValue').textContent = !armed ? 'not armed' : `propulsion ${commandX >= 0 ? '+' : ''}${commandX.toFixed(2)}, heading ${heading >= 0 ? '+' : ''}${heading.toFixed(2)}`;
   $('dot').classList.toggle('ok', connected && armed && !emergency);
-  $('status').textContent = emergency ? 'EMERGENCY ZERO' : !armed ? (pad ? 'Controller detected — not armed' : 'Keyboard test ready — not armed') : !connected ? 'Armed — waiting for controller or keyboard input' : Math.abs(commandX) > .001 || Math.abs(heading) > .001 ? 'Sending live command to MicroDuck' : 'Armed — move a stick, trigger, D-pad, or W/A/S/D';
+  $('status').textContent = emergency ? 'EMERGENCY ZERO — click Resume controls' : !armed ? (pad ? 'Controller detected — not armed' : 'Keyboard test ready — not armed') : !connected ? 'Armed — waiting for controller or keyboard input' : Math.abs(commandX) > .001 || Math.abs(heading) > .001 ? 'Sending live command to MicroDuck' : 'Armed — move a stick, trigger, D-pad, or W/A/S/D';
   // Keep one in-flight request at a time; overlapping fetches can starve the
   // heartbeat when the simulator is using the CPU heavily.
   await send({armed, connected, emergency_stop: emergency, command_x: commandX, heading, reset, pause,
