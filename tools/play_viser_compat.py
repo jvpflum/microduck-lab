@@ -3,6 +3,7 @@
 import atexit
 import os
 import sys
+import time
 
 # Keep the gamepad HTTP thread responsive while the CPU viewer performs its
 # physics/inference loop. The default interpreter switch interval is too coarse
@@ -40,6 +41,7 @@ bridge = GamepadBridge(
     port=int(os.environ.get("DUCKLAB_GAMEPAD_PORT", "8090")),
     timeout_s=float(os.environ.get("DUCKLAB_GAMEPAD_TIMEOUT", "5.0")),
 )
+_last_gamepad_debug = 0.0
 atexit.register(bridge.close)
 
 # The roller and swizzle tasks both use this command type. Preserve its normal
@@ -48,11 +50,20 @@ from mjlab_microduck.tasks.mdp import VelocityCommandCommandOnly
 
 
 def _apply_gamepad(self):
+    global _last_gamepad_debug
     command = bridge.state.snapshot()
     if command.override:
         self.vel_command_b[:, 0] = command.command_x
         self.vel_command_b[:, 1] = 0.0
         self.vel_command_b[:, 2] = command.heading
+        now = time.monotonic()
+        if now - _last_gamepad_debug >= 1.0:
+            print(
+                f"[gamepad] applied x={command.command_x:+.3f} heading={command.heading:+.3f} "
+                f"connected={command.connected} stale={command.stale}",
+                flush=True,
+            )
+            _last_gamepad_debug = now
 
 
 _compute_velocity_command = VelocityCommandCommandOnly.compute
