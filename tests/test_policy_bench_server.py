@@ -291,7 +291,8 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(result["num_envs"], 6)
         env_index = process.command.index("--num-envs")
         self.assertEqual(process.command[env_index + 1], "6")
-        self.assertEqual(result["open_url"], result["controller_url"])
+        self.assertEqual(result["open_url"], result["viser_url"])
+        self.assertNotEqual(result["open_url"], result["controller_url"])
         self.assertEqual(process.kwargs["env"]["DUCKLAB_VIEW_KIND"], "training-preview")
         self.assertEqual(process.kwargs["env"]["DUCKLAB_VIEW_NUM_ENVS"], "6")
         process.returncode = 0

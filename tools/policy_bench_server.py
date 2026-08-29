@@ -711,7 +711,14 @@ class ProcessManager:
             "num_envs": session.num_envs,
             "kind": session.kind,
         }
-        result["open_url"] = result["viser_url"] if session.task == "hop" else result["controller_url"]
+        # Training previews are observation-only six-robot evaluations. Open
+        # Viser directly; the controller bridge is irrelevant here and used
+        # to hide the visualization behind the wrong page.
+        result["open_url"] = (
+            result["viser_url"]
+            if session.kind == "training-preview" or session.task == "hop"
+            else result["controller_url"]
+        )
         return result
 
     @staticmethod
