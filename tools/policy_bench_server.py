@@ -72,6 +72,21 @@ def running_training_processes() -> list[dict[str, Any]]:
     return sorted(matches, key=lambda item: item["pid"])
 
 
+def training_progress() -> dict[str, Any] | None:
+    """Read the newest local training log without depending on W&B."""
+    logs = sorted((LAB_ROOT / "reports").glob("train-*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
+    for path in logs:
+        try:
+            text = path.read_text(errors="replace")
+        except OSError:
+            continue
+        iterations = re.findall(r"Iteration:\s*(\d+)", text)
+        eta = re.findall(r"ETA:\s*([^\n\r]+)", text)
+        if iterations:
+            return {"log": str(path), "iteration": int(iterations[-1]), "eta": eta[-1].strip() if eta else None}
+    return None
+
+
 def parse_training_request(message: str) -> dict[str, Any] | None:
     lowered = message.lower()
     if not re.search(r"\b(train|training|learn)\b", lowered):
@@ -191,6 +206,7 @@ class ProcessManager:
                     "config": self.training_config if training_alive else None,
                     "pid": self.training.pid if training_alive and self.training else None,
                     "detected": running_training_processes(),
+                    "progress": training_progress(),
                 },
             }
 
