@@ -1,9 +1,10 @@
 import time
 import unittest
+import urllib.request
 from pathlib import Path
 from unittest.mock import Mock
 
-from tools.gamepad_bridge import ControllerOwnershipError, GamepadState
+from tools.gamepad_bridge import ControllerOwnershipError, GamepadBridge, GamepadState
 
 
 class GamepadStateTests(unittest.TestCase):
@@ -103,6 +104,24 @@ class GamepadStateTests(unittest.TestCase):
         self.assertNotIn("pad.buttons[1]", text)
         self.assertNotIn("pad.buttons[9]", text)
         self.assertNotIn("https://", text)
+
+    def test_controller_page_accepts_drive_arena_query_string(self):
+        bridge = GamepadBridge(port=0)
+        try:
+            bridge.start()
+        except PermissionError:
+            self.skipTest("test sandbox does not allow local sockets")
+        try:
+            assert bridge._server is not None
+            port = bridge._server.server_address[1]
+            with urllib.request.urlopen(
+                f"http://127.0.0.1:{port}/?arena_port=8080", timeout=2
+            ) as response:
+                body = response.read().decode()
+            self.assertIn("MicroDuck Gamepad", body)
+            self.assertIn("arenaFrame", body)
+        finally:
+            bridge.close()
 
 
 if __name__ == "__main__":

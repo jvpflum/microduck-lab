@@ -90,6 +90,25 @@ class PolicyBenchServerTests(unittest.TestCase):
             progress["reward_history"],
             [{"iteration": 9, "reward": 12.5}, {"iteration": 10, "reward": 13.75}],
         )
+        self.assertEqual(progress["reward_history_full"], progress["reward_history"])
+        self.assertEqual(progress["reward_history_count"], 2)
+
+    def test_training_progress_full_curve_spans_entire_large_run(self) -> None:
+        reports = self.root / "reports"
+        reports.mkdir()
+        lines = [
+            f"Learning iteration {iteration}/1201\nMean reward: {iteration / 10:.2f}\n"
+            for iteration in range(1, 1202)
+        ]
+        (reports / "train-large.log").write_text("".join(lines))
+        with mock.patch.object(server, "LAB_ROOT", self.root):
+            progress = server.training_progress()
+        assert progress is not None
+        self.assertEqual(progress["reward_history_count"], 1201)
+        self.assertEqual(len(progress["reward_history"]), 80)
+        self.assertEqual(len(progress["reward_history_full"]), 1000)
+        self.assertEqual(progress["reward_history_full"][0]["iteration"], 1)
+        self.assertEqual(progress["reward_history_full"][-1]["iteration"], 1201)
 
     def test_startup_cleanup_only_targets_policy_bench_viewers(self) -> None:
         proc = self.root / "proc"
@@ -121,6 +140,7 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(result["label"], "run-a")
         self.assertEqual(result["task"], "swizzle")
         self.assertEqual(result["iteration"], 250)
+        self.assertEqual(result["controller_url"], "http://localhost:8090/?arena_port=8080")
         self.assertIn("Mjlab-Velocity-Swizzle-MicroDuck", process.command)
         self.assertNotIsInstance(process.command, str)
         self.assertEqual(process.kwargs["env"]["WANDB_MODE"], "disabled")

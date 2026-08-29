@@ -146,19 +146,29 @@ def training_progress() -> dict[str, Any] | None:
         totals = re.findall(r"Learning iteration\s*\d+/(\d+)", text)
         eta = re.findall(r"ETA:\s*([^\n\r]+)", text)
         if iterations:
-            reward_history = [
+            full_history = [
                 {"iteration": int(iteration), "reward": float(reward)}
                 for iteration, reward in re.findall(
                     r"Learning iteration\s*(\d+)/\d+[\s\S]*?Mean reward:\s*([-+\d.eE]+)",
                     text,
-                )[-80:]
+                )
             ]
+            # Preserve the complete training span without sending thousands of
+            # SVG points over SSH every five seconds. Always retain both ends.
+            if len(full_history) > 1_000:
+                last = len(full_history) - 1
+                indices = sorted({round(index * last / 999) for index in range(1_000)})
+                full_history_for_chart = [full_history[index] for index in indices]
+            else:
+                full_history_for_chart = full_history
             return {
                 "log": str(path),
                 "iteration": int(iterations[-1]),
                 "total": int(totals[-1]) if totals else None,
                 "eta": eta[-1].strip() if eta else None,
-                "reward_history": reward_history,
+                "reward_history": full_history[-80:],
+                "reward_history_full": full_history_for_chart,
+                "reward_history_count": len(full_history),
             }
     return None
 
@@ -384,7 +394,10 @@ class ProcessManager:
             "iteration": session.iteration,
             "reused": reused,
             "viser_url": f"http://localhost:{session.viser_port}",
-            "controller_url": f"http://localhost:{session.controller_port}",
+            "controller_url": (
+                f"http://localhost:{session.controller_port}"
+                f"/?arena_port={session.viser_port}"
+            ),
             "viser_port": session.viser_port,
             "controller_port": session.controller_port,
             "pid": session.process.pid,

@@ -10,6 +10,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Protocol
+from urllib.parse import urlsplit
 
 
 class ControllerOwnershipError(ValueError):
@@ -174,16 +175,17 @@ class GamepadBridge:
                 self.wfile.write(body)
 
             def do_GET(self) -> None:  # noqa: N802
-                if self.path == "/":
+                request_path = urlsplit(self.path).path
+                if request_path == "/":
                     self.send_bytes(bridge.page_path.read_bytes(), "text/html; charset=utf-8")
-                elif self.path == "/api/state":
+                elif request_path == "/api/state":
                     state = asdict(bridge.state.snapshot())
                     self.send_bytes(json.dumps(state).encode(), "application/json")
                 else:
                     self.send_bytes(b"not found\n", "text/plain", HTTPStatus.NOT_FOUND)
 
             def do_POST(self) -> None:  # noqa: N802
-                if self.path != "/api/state":
+                if urlsplit(self.path).path != "/api/state":
                     self.send_bytes(b"not found\n", "text/plain", HTTPStatus.NOT_FOUND)
                     return
                 try:

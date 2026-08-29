@@ -7,7 +7,12 @@
   <style>
     :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
     body { margin: 0; background: #0b1020; color: #e8eefc; }
-    main { width: min(720px, calc(100% - 32px)); margin: 32px auto; }
+    main { width: min(1500px, calc(100% - 32px)); margin: 20px auto; }
+    .drive-workspace { display: grid; grid-template-columns: minmax(360px, 460px) minmax(600px, 1fr); gap: 16px; align-items: start; }
+    .controller-pane { min-width: 0; }
+    .arena-card { position: sticky; top: 16px; height: calc(100vh - 32px); padding: 12px; display: grid; grid-template-rows: auto 1fr; gap: 8px; }
+    .arena-card h2 { padding: 4px 4px 0; }
+    .arena-card iframe { width: 100%; height: 100%; min-height: 620px; border: 0; border-radius: 12px; background: #080c14; }
     .card { background: #151c30; border: 1px solid #2b3655; border-radius: 18px; padding: 22px; margin: 14px 0; }
     h1 { margin: 0 0 8px; font-size: 28px; }
     p { color: #aebbd6; line-height: 1.45; }
@@ -33,10 +38,11 @@
     .hold { touch-action: none; user-select: none; }
     h2 { margin: 0 0 6px; font-size: 19px; }
     kbd { background: #27324d; border-radius: 6px; padding: 2px 7px; }
+    @media (max-width: 1050px) { .drive-workspace { grid-template-columns: 1fr; } .arena-card { position: static; height: 75vh; } }
     @media (max-width: 560px) { .grid, .values { grid-template-columns: 1fr; } }
   </style>
 </head>
-<body><main>
+<body><main><div class="drive-workspace"><section class="controller-pane">
   <div class="card">
     <h1>MicroDuck Gamepad</h1>
     <div class="status"><span id="dot" class="dot"></span><span id="status">No controller detected</span></div>
@@ -111,9 +117,19 @@
     <p><strong>Controls:</strong> left stick Y, triggers, or <kbd>W</kbd>/<kbd>S</kbd> = propulsion; right stick X or <kbd>A</kbd>/<kbd>D</kbd> = heading; controller <kbd>X</kbd> = coast. Reset, pause, and emergency actions are on-screen so an accidental controller press cannot stop the simulation.</p>
     <p id="meaning" class="warn">This checkpoint interprets negative propulsion as braking, not reverse.</p>
   </div>
+  </section><section id="arenaCard" class="card arena-card">
+    <h2>Live arena</h2>
+    <iframe id="arenaFrame" title="MicroDuck Viser arena" allow="fullscreen"></iframe>
+  </section></div>
 </main>
 <script>
 const $ = id => document.getElementById(id);
+const arenaPort = new URLSearchParams(location.search).get('arena_port');
+if (arenaPort && /^\d+$/.test(arenaPort)) {
+  $('arenaFrame').src = `${location.protocol}//${location.hostname}:${arenaPort}`;
+} else {
+  $('arenaCard').hidden = true;
+}
 let armed = false, emergency = false, manualDrive = null, requestTakeover = false;
 let resetRequested = false, pauseRequested = false;
 let controllerSignature = '', lastSourceSignature = '';
