@@ -45,6 +45,8 @@
       <button id="arm" disabled>Arm controller</button>
       <button id="estop" class="danger">Emergency zero</button>
       <button id="clear" class="secondary">Resume controls</button>
+      <button id="resetSim" class="secondary">Reset robot</button>
+      <button id="pauseSim" class="secondary">Pause / play</button>
     </div>
   </div>
 
@@ -106,13 +108,14 @@
       <div>Left stick: <span id="leftValue">0.00</span></div>
       <div>Right stick: <span id="rightValue">0.00</span></div>
     </div>
-    <p><strong>Controls:</strong> left stick Y, triggers, or <kbd>W</kbd>/<kbd>S</kbd> = propulsion; right stick X or <kbd>A</kbd>/<kbd>D</kbd> = heading; controller <kbd>X</kbd> = coast; controller <kbd>A</kbd> = reset; <kbd>Start</kbd> = pause/play. Use the red on-screen button for emergency zero.</p>
+    <p><strong>Controls:</strong> left stick Y, triggers, or <kbd>W</kbd>/<kbd>S</kbd> = propulsion; right stick X or <kbd>A</kbd>/<kbd>D</kbd> = heading; controller <kbd>X</kbd> = coast. Reset, pause, and emergency actions are on-screen so an accidental controller press cannot stop the simulation.</p>
     <p id="meaning" class="warn">This checkpoint interprets negative propulsion as braking, not reverse.</p>
   </div>
 </main>
 <script>
 const $ = id => document.getElementById(id);
 let armed = false, emergency = false, manualDrive = null, requestTakeover = false;
+let resetRequested = false, pauseRequested = false;
 let controllerSignature = '', lastSourceSignature = '';
 const keys = new Set();
 const clientId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
@@ -142,6 +145,8 @@ $('arm').onclick = () => {
 };
 $('estop').onclick = () => { emergency = true; requestTakeover = true; };
 $('clear').onclick = () => { emergency = false; requestTakeover = true; };
+$('resetSim').onclick = () => { resetRequested = true; requestTakeover = true; };
+$('pauseSim').onclick = () => { pauseRequested = true; requestTakeover = true; };
 
 for (const id of ['controller','driveSource','turnSource','invertDrive','invertTurn']) {
   $(id).addEventListener('change', () => localStorage.setItem('microduck-' + id, $(id).type === 'checkbox' ? String($(id).checked) : $(id).value));
@@ -282,8 +287,6 @@ async function loop() {
     commandX = drive * scale;
     heading = right * Number($('yaw').value);
     if (pad.buttons[2]?.pressed) commandX = 0; // X: coast
-    reset = Boolean(pad.buttons[0]?.pressed);       // A
-    pause = Boolean(pad.buttons[9]?.pressed);       // Start
     $('leftValue').textContent = drive.toFixed(2);
     $('rightValue').textContent = right.toFixed(2);
     $('mappingValue').textContent = `${pad.mapping || 'unmapped'} · ${pad.id}`;
@@ -299,6 +302,8 @@ async function loop() {
   if (keys.has('KeyS')) commandX = -0.35;
   if (keys.has('KeyA')) heading = -Number($('yaw').value || 0.3);
   if (keys.has('KeyD')) heading = Number($('yaw').value || 0.3);
+  reset = resetRequested;
+  pause = pauseRequested;
   if (emergency) { commandX = 0; heading = 0; }
   $('xValue').textContent = (commandX >= 0 ? '+' : '') + commandX.toFixed(2);
   $('yawValue').textContent = (heading >= 0 ? '+' : '') + heading.toFixed(2);
@@ -309,6 +314,8 @@ async function loop() {
   // heartbeat when the simulator is using the CPU heavily.
   await send({armed, connected, emergency_stop: emergency, command_x: commandX, heading, reset, pause,
     gamepad_id: pad?.id || 'keyboard/manual', mapping: pad?.mapping || '', axes: pad ? Array.from(pad.axes) : []});
+  resetRequested = false;
+  pauseRequested = false;
   } catch (error) {
     $('status').textContent = 'Gamepad API error: ' + error.message;
     $('dot').classList.remove('ok');

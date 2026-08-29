@@ -133,10 +133,11 @@ In that SSH session, launch the final skating checkpoint:
 Open `http://localhost:8080` for Viser and `http://localhost:8090` for the
 controller. Connect the Xbox controller to the local computer, press a button
 so the browser detects it, and select **Arm Controller**. The left stick or
-triggers control propulsion, the right stick controls heading, A resets, Start
-pauses, and X coasts. Use the red on-screen **Emergency zero** button to stop;
-**Resume controls** clears that latch. Commands automatically fall back to zero
-if the browser disconnects or stops updating for 500 ms.
+triggers control propulsion, the right stick controls heading, and X coasts.
+Reset, pause/play, and emergency controls are on-screen to prevent accidental
+face-button actions. **Resume controls** clears an emergency latch. Commands
+automatically fall back to zero if the browser disconnects or stops updating
+for 500 ms. A nonzero drive command also resumes a paused simulation.
 
 Use the **Original roller** preset with the first roller checkpoint; its
 negative command means braking and it was not trained for reverse. Use the

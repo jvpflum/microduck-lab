@@ -56,6 +56,16 @@ class GamepadStateTests(unittest.TestCase):
         self.assertEqual(viewer.request_reset.call_count, 2)
         self.assertEqual(viewer.request_toggle_pause.call_count, 2)
 
+    def test_first_nonzero_drive_command_resumes_paused_viewer(self):
+        viewer = Mock()
+        state = GamepadState()
+        state.bind_viewer(viewer)
+        base = {"client_id": "tab-a", "armed": True, "connected": True}
+        state.update({**base, "command_x": 0.0})
+        state.update({**base, "command_x": 0.4})
+        state.update({**base, "command_x": 0.5})
+        self.assertEqual(viewer.request_resume.call_count, 1)
+
     def test_controller_diagnostics_are_bounded_and_reported(self):
         state = GamepadState()
         state.update({
@@ -91,6 +101,7 @@ class GamepadStateTests(unittest.TestCase):
         self.assertIn("Raw axes", text)
         self.assertIn("Resume controls", text)
         self.assertNotIn("pad.buttons[1]", text)
+        self.assertNotIn("pad.buttons[9]", text)
         self.assertNotIn("https://", text)
 
 

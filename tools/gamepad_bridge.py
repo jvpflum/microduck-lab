@@ -19,6 +19,7 @@ class ControllerOwnershipError(ValueError):
 class ViewerControls(Protocol):
     def request_reset(self) -> None: ...
     def request_toggle_pause(self) -> None: ...
+    def request_resume(self) -> None: ...
 
 
 @dataclass(frozen=True)
@@ -79,11 +80,25 @@ class GamepadState:
                 )
             self._client_id = client_id
             self._client_seen_at = now
+            was_moving = (
+                self._armed
+                and self._connected
+                and not self._emergency_stop
+                and (abs(self._command_x) > 1e-3 or abs(self._heading) > 1e-3)
+            )
             self._armed = bool(payload.get("armed", False))
             self._connected = bool(payload.get("connected", False))
             self._emergency_stop = bool(payload.get("emergency_stop", False))
             self._command_x = max(-1.0, min(1.0, float(payload.get("command_x", 0.0))))
             self._heading = max(-1.0, min(1.0, float(payload.get("heading", 0.0))))
+            is_moving = (
+                self._armed
+                and self._connected
+                and not self._emergency_stop
+                and (abs(self._command_x) > 1e-3 or abs(self._heading) > 1e-3)
+            )
+            if is_moving and not was_moving:
+                callbacks.append("resume")
             self._gamepad_id = str(payload.get("gamepad_id", ""))[:240]
             self._mapping = str(payload.get("mapping", ""))[:40]
             self._axes = axes
@@ -102,6 +117,8 @@ class GamepadState:
                     viewer.request_reset()
                 elif name == "pause":
                     viewer.request_toggle_pause()
+                elif name == "resume":
+                    viewer.request_resume()
 
     def snapshot(self, now: float | None = None) -> GamepadCommand:
         current = time.monotonic() if now is None else now

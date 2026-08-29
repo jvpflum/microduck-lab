@@ -46,8 +46,8 @@ a simulator bridge problem.
 - left stick Y or triggers: signed propulsion;
 - right stick X: heading error;
 - `X`: coast/zero command while held;
-- `A`: reset the environment;
-- `Start`: pause/play;
+- on-screen **Reset robot**: reset the environment;
+- on-screen **Pause / play**: toggle simulation playback;
 - on-screen **Emergency zero**: latch propulsion and heading at zero;
 - on-screen **Resume controls**: clear the emergency-zero latch.
 
@@ -65,6 +65,8 @@ updating for 500 ms while armed, propulsion and heading are forced to zero. A
 disconnect also forces zero. Emergency zero is latched in the browser until the
 operator clicks **Resume controls**. It is deliberately not mapped to an Xbox
 face button, where an accidental press can silently disable driving.
+A new nonzero propulsion or heading command safely resumes the viewer if it was
+paused; it does not toggle a viewer that is already running.
 
 This is a simulation control surface, not a physical-robot safety system. A real
 deployment requires a hardware emergency stop, an independent runtime watchdog,

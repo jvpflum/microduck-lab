@@ -72,9 +72,11 @@ def _apply_gamepad(self):
         self.vel_command_b[:, 2] = command.heading
         now = time.monotonic()
         if now - _last_gamepad_debug >= 1.0:
+            root_xy = self.robot.data.root_link_pos_w[0, :2].detach().cpu().tolist()
             print(
                 f"[gamepad] applied x={command.command_x:+.3f} heading={command.heading:+.3f} "
-                f"connected={command.connected} stale={command.stale}",
+                f"connected={command.connected} stale={command.stale} "
+                f"root=({root_xy[0]:+.3f},{root_xy[1]:+.3f})",
                 flush=True,
             )
             _last_gamepad_debug = now
@@ -109,6 +111,11 @@ class GamepadViserPlayViewer(_ViserPlayViewer):
             super().close()
         finally:
             bridge.close()
+
+    def request_resume(self):
+        """Resume on the rising edge of a drive command, without toggling a running sim."""
+        if self._is_paused:
+            self.request_toggle_pause()
 
 
 play_module.ViserPlayViewer = GamepadViserPlayViewer
