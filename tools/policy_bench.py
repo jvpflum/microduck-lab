@@ -508,7 +508,7 @@ class Bench:
         output.write_text(body)
         return output
 
-    def render_dashboard(self) -> Path:
+    def render_dashboard(self, active_experiments: set[str] | None = None) -> Path:
         registry = read_json(self.registry_path)
         all_manifests = sorted(self.manifests(), key=lambda item: item["created_at"], reverse=True)
         # Smoke launches validate wiring for a few iterations; they are not
@@ -519,11 +519,12 @@ class Bench:
             return manifest.get("experiment_id") or f"{manifest.get('task', 'unknown')}:{manifest.get('source_run_dir', manifest['run_id'])}"
 
         experiments = {experiment_key(manifest) for manifest in manifests}
-        active_experiments = active_training_experiments()
+        active_experiments = active_training_experiments() if active_experiments is None else active_experiments
         grouped: dict[str, list[dict[str, Any]]] = {}
         for manifest in manifests:
             grouped.setdefault(experiment_key(manifest), []).append(manifest)
         experiment_rows = []
+        finished_rows = []
         active_rows = []
         for group in grouped.values():
             newest = group[0]
@@ -555,7 +556,7 @@ class Bench:
                     f"latest saved checkpoint {latest.get('latest_iteration')} · "
                     f"<button class='play' data-run-id='{html.escape(latest['run_id'])}'>▶ View latest saved</button></p>"
                 )
-            experiment_rows.append(
+            row = (
                 "<tr>"
                 f"<td>{html.escape(label)}</td><td>{html.escape(newest['task'])}</td>"
                 f"<td>{html.escape(newest.get('experiment_kind', 'training'))}</td>"
@@ -567,17 +568,8 @@ class Bench:
                 + "".join(snapshots)
                 + "</table></details></td></tr>"
             )
-        # Process visibility can differ between the dashboard and a detached
-        # training session. Keep the newest saved candidate actionable even
-        # when /proc has not reported the active PID yet.
-        if not active_rows and grouped:
-            candidate_group = max(grouped.values(), key=lambda items: items[0].get("created_at", ""))
-            candidate = max(candidate_group, key=lambda item: item.get("latest_iteration") or -1)
-            active_rows.append(
-                f"<p><strong>Latest saved candidate</strong> · {html.escape(candidate['task'])} · "
-                f"checkpoint {candidate.get('latest_iteration')} · "
-                f"<button class='play' data-run-id='{html.escape(candidate['run_id'])}'>▶ View latest saved</button></p>"
-            )
+            if state != "active":
+                finished_rows.append(row)
         champions = "".join(
             f"<li><strong>{html.escape(task)}</strong>: "
             + ", ".join(f"{html.escape(stage)} = {html.escape(run_id)}" for stage, run_id in stages.items())
@@ -591,12 +583,12 @@ class Bench:
             "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
             "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
             "<h2>Active training jobs</h2><div class='panel' id='active-training'>"
-            + ("".join(active_rows) or "<p id='active-empty'>No active training jobs detected. Saved policies remain available below.</p>")
+            + ("".join(active_rows) or "<p id='active-empty'>No active training jobs.</p>")
             + "<p id='training-progress'>Checking progress…</p></div>"
             f"<h2>Registry</h2><ul>{champions}</ul>"
             "<h2>Finished training runs</h2><p>Each row is one completed or saved training job. <strong>Play latest</strong> tests the highest saved iteration. Open <em>Saved versions</em> only to inspect older versions.</p>"
             "<table><tr><th>Training run</th><th>Skill</th><th>Kind</th><th>Source state</th><th>Saved versions</th><th>Latest version</th><th>Open</th></tr>"
-            + "".join(experiment_rows)
+            + "".join(finished_rows)
             + "</table>"
             + "<h2>DuckLab Assistant</h2><div class='panel'><div id='chat-log' class='chat-log'>"
             + "<p><strong>DuckLab:</strong> Tell me what you want to do. Try “train swizzle for 8000 iterations with 4096 environments”.</p>"

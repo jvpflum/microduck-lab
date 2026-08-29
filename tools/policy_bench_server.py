@@ -67,6 +67,9 @@ def running_training_processes() -> list[dict[str, Any]]:
             command = (entry / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
         except (OSError, PermissionError):
             continue
+        # uv keeps a parent process around; report the actual trainer once.
+        if "/uv/bin/uv run train" in command:
+            continue
         if re.search(r"(?:^|/)train\s+Mjlab-", command):
             matches.append({"pid": int(entry.name), "command": command.strip()})
     return sorted(matches, key=lambda item: item["pid"])
@@ -386,7 +389,12 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self._send_json(self.server.manager.status())
             return
         if self.path in {"/", "/index.html"}:
-            path = self.server.bench.render_dashboard()
+            active = set()
+            for process in running_training_processes():
+                match = re.search(r"--agent\.run-name\s+([^\s]+)", process["command"])
+                if match:
+                    active.add(match.group(1))
+            path = self.server.bench.render_dashboard(active_experiments=active)
             payload = path.read_text().replace("__CONTROL_TOKEN__", self.server.control_token).encode()
             self.send_response(HTTPStatus.OK)
             self.send_header("Content-Type", "text/html; charset=utf-8")
