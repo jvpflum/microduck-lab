@@ -331,6 +331,16 @@ class ProcessManager:
 class DashboardHandler(SimpleHTTPRequestHandler):
     server: "DashboardServer"
 
+    def log_message(self, format: str, *args: Any) -> None:
+        """Keep the long-running dashboard terminal readable.
+
+        The browser intentionally polls /api/status, so logging every 200
+        response quickly buries useful training and viewer messages.
+        """
+        if args and str(args[0]).startswith("/api/"):
+            return
+        super().log_message(format, *args)
+
     def _send_json(self, value: Any, status: HTTPStatus = HTTPStatus.OK) -> None:
         payload = json_bytes(value)
         self.send_response(status)
