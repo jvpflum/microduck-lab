@@ -1,7 +1,8 @@
 SHELL := /bin/bash
 
-.PHONY: bootstrap preflight test list-envs smoke skate-smoke verify-artifact \
-	verify-skate-artifact train-baseline train-skate verify
+.PHONY: bootstrap preflight test list-envs smoke skate-smoke swizzle-smoke \
+	verify-artifact verify-skate-artifact evaluate-swizzle train-baseline train-skate \
+	train-swizzle verify
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -21,16 +22,25 @@ smoke:
 skate-smoke:
 	./scripts/skate-smoke.sh
 
+swizzle-smoke:
+	./scripts/swizzle-smoke.sh
+
 verify-artifact:
 	./scripts/verify-artifact.sh
 
 verify-skate-artifact:
 	./scripts/verify-skate-artifact.sh
 
+evaluate-swizzle:
+	./scripts/evaluate-swizzle.sh
+
 train-baseline:
 	./scripts/train-baseline.sh
 
 train-skate:
 	./scripts/train-skate.sh
+
+train-swizzle:
+	./scripts/train-swizzle.sh
 
 verify: preflight test smoke verify-artifact

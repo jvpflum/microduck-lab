@@ -66,6 +66,19 @@ Then train the skating baseline:
 make train-skate
 ```
 
+For symmetric forward/reverse propulsion with both blades grounded, use the
+dedicated swizzle workflow:
+
+```bash
+make swizzle-smoke
+make train-swizzle
+make evaluate-swizzle
+```
+
+See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
+qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
+for active braking, spin, recovery, and supervisor design.
+
 The default is 4,096 environments and 5,000 PPO iterations. Override either
 setting with `DUCKLAB_ENVS` and `DUCKLAB_ITERATIONS`, as with walking. The
 policy learns the upstream roller command semantics: coast at zero, push with
