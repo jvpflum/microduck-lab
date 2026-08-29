@@ -7,7 +7,9 @@ The lab pins Pollen's official robot runtime, browser simulator, and
 `microduck_rl` training project as Git submodules. Pollen's shipped policies,
 arena, gamepad controls, runtime, and safety behavior are the defaults. DuckLab
 adds local evaluation, comparison, provenance, promotion, and guarded custom
-training; it does not rebuild upstream capabilities.
+training; it does not rebuild upstream capabilities. The locally built arena
+omits Pollen's storefront/preorder call-to-action while retaining the upstream
+physics, policies, controls, and assets.
 
 The product goal is a simple robotics teaching loop—sign in, describe a skill,
 train, understand the result, promote a policy, and drive the robot. See
@@ -120,6 +122,25 @@ make evaluate-swizzle
 See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
 qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
 for active braking, spin, recovery, and supervisor design.
+
+## Train the Roller Hop skill
+
+Roller Hop is a separate one-shot policy layered on the same Pollen roller
+model, BAM actuator, 61D observations, domain randomization, and official ONNX
+export path. It targets a conservative 20 mm stationary jump and a quiet,
+upright two-skate landing.
+
+```bash
+make hop-smoke
+make train-hop
+```
+
+The full run defaults to 4,096 environments and 1,500 PPO iterations. On
+completion DuckLab verifies the ONNX artifact, registers it as a `hop` run,
+runs the headless hop battery, and assigns a transparent score. It is never
+automatically promoted. The dashboard assistant also accepts requests such as
+“train a roller jump overnight.” See [docs/ROLLER_HOP.md](docs/ROLLER_HOP.md)
+for the reward gates and release sequence.
 
 ### Compare and promote policies
 

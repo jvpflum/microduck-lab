@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 {swizzle|roller|walking}" >&2
+    echo "Usage: $0 {swizzle|roller|walking|hop}" >&2
     exit 2
 fi
 
@@ -17,18 +17,28 @@ case "${task}" in
         bench_task="swizzle"
         roller_flag=(--roller)
         auto_score=true
+        suite_args=()
         ;;
     roller)
         experiment="velocity_rollers"
         bench_task="roller"
         roller_flag=(--roller)
         auto_score=true
+        suite_args=()
         ;;
     walking)
         experiment="velocity"
         bench_task="walking"
         roller_flag=()
         auto_score=false
+        suite_args=()
+        ;;
+    hop)
+        experiment="roller_hop"
+        bench_task="hop"
+        roller_flag=(--roller)
+        auto_score=true
+        suite_args=(--suite hop-v1)
         ;;
     *)
         echo "Unknown training task: ${task}" >&2
@@ -67,7 +77,7 @@ if [[ -z "${bench_run}" ]]; then
 fi
 
 if [[ "${auto_score}" == "true" ]]; then
-    "${lab_root}/scripts/policy-bench.sh" evaluate "${bench_run}"
+    "${lab_root}/scripts/policy-bench.sh" evaluate "${bench_run}" "${suite_args[@]}"
 fi
 "${lab_root}/scripts/policy-bench.sh" metrics "${bench_run}"
 echo "Finalized Policy Bench run: ${bench_run}"

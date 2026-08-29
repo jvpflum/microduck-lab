@@ -35,6 +35,53 @@ def bounded_score(value: float, target: float, tolerance: float) -> float:
 
 def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
     """Return a transparent 0-100 heuristic; it is not an auto-promotion gate."""
+    if task == "hop":
+        hop = evaluation.get("hop", {})
+        if not hop:
+            return {"overall": None, "label": "not scorable", "components": {}, "weights": {}}
+        clearance = float(hop.get("peak_clearance_m", 0.0))
+        air_time = float(hop.get("air_time_s", 0.0))
+        drift = float(hop.get("horizontal_drift_m", 1.0))
+        final_tilt = float(hop.get("final_tilt_mean_deg", 90.0))
+        final_speed = float(hop.get("final_speed_mean_mps", 1.0))
+        grounded = float(hop.get("final_both_grounded_fraction", 0.0))
+        components = {
+            "clearance": bounded_score(clearance, 0.020, 0.020),
+            "air_time": min(1.0, max(0.0, air_time / 0.10)),
+            "landing": grounded if hop.get("landing_detected") else 0.0,
+            "upright": max(0.0, 1.0 - final_tilt / 25.0),
+            "stillness": max(0.0, 1.0 - final_speed / 0.15) if hop.get("landing_detected") else 0.0,
+            "low_drift": max(0.0, 1.0 - drift / 0.08),
+        }
+        weights = {
+            "clearance": 0.25,
+            "air_time": 0.10,
+            "landing": 0.25,
+            "upright": 0.15,
+            "stillness": 0.15,
+            "low_drift": 0.10,
+        }
+        gates = {
+            "takeoff": {"passed": bool(hop.get("takeoff_detected")), "value": bool(hop.get("takeoff_detected"))},
+            "clearance": {"passed": clearance >= 0.015, "value": round(clearance, 4), "minimum": 0.015},
+            "air_time": {"passed": air_time >= 0.06, "value": round(air_time, 4), "minimum": 0.06},
+            "landing": {"passed": bool(hop.get("landing_detected")), "value": bool(hop.get("landing_detected"))},
+            "upright": {"passed": final_tilt <= 15.0, "value": round(final_tilt, 2), "maximum": 15.0},
+            "settled": {"passed": final_speed <= 0.10, "value": round(final_speed, 4), "maximum": 0.10},
+            "drift": {"passed": drift <= 0.05, "value": round(drift, 4), "maximum": 0.05},
+        }
+        overall = 100.0 * sum(components[key] * weights[key] for key in weights)
+        if not gates["takeoff"]["passed"] or not gates["landing"]["passed"]:
+            overall = min(overall, 49.0)
+        return {
+            "overall": round(overall, 2),
+            "label": "heuristic simulation score",
+            "components": {key: round(value * 100.0, 2) for key, value in components.items()},
+            "weights": weights,
+            "qualification_gates": gates,
+            "qualified": all(item["passed"] for item in gates.values()),
+        }
+
     phases = evaluation.get("phases", {})
     forward = phases.get("forward", {})
     reverse = phases.get("reverse", {})
@@ -142,6 +189,7 @@ def infer_task(run_dir: Path) -> str:
         "velocity_swizzle": "swizzle",
         "velocity_rollers": "roller",
         "velocity": "walking",
+        "roller_hop": "hop",
     }.get(parent, parent.replace("velocity_", "") or "unknown")
 
 
@@ -403,13 +451,15 @@ class Bench:
         policy = manifest["artifacts"].get("policy")
         if not policy:
             raise SystemExit(f"Run {run_id} has no exported ONNX policy")
-        if manifest["task"] not in {"swizzle", "roller"}:
+        if manifest["task"] not in {"swizzle", "roller", "hop"}:
             raise SystemExit(f"No evaluator is registered for task {manifest['task']!r}")
         policy_path = Path(policy["path"])
         if not policy_path.is_file() or sha256(policy_path) != policy["sha256"]:
             raise SystemExit(f"Policy snapshot is missing or corrupt: {policy_path}")
         output = self.runs_dir / run_id / "evaluations" / f"{suite}.json"
-        evaluator = LAB_ROOT / "tools" / "evaluate_swizzle.py"
+        evaluator = LAB_ROOT / (
+            "tools/evaluate_hop.py" if manifest["task"] == "hop" else "tools/evaluate_swizzle.py"
+        )
         uv = LAB_ROOT / ".tools" / "uv" / "bin" / "uv"
         if not uv.is_file():
             raise SystemExit("DuckLab uv environment is missing; run ./scripts/bootstrap.sh")
@@ -660,7 +710,7 @@ class Bench:
                 "<div class='launch-cluster'>"
                 f"{primary_action}"
                 f"<button class='deployment secondary' data-run-id='{html.escape(latest['run_id'])}' "
-                f"{'disabled ' if not latest.get('has_exported_policy') or latest.get('task') not in {'roller', 'swizzle'} else ''}"
+                f"{'disabled ' if not latest.get('has_exported_policy') or latest.get('task') not in {'roller', 'swizzle', 'hop'} else ''}"
                 "title='Run the exported ONNX through Pollen CPU MuJoCo'>Deployment check</button></div></div>"
                 "<div class='run-stats'>"
                 f"<div><small>{'Source' if is_factory else 'Latest iteration'}</small><strong>{'Pollen official' if is_factory else f'{latest_iteration:,}'}</strong></div>"

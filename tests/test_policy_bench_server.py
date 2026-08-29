@@ -80,6 +80,12 @@ class PolicyBenchServerTests(unittest.TestCase):
         request = server.parse_training_request("train swizzle overnight for 8000 iterations")
         self.assertEqual(request["resource_profile"], "training-priority")
 
+    def test_jump_request_maps_to_registered_hop_task(self) -> None:
+        request = server.parse_training_request("train a roller jump overnight")
+        self.assertEqual(request["task"], "hop")
+        self.assertEqual(request["iterations"], 1500)
+        self.assertEqual(request["resource_profile"], "training-priority")
+
     def test_unknown_training_skill_requests_clarification(self) -> None:
         request = server.parse_training_request("train something cool")
         self.assertIn("error", request)

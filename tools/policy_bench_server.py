@@ -44,6 +44,11 @@ TASKS = {
         "train_script": LAB_ROOT / "scripts" / "train-baseline.sh",
         "default_iterations": 4000,
     },
+    "hop": {
+        "play_task": "Mjlab-RollerHop-Flat-MicroDuck",
+        "train_script": LAB_ROOT / "scripts" / "train-hop.sh",
+        "default_iterations": 1500,
+    },
 }
 
 # The dashboard itself owns 8091. Each simulation gets an isolated Viser and
@@ -203,14 +208,16 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
     lowered = message.lower()
     if not re.search(r"\b(train|training|learn)\b", lowered):
         return None
-    if "roller" in lowered:
+    if "hop" in lowered or "jump" in lowered:
+        task = "hop"
+    elif "roller" in lowered:
         task = "roller"
     elif "swizzle" in lowered or "skate" in lowered:
         task = "swizzle"
     elif "walk" in lowered:
         task = "walking"
     else:
-        return {"error": "Tell me which skill to train: swizzle, roller, or walking."}
+        return {"error": "Tell me which skill to train: hop, swizzle, roller, or walking."}
     iteration_match = re.search(r"([\d,]+)\s*(?:iterations?|iters?)\b", lowered)
     environment_match = re.search(r"([\d,]+)\s*(?:environments?|envs?)\b", lowered)
     iterations = (
@@ -254,7 +261,7 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
     prompt = (
         "You are the MicroDuck training assistant. Return JSON only, with keys "
         "task, iterations, environments, resource_profile, supported, reply. task must be one of "
-        "swizzle, roller, walking, or custom. Choose custom for a skill that has "
+        "hop, swizzle, roller, walking, or custom. Choose custom for a skill that has "
         "no registered simulator task. Never invent a runnable task. Defaults are "
         "8000 iterations and 4096 environments. resource_profile must be shared "
         "or training-priority; use training-priority for overnight or maximum-throughput "
@@ -344,8 +351,8 @@ class ProcessManager:
 
     def run_deployment_check(self, run_id: str) -> dict[str, Any]:
         manifest = self.bench.load_manifest(run_id)
-        if manifest.get("task") not in {"roller", "swizzle"}:
-            raise ValueError("Deployment Check is currently available for roller-skating policies only")
+        if manifest.get("task") not in {"roller", "swizzle", "hop"}:
+            raise ValueError("Deployment Check is not configured for this policy type")
         if not manifest.get("artifacts", {}).get("policy"):
             raise ValueError("This saved model has no exported ONNX policy yet")
         with self.lock:
@@ -353,7 +360,8 @@ class ProcessManager:
                 raise ValueError("A Deployment Check is already running for this model")
             self.deployment_checks.add(run_id)
         try:
-            record = self.bench.evaluate(run_id, "skating-v1")
+            suite = "hop-v1" if manifest.get("task") == "hop" else "skating-v1"
+            record = self.bench.evaluate(run_id, suite)
         finally:
             with self.lock:
                 self.deployment_checks.discard(run_id)
@@ -614,6 +622,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             payload = payload.replace(b'src="/', b'src="/factory/').replace(
                 b'href="/', b'href="/factory/'
             )
+            # Keep the pinned open-source arena intact while removing Pollen's
+            # storefront CTA from DuckLab's locally served product surface.
+            # :has() targets the complete Shop HUD plate, not only its anchor.
+            ducklab_style = (
+                b'<style id="ducklab-arena-overrides">'
+                b'div:has(>div>a[href*="store.pollen-robotics.com"]){display:none!important}'
+                b'</style>'
+            )
+            payload = payload.replace(b"</head>", ducklab_style + b"</head>")
         content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", content_type)

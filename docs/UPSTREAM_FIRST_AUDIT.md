@@ -22,7 +22,8 @@ where it adds measurable value around Pollen's stack.
 
 - Pollen runtime: `590b986bd8c0d50ae02cb3ea2f59c463b6828168`
 - Pollen browser simulator: `1261013e7e28ba2a6878bd76ae573751c0e4b457`
-- Pollen training stack: `d424a0c899f6b33cbd3daeb279913134349c0b63`
+- DuckLab training fork: `7b07bd8` (Pollen `develop` plus the Roller Hop task;
+  upstream base `d424a0c899f6b33cbd3daeb279913134349c0b63`)
 - Factory roller SHA-256:
   `cf05651d2708a2f9364212e86b866c97a70ace8131c492500105e8f28bf99afd`
 
