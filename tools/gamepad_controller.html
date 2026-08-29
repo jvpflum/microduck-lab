@@ -107,7 +107,7 @@ async function send(payload) {
   catch (_) { $('status').textContent = 'Bridge disconnected'; $('dot').classList.remove('ok'); }
 }
 
-function loop() {
+async function loop() {
   try {
   // GamepadList is not spreadable in every Chromium build. Array.from keeps
   // the 20 Hz command heartbeat alive instead of silently stopping the loop.
@@ -141,7 +141,9 @@ function loop() {
   if (emergency) { commandX = 0; heading = 0; }
   $('xValue').textContent = (commandX >= 0 ? '+' : '') + commandX.toFixed(2);
   $('yawValue').textContent = (heading >= 0 ? '+' : '') + heading.toFixed(2);
-  send({armed, connected, emergency_stop: emergency, command_x: commandX, heading, reset, pause});
+  // Keep one in-flight request at a time; overlapping fetches can starve the
+  // heartbeat when the simulator is using the CPU heavily.
+  await send({armed, connected, emergency_stop: emergency, command_x: commandX, heading, reset, pause});
   } catch (error) {
     $('status').textContent = 'Gamepad API error: ' + error.message;
     $('dot').classList.remove('ok');

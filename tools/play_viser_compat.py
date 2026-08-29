@@ -30,7 +30,10 @@ def _add_slider_clamped(self, label, *, min, max, step, initial_value, **kwargs)
 
 GuiApi.add_slider = _add_slider_clamped
 
-bridge = GamepadBridge(port=int(os.environ.get("DUCKLAB_GAMEPAD_PORT", "8090")))
+bridge = GamepadBridge(
+    port=int(os.environ.get("DUCKLAB_GAMEPAD_PORT", "8090")),
+    timeout_s=float(os.environ.get("DUCKLAB_GAMEPAD_TIMEOUT", "2.0")),
+)
 atexit.register(bridge.close)
 
 # The roller and swizzle tasks both use this command type. Preserve its normal
