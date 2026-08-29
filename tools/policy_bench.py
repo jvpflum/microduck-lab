@@ -513,7 +513,11 @@ class Bench:
         all_manifests = sorted(self.manifests(), key=lambda item: item["created_at"], reverse=True)
         # Smoke launches validate wiring for a few iterations; they are not
         # user-facing training jobs and should never inflate the run count.
-        manifests = [item for item in all_manifests if item.get("experiment_kind", "training") != "smoke"]
+        real_tasks = {item.get("task") for item in all_manifests if item.get("experiment_kind", "training") != "smoke"}
+        # Keep a task visible when it only has a smoke baseline (for example
+        # the original walking run), but never add smoke rows beside a real
+        # training job for the same task.
+        manifests = [item for item in all_manifests if item.get("experiment_kind", "training") != "smoke" or item.get("task") not in real_tasks]
         hidden_smoke = len(all_manifests) - len(manifests)
         def experiment_key(manifest: dict[str, Any]) -> str:
             # A run name is the user-facing job identity. Resume attempts may
@@ -521,6 +525,8 @@ class Bench:
             # training job in the UI.
             label = manifest.get("experiment_label") or manifest.get("source_run_dir", "").rsplit("/", 1)[-1]
             label = re.sub(r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_", "", label)
+            if manifest.get("experiment_kind") == "smoke":
+                return f"smoke:{manifest.get('task', 'unknown')}"
             if label:
                 return f"{manifest.get('task', 'unknown')}:{label}"
             return manifest.get("experiment_id") or f"{manifest.get('task', 'unknown')}:{manifest.get('source_run_dir', manifest['run_id'])}"
