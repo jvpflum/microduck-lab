@@ -120,22 +120,41 @@ Serve the local report on port 8091:
 make bench-dashboard
 ```
 
-For remote interactive play, forward all three local services:
+For remote interactive play, forward the dashboard plus the viewer pool. Put
+this once in the SSH config on your laptop so every saved model can get its own
+arena without reconnecting:
 
 ```bash
-ssh -L 8080:localhost:8080 \
-    -L 8090:localhost:8090 \
-    -L 8091:localhost:8091 \
-    <ssh-user>@<spark-address>
+Host microduck-spark
+    HostName <spark-address>
+    User ducklab-user
+    LocalForward 8091 localhost:8091
+    LocalForward 8080 localhost:8080
+    LocalForward 8090 localhost:8090
+    LocalForward 8081 localhost:8081
+    LocalForward 8092 localhost:8092
+    LocalForward 8082 localhost:8082
+    LocalForward 8093 localhost:8093
+    LocalForward 8083 localhost:8083
+    LocalForward 8094 localhost:8094
+    LocalForward 8084 localhost:8084
+    LocalForward 8095 localhost:8095
+    LocalForward 8085 localhost:8085
+    LocalForward 8096 localhost:8096
 ```
 
-Open `http://localhost:8091`. Every immutable run has a **Play** button. A
-click validates the checkpoint hash, launches the correct mjlab task on CPU,
-and opens Viser and the Xbox controller in separate browser tabs. If the
-browser blocks those tabs, allow pop-ups for `localhost:8091`. Only one viewer
-is managed at a time; use **Stop viewer** before selecting another candidate.
-The control center refuses to take over or kill an older viewer it did not
-launch, so manually stop an existing terminal-launched Viser session first.
+Connect with `ssh microduck-spark`, then open `http://localhost:8091`. **Open
+simulation** validates that exact saved model, assigns it an isolated arena and
+controller pair, and opens only its arena. The **Open simulations** section is
+the source of truth: it identifies every model, its ports, and provides explicit
+**Open arena**, **Open Xbox controller**, and **Stop** actions. Reopening a model
+reuses its own session; opening another model does not replace it. Up to six can
+be open concurrently.
+
+The dashboard never guesses that an occupied port belongs to the requested
+model. It skips externally occupied pairs and reports a clear error if the pool
+is full. A normal dashboard shutdown also closes the simulations it owns, which
+prevents stale arenas from surviving a restart.
 
 ### DuckLab Assistant
 

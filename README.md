@@ -99,8 +99,10 @@ make bench-list
 make bench-dashboard
 ```
 
-The dashboard provides one-click **Play** buttons that launch the selected
-checkpoint and open Viser plus the Xbox controller. Its local DuckLab Assistant
+The dashboard provides one-click **Open simulation** buttons that launch each
+selected model in an isolated Viser/controller session. Multiple saved policies
+can remain open side by side, and the dashboard always shows which arena and
+controller belong together. Its local DuckLab Assistant
 can turn a request such as “train swizzle for 8000 iterations with 4096
 environments” into a validated configuration and an explicit confirmation
 button. It cannot execute arbitrary shell commands and blocks concurrent full
@@ -114,9 +116,9 @@ sim-qualified swizzle checkpoint after verifying its hash. See
 
 ### Test a policy with an Xbox controller
 
-The remote Viser launcher includes a browser-based Xbox controller bridge. Stop
-any older viewer process, then connect to the Spark from your local computer
-with both ports forwarded:
+The remote Viser launcher includes a browser-based Xbox controller bridge. For
+a single direct viewer, connect to the Spark from your local computer with both
+ports forwarded:
 
 ```bash
 ssh -L 8080:localhost:8080 -L 8090:localhost:8090 <ssh-user>@<spark-address>
@@ -140,7 +142,9 @@ negative command means braking and it was not trained for reverse. Use the
 **Swizzle** preset with a qualified swizzle checkpoint for symmetric forward
 and reverse control. This interface controls simulation only and is not a
 physical-robot safety system. See [docs/GAMEPAD.md](docs/GAMEPAD.md) for the
-complete workflow and troubleshooting notes.
+complete workflow and troubleshooting notes. Policy Bench can run multiple
+models at once; its full SSH forwarding configuration is in
+[docs/POLICY_BENCH.md](docs/POLICY_BENCH.md#dashboard-control-center).
 
 The default is 4,096 environments and 5,000 PPO iterations. Override either
 setting with `DUCKLAB_ENVS` and `DUCKLAB_ITERATIONS`, as with walking. The

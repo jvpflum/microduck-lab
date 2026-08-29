@@ -14,6 +14,7 @@ import subprocess
 import threading
 import shutil
 import time
+from dataclasses import dataclass
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -39,6 +40,32 @@ TASKS = {
         "default_iterations": 4000,
     },
 }
+
+# The dashboard itself owns 8091. Each simulation gets an isolated Viser and
+# controller pair so selecting one policy can never redirect an existing tab
+# to another policy. Forward this bounded pool over SSH for remote use.
+VIEWER_PORT_PAIRS = (
+    (8080, 8090),
+    (8081, 8092),
+    (8082, 8093),
+    (8083, 8094),
+    (8084, 8095),
+    (8085, 8096),
+)
+
+
+@dataclass
+class ViewerSession:
+    run_id: str
+    label: str
+    task: str
+    iteration: int | None
+    process: subprocess.Popen[bytes]
+    log_handle: Any
+    log_path: Path
+    viser_port: int
+    controller_port: int
+    started_at: float
 
 
 def json_bytes(value: Any) -> bytes:
@@ -75,6 +102,38 @@ def running_training_processes() -> list[dict[str, Any]]:
     return sorted(matches, key=lambda item: item["pid"])
 
 
+def cleanup_orphaned_dashboard_viewers(
+    state_dir: Path = DEFAULT_STATE, proc_root: Path = Path("/proc")
+) -> int:
+    """Stop viewer groups left by an unclean dashboard termination.
+
+    Only processes loading immutable Policy Bench snapshots are in scope; a
+    viewer launched manually from an upstream log directory is left alone.
+    """
+    groups: set[int] = set()
+    proc = proc_root
+    if not proc.is_dir():
+        return 0
+    snapshot_root = str((state_dir / "runs").resolve())
+    for entry in proc.iterdir():
+        if not entry.name.isdigit() or int(entry.name) == os.getpid():
+            continue
+        try:
+            command = (entry / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
+            pid = int(entry.name)
+            process_group = os.getpgid(pid)
+        except (OSError, PermissionError, ProcessLookupError):
+            continue
+        if "tools/play_viser_compat.py" in command and snapshot_root in command and process_group == pid:
+            groups.add(process_group)
+    for process_group in groups:
+        try:
+            os.killpg(process_group, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    return len(groups)
+
+
 def training_progress() -> dict[str, Any] | None:
     """Read the newest local training log without depending on W&B."""
     logs = sorted((LAB_ROOT / "reports").glob("train-*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
@@ -87,7 +146,20 @@ def training_progress() -> dict[str, Any] | None:
         totals = re.findall(r"Learning iteration\s*\d+/(\d+)", text)
         eta = re.findall(r"ETA:\s*([^\n\r]+)", text)
         if iterations:
-            return {"log": str(path), "iteration": int(iterations[-1]), "total": int(totals[-1]) if totals else None, "eta": eta[-1].strip() if eta else None}
+            reward_history = [
+                {"iteration": int(iteration), "reward": float(reward)}
+                for iteration, reward in re.findall(
+                    r"Learning iteration\s*(\d+)/\d+[\s\S]*?Mean reward:\s*([-+\d.eE]+)",
+                    text,
+                )[-80:]
+            ]
+            return {
+                "log": str(path),
+                "iteration": int(iterations[-1]),
+                "total": int(totals[-1]) if totals else None,
+                "eta": eta[-1].strip() if eta else None,
+                "reward_history": reward_history,
+            }
     return None
 
 
@@ -169,9 +241,7 @@ class ProcessManager:
     def __init__(self, bench: Bench):
         self.bench = bench
         self.lock = threading.Lock()
-        self.viewer: subprocess.Popen[bytes] | None = None
-        self.viewer_run_id: str | None = None
-        self.viewer_log = None
+        self.viewers: dict[str, ViewerSession] = {}
         self.training: subprocess.Popen[bytes] | None = None
         self.training_config: dict[str, Any] | None = None
         self.training_log = None
@@ -181,12 +251,10 @@ class ProcessManager:
         return process is not None and process.poll() is None
 
     def _reap_finished_locked(self) -> None:
-        if self.viewer is not None and self.viewer.poll() is not None:
-            self.viewer = None
-            self.viewer_run_id = None
-            if self.viewer_log:
-                self.viewer_log.close()
-                self.viewer_log = None
+        for run_id, session in list(self.viewers.items()):
+            if session.process.poll() is not None:
+                session.log_handle.close()
+                del self.viewers[run_id]
         if self.training is not None and self.training.poll() is not None:
             self.training = None
             self.training_config = None
@@ -197,13 +265,19 @@ class ProcessManager:
     def status(self) -> dict[str, Any]:
         with self.lock:
             self._reap_finished_locked()
-            viewer_alive = self._alive(self.viewer)
             training_alive = self._alive(self.training)
+            viewers = [
+                self._viewer_result(session, reused=True)
+                for session in sorted(self.viewers.values(), key=lambda item: item.started_at)
+            ]
             return {
+                "viewers": viewers,
+                # Kept for compatibility with older clients while the UI and
+                # chat move to the explicit session list.
                 "viewer": {
-                    "running": viewer_alive,
-                    "run_id": self.viewer_run_id if viewer_alive else None,
-                    "pid": self.viewer.pid if viewer_alive and self.viewer else None,
+                    "running": bool(viewers),
+                    "run_id": viewers[0]["run_id"] if viewers else None,
+                    "pid": viewers[0]["pid"] if viewers else None,
                 },
                 "training": {
                     "managed_running": training_alive,
@@ -227,28 +301,35 @@ class ProcessManager:
             raise ValueError("The checkpoint snapshot is missing or failed its hash check")
         with self.lock:
             self._reap_finished_locked()
-            if self._alive(self.viewer):
-                if self.viewer_run_id == run_id:
-                    return self._viewer_result(run_id, reused=True)
-                raise ValueError("Another dashboard-managed viewer is running. Stop it before playing a different run.")
-            unavailable = [port for port in (8080, 8090) if not port_available(port)]
-            if unavailable:
-                # A viewer may have survived a dashboard restart, so the
-                # manager no longer owns its Popen handle even though the
-                # standard endpoints are healthy. Reuse those endpoints and
-                # let the UI open them instead of failing with a port error.
-                return {
-                    "run_id": run_id,
-                    "reused": True,
-                    "external": True,
-                    "viser_url": "http://localhost:8080",
-                    "controller_url": "http://localhost:8090",
-                    "pid": None,
-                    "log": None,
-                }
-            log_path = LAB_ROOT / "reports" / f"policy-bench-viewer-{int(time.time())}.log"
+            existing = self.viewers.get(run_id)
+            if existing is not None and self._alive(existing.process):
+                return self._viewer_result(existing, reused=True)
+            reserved = {
+                port
+                for session in self.viewers.values()
+                for port in (session.viser_port, session.controller_port)
+            }
+            pair = next(
+                (
+                    (viser_port, controller_port)
+                    for viser_port, controller_port in VIEWER_PORT_PAIRS
+                    if viser_port not in reserved
+                    and controller_port not in reserved
+                    and port_available(viser_port)
+                    and port_available(controller_port)
+                ),
+                None,
+            )
+            if pair is None:
+                raise ValueError(
+                    "All viewer slots are occupied. Stop an existing simulation in Viewer sessions, "
+                    "or close an older terminal-launched viewer."
+                )
+            viser_port, controller_port = pair
+            safe_run_id = re.sub(r"[^a-zA-Z0-9._-]+", "-", run_id)[:80]
+            log_path = LAB_ROOT / "reports" / f"policy-bench-viewer-{safe_run_id}-{int(time.time())}.log"
             log_path.parent.mkdir(parents=True, exist_ok=True)
-            self.viewer_log = log_path.open("ab", buffering=0)
+            log_handle = log_path.open("ab", buffering=0)
             command = [
                 str(LAB_ROOT / ".tools" / "uv" / "bin" / "uv"),
                 "run",
@@ -265,51 +346,83 @@ class ProcessManager:
             ]
             environment = os.environ.copy()
             environment["WANDB_MODE"] = "disabled"
-            environment["DUCKLAB_GAMEPAD_PORT"] = "8090"
-            self.viewer = subprocess.Popen(
-                command,
-                cwd=UPSTREAM,
-                env=environment,
-                stdout=self.viewer_log,
-                stderr=subprocess.STDOUT,
-                start_new_session=True,
+            environment["DUCKLAB_VISER_PORT"] = str(viser_port)
+            environment["DUCKLAB_GAMEPAD_PORT"] = str(controller_port)
+            try:
+                process = subprocess.Popen(
+                    command,
+                    cwd=UPSTREAM,
+                    env=environment,
+                    stdout=log_handle,
+                    stderr=subprocess.STDOUT,
+                    start_new_session=True,
+                )
+            except Exception:
+                log_handle.close()
+                raise
+            session = ViewerSession(
+                run_id=run_id,
+                label=manifest.get("experiment_label") or Path(manifest["source_run_dir"]).name,
+                task=task,
+                iteration=manifest.get("latest_iteration"),
+                process=process,
+                log_handle=log_handle,
+                log_path=log_path,
+                viser_port=viser_port,
+                controller_port=controller_port,
+                started_at=time.time(),
             )
-            self.viewer_run_id = run_id
-            return self._viewer_result(run_id, reused=False, log_path=log_path)
+            self.viewers[run_id] = session
+            return self._viewer_result(session, reused=False)
 
-    def _viewer_result(self, run_id: str, reused: bool, log_path: Path | None = None) -> dict[str, Any]:
+    @staticmethod
+    def _viewer_result(session: ViewerSession, reused: bool) -> dict[str, Any]:
         return {
-            "run_id": run_id,
+            "run_id": session.run_id,
+            "label": session.label,
+            "task": session.task,
+            "iteration": session.iteration,
             "reused": reused,
-            "viser_url": "http://localhost:8080",
-            "controller_url": "http://localhost:8090",
-            "pid": self.viewer.pid if self.viewer else None,
-            "log": str(log_path) if log_path else None,
+            "viser_url": f"http://localhost:{session.viser_port}",
+            "controller_url": f"http://localhost:{session.controller_port}",
+            "viser_port": session.viser_port,
+            "controller_port": session.controller_port,
+            "pid": session.process.pid,
+            "log": str(session.log_path),
+            "started_at": session.started_at,
         }
 
-    def stop_viewer(self) -> dict[str, Any]:
+    @staticmethod
+    def _terminate_viewer(session: ViewerSession) -> None:
+        try:
+            os.killpg(session.process.pid, signal.SIGTERM)
+            session.process.wait(timeout=8)
+        except ProcessLookupError:
+            pass
+        except subprocess.TimeoutExpired:
+            os.killpg(session.process.pid, signal.SIGKILL)
+            session.process.wait(timeout=3)
+        finally:
+            session.log_handle.close()
+
+    def stop_viewer(self, run_id: str | None = None) -> dict[str, Any]:
         with self.lock:
             self._reap_finished_locked()
-            if not self._alive(self.viewer):
-                self.viewer = None
-                self.viewer_run_id = None
-                return {"stopped": False, "message": "No dashboard-managed viewer is running."}
-            assert self.viewer is not None
-            pid = self.viewer.pid
-            try:
-                os.killpg(pid, signal.SIGTERM)
-                self.viewer.wait(timeout=8)
-            except ProcessLookupError:
-                pass
-            except subprocess.TimeoutExpired:
-                os.killpg(pid, signal.SIGKILL)
-                self.viewer.wait(timeout=3)
-            self.viewer = None
-            self.viewer_run_id = None
-            if self.viewer_log:
-                self.viewer_log.close()
-                self.viewer_log = None
-            return {"stopped": True, "pid": pid}
+            if run_id:
+                session = self.viewers.pop(run_id, None)
+                if session is None:
+                    return {"stopped": False, "message": "That simulation is not running."}
+                self._terminate_viewer(session)
+                return {"stopped": True, "run_id": run_id, "pid": session.process.pid}
+            sessions = list(self.viewers.values())
+            self.viewers.clear()
+            for session in sessions:
+                self._terminate_viewer(session)
+            return {
+                "stopped": bool(sessions),
+                "count": len(sessions),
+                "message": f"Stopped {len(sessions)} simulation{'s' if len(sessions) != 1 else ''}." if sessions else "No simulations are running.",
+            }
 
     def start_training(self, config: dict[str, Any]) -> dict[str, Any]:
         task = config.get("task")
@@ -422,7 +535,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if self.path == "/api/play":
                 self._send_json(self.server.manager.launch_viewer(str(body.get("run_id", ""))))
             elif self.path == "/api/stop-viewer":
-                self._send_json(self.server.manager.stop_viewer())
+                run_id = str(body.get("run_id", "")).strip() or None
+                self._send_json(self.server.manager.stop_viewer(run_id))
             elif self.path == "/api/star":
                 run_id = str(body.get("run_id", ""))
                 self._send_json(self.server.bench.star(run_id) if body.get("star", True) else self.server.bench.unstar(run_id))
@@ -455,8 +569,8 @@ class DashboardServer(ThreadingHTTPServer):
             status = self.manager.status()
             detected = status["training"]["detected"]
             reply = "Training is running." if detected else "No training process is currently detected."
-            if status["viewer"]["running"]:
-                reply += f" Viewer is playing {status['viewer']['run_id']}."
+            if status["viewers"]:
+                reply += f" {len(status['viewers'])} simulation(s) are open."
             return {"kind": "status", "reply": reply, "status": status}
         request = parse_training_request(text)
         if request is not None:
@@ -517,11 +631,19 @@ def main() -> None:
     parser.add_argument("--state-dir", type=Path, default=DEFAULT_STATE)
     parser.add_argument("--port", type=int, default=8091)
     args = parser.parse_args()
+    cleaned = cleanup_orphaned_dashboard_viewers(args.state_dir)
+    if cleaned:
+        print(f"Cleaned up {cleaned} stale dashboard viewer session(s).", flush=True)
     bench = Bench(args.state_dir)
     bench.initialize()
     bench.render_dashboard()
     server = DashboardServer(("127.0.0.1", args.port), bench)
     print(f"Policy Bench control center: http://127.0.0.1:{args.port}", flush=True)
+    def request_shutdown(_signum: int, _frame: Any) -> None:
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGTERM, request_shutdown)
+    signal.signal(signal.SIGHUP, request_shutdown)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

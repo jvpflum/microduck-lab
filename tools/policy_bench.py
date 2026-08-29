@@ -158,7 +158,7 @@ def active_training_experiments() -> set[str]:
     experiments: set[str] = set()
     proc = Path("/proc")
     if not proc.is_dir():
-        return tasks
+        return experiments
     for entry in proc.iterdir():
         if not entry.name.isdigit() or int(entry.name) == os.getpid():
             continue
@@ -518,7 +518,6 @@ class Bench:
         # the original walking run), but never add smoke rows beside a real
         # training job for the same task.
         manifests = [item for item in all_manifests if item.get("experiment_kind", "training") != "smoke" or item.get("task") not in real_tasks]
-        hidden_smoke = len(all_manifests) - len(manifests)
         def experiment_key(manifest: dict[str, Any]) -> str:
             # A run name is the user-facing job identity. Resume attempts may
             # create a new timestamped source directory, but must remain one
@@ -531,7 +530,6 @@ class Bench:
                 return f"{manifest.get('task', 'unknown')}:{label}"
             return manifest.get("experiment_id") or f"{manifest.get('task', 'unknown')}:{manifest.get('source_run_dir', manifest['run_id'])}"
 
-        experiments = {experiment_key(manifest) for manifest in manifests}
         active_experiments = active_training_experiments() if active_experiments is None else active_experiments
         grouped: dict[str, list[dict[str, Any]]] = {}
         for manifest in manifests:
@@ -543,8 +541,14 @@ class Bench:
             newest = group[0]
             label = newest.get("experiment_label") or newest["source_run_dir"].rsplit("/", 1)[-1]
             state = "active" if newest.get("experiment_kind") == "training" and label in active_experiments else "finished/snapshot"
+            # Retries and discovery passes can snapshot the same iteration
+            # more than once. That is useful provenance, but it is not another
+            # user-facing saved model.
+            distinct_versions: dict[int | None, dict[str, Any]] = {}
+            for manifest in sorted(group, key=lambda item: item.get("created_at", ""), reverse=True):
+                distinct_versions.setdefault(manifest.get("latest_iteration"), manifest)
             snapshots = []
-            for manifest in sorted(group, key=lambda item: item.get("latest_iteration") or -1, reverse=True):
+            for manifest in sorted(distinct_versions.values(), key=lambda item: item.get("latest_iteration") or -1, reverse=True):
                 score = None
                 for evaluation in manifest.get("evaluations", []):
                     try:
@@ -562,20 +566,26 @@ class Bench:
                     f"<td><a href='runs/{html.escape(manifest['run_id'])}/report.html'>Details</a> "
                     f"<button class='star' data-run-id='{html.escape(manifest['run_id'])}'>{'Unstar' if manifest.get('starred') else '★ Star'}</button></td></tr>"
                 )
-            latest = max(group, key=lambda item: item.get("latest_iteration") or -1)
+            latest = max(
+                distinct_versions.values(),
+                key=lambda item: (item.get("latest_iteration") or -1, item.get("created_at", "")),
+            )
             if state == "active":
                 active_rows.append(
-                    f"<p><strong>{html.escape(label)}</strong> · {html.escape(newest['task'])} · "
-                    f"latest saved checkpoint {latest.get('latest_iteration')} · "
-                    f"<button class='play' data-run-id='{html.escape(latest['run_id'])}' data-label='▶ View latest saved'>▶ View latest saved</button></p>"
+                    "<article class='run-card'>"
+                    f"<div><span class='status-dot'></span><strong>{html.escape(label)}</strong> "
+                    f"<span class='pill'>{html.escape(newest['task'])}</span>"
+                    f"<p class='muted'>Training now · latest saved model: iteration {latest.get('latest_iteration')}</p></div>"
+                    f"<button class='play' data-run-id='{html.escape(latest['run_id'])}' "
+                    "data-label='Open saved model'>Open saved model</button></article>"
                 )
             row = (
                 "<tr>"
                 f"<td>{html.escape(label)}</td><td>{html.escape(newest['task'])}</td>"
-                f"<td>{html.escape(newest.get('experiment_kind', 'training'))}</td>"
-                f"<td>{state}</td><td>{len(group)}</td>"
+                f"<td>{'Smoke check' if newest.get('experiment_kind') == 'smoke' else 'Training'}</td>"
+                f"<td>{'Active' if state == 'active' else 'Finished'}</td><td>{len(distinct_versions)}</td>"
                 f"<td>{max(item.get('latest_iteration') or -1 for item in group)}</td>"
-                f"<td><button class='play' data-run-id='{html.escape(latest['run_id'])}' data-label='▶ Play latest ({latest.get('latest_iteration')})'>▶ Play latest ({latest.get('latest_iteration')})</button> "
+                f"<td><button class='play' data-run-id='{html.escape(latest['run_id'])}' data-label='Open simulation'>Open simulation</button> "
                 "<details><summary>Saved versions</summary>"
                 "<table><tr><th>Saved version</th><th>Stage</th><th>Score</th><th>Evaluations</th><th>Star</th><th>Actions</th></tr>"
                 + "".join(snapshots)
@@ -590,34 +600,41 @@ class Bench:
             for task, stages in registry.get("tasks", {}).items()
         ) or "<li>No promoted policies yet</li>"
         content = (
-            f"<p>MicroDuck training control center. Showing {len(experiments)} training runs across {len(manifests)} saved versions. "
-            f"{hidden_smoke} smoke-test snapshots are hidden.</p>"
-            "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
-            "<span id='play-links'></span> <button id='stop-viewer' type='button'>Stop viewer</button></div>"
-            "<h2>Active training jobs</h2><div class='panel' id='active-training'>"
+            "<div class='summary-strip'><span id='system-status'>Checking system status…</span></div>"
+            "<h2>Active training</h2><div class='panel' id='active-training'>"
             + ("".join(active_rows) or "<p id='active-empty'>No active training jobs.</p>")
-            + "<div class='progress'><span id='training-progress-bar'></span></div><p id='training-progress'>Checking progress…</p></div>"
-            f"<h2>Registry</h2><ul>{champions}</ul>"
-            "<h2>Finished training runs</h2><p>Each row is one completed or saved training job. <strong>Play latest</strong> tests the highest saved iteration. Open <em>Saved versions</em> only to inspect older versions.</p>"
-            "<table><tr><th>Training run</th><th>Skill</th><th>Kind</th><th>Source state</th><th>Saved versions</th><th>Latest version</th><th>Open</th></tr>"
+            + "<div class='progress' aria-label='Training progress'><span id='training-progress-bar'></span></div>"
+            "<p id='training-progress' class='progress-copy'>Checking progress…</p>"
+            "<div id='live-reward' class='live-curve' hidden><div class='curve-heading'><strong>Recent mean reward</strong><span id='reward-range' class='muted'></span></div>"
+            "<svg viewBox='0 0 720 170' role='img' aria-label='Recent training mean reward'><line x1='28' y1='145' x2='700' y2='145'></line><polyline id='reward-line' points=''></polyline></svg></div></div>"
+            "<h2>Open simulations</h2><div class='panel'>"
+            "<div class='section-heading'><p class='muted'>Each model runs in its own arena. Open its controller only when you want to drive that model.</p>"
+            "<button id='stop-all-viewers' class='secondary' type='button'>Stop all</button></div>"
+            "<div id='viewer-sessions' class='session-grid'><p>No simulations open.</p></div></div>"
+            "<h2>Finished training runs</h2><p class='muted'>Open a run's latest saved model. Older saved versions stay tucked away unless you need them.</p>"
+            "<div class='table-wrap'><table><tr><th>Training run</th><th>Skill</th><th>Kind</th><th>Status</th><th>Saved models</th><th>Latest iteration</th><th>Actions</th></tr>"
             + "".join(finished_rows)
-            + "</table>"
+            + "</table></div>"
+            f"<h2>Promoted policies</h2><div class='panel'><ul>{champions}</ul></div>"
             + "<h2>DuckLab Assistant</h2><div class='panel'><div id='chat-log' class='chat-log'>"
-            + "<p><strong>DuckLab:</strong> Tell me what you want to do. Try “train swizzle for 8000 iterations with 4096 environments”.</p>"
-            + "</div><form id='chat-form'><input id='chat-input' autocomplete='off' placeholder='What should MicroDuck learn next?'>"
+            + "<p><strong>DuckLab:</strong> Tell me what you want MicroDuck to learn or ask what is running.</p>"
+            + "</div><form id='chat-form'><input id='chat-input' autocomplete='off' placeholder='Example: train MicroDuck to skate backwards'>"
             + "<button type='submit'>Send</button></form><div id='chat-action'></div></div>"
             + "<script>"
             + "const TOKEN='__CONTROL_TOKEN__';"
             + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
             + "function say(who,text){const p=document.createElement('p');const b=document.createElement('strong');b.textContent=who+': ';p.appendChild(b);p.appendChild(document.createTextNode(text));document.querySelector('#chat-log').appendChild(p);p.scrollIntoView();}"
-            + "function showPlayLinks(result){const box=document.querySelector('#play-links');box.innerHTML='<strong>Viewer ready:</strong> <a target=\"_blank\" href=\"'+result.viser_url+'\">Open Viser</a> · <a target=\"_blank\" href=\"'+result.controller_url+'\">Open Xbox controller</a>'; }"
-            + "async function openWhenReady(win,url){for(let i=0;i<30;i++){try{await fetch(url,{mode:'no-cors',cache:'no-store'});if(win)win.location=url;return;}catch(e){await new Promise(r=>setTimeout(r,500));}}if(win)win.location=url;}"
-            + "async function playRun(button){const viser=window.open('about:blank','microduck-viser');button.disabled=true;button.textContent='Starting…';try{const result=await api('/api/play',{run_id:button.dataset.runId});await openWhenReady(viser,result.viser_url);showPlayLinks(result);button.disabled=false;button.textContent='↗ Reopen Viser';setTimeout(refreshStatus,1000);}catch(error){if(viser)viser.close();alert(error.message);button.disabled=false;button.textContent=button.dataset.label||'▶ Play';}}"
+            + "function shortRun(id){return id.length>54?id.slice(0,51)+'…':id;}"
+            + "function sessionCard(v){const card=document.createElement('article');card.className='session-card';const info=document.createElement('div');const title=document.createElement('strong');title.textContent=v.label||shortRun(v.run_id);title.title=v.run_id;const ports=document.createElement('p');ports.className='muted';ports.textContent=(v.task||'policy')+(v.iteration!==null?' · saved iteration '+v.iteration:'')+' · arena '+v.viser_port+' · controller '+v.controller_port;info.append(title,ports);const actions=document.createElement('div');actions.className='session-actions';const arena=document.createElement('a');arena.href=v.viser_url;arena.target='_blank';arena.textContent='Open arena';const controller=document.createElement('a');controller.href=v.controller_url;controller.target='_blank';controller.textContent='Open Xbox controller';const stop=document.createElement('button');stop.className='danger';stop.textContent='Stop';stop.onclick=async()=>{stop.disabled=true;try{await api('/api/stop-viewer',{run_id:v.run_id});await refreshStatus();}catch(e){alert(e.message);stop.disabled=false;}};actions.append(arena,controller,stop);card.append(info,actions);return card;}"
+            + "function renderSessions(viewers){const box=document.querySelector('#viewer-sessions');box.replaceChildren();if(!viewers.length){const p=document.createElement('p');p.textContent='No simulations open.';box.appendChild(p);}else{viewers.forEach(v=>box.appendChild(sessionCard(v)));}const stopAll=document.querySelector('#stop-all-viewers');stopAll.disabled=!viewers.length;}"
+            + "function renderReward(history){const box=document.querySelector('#live-reward');if(!history||history.length<2){box.hidden=true;return;}box.hidden=false;const values=history.map(p=>p.reward),ordered=[...values].sort((a,b)=>a-b);const rawLow=ordered[0],rawHigh=ordered[ordered.length-1];const low=ordered[Math.floor((ordered.length-1)*.05)],high=ordered[Math.ceil((ordered.length-1)*.95)],span=high-low||1;const points=history.map((p,i)=>{const shown=Math.max(low,Math.min(high,p.reward));return(28+i*672/(history.length-1)).toFixed(1)+','+(145-(shown-low)*120/span).toFixed(1)}).join(' ');document.querySelector('#reward-line').setAttribute('points',points);const latest=history[history.length-1];document.querySelector('#reward-range').textContent='iteration '+history[0].iteration+' → '+latest.iteration+' · latest '+latest.reward.toFixed(2)+' · raw range '+rawLow.toFixed(2)+' to '+rawHigh.toFixed(2)+' · chart clips outer 5%';}"
+            + "async function openWhenReady(win,url){for(let i=0;i<120;i++){try{await fetch(url,{mode:'no-cors',cache:'no-store'});if(win&&!win.closed)win.location=url;return;}catch(e){await new Promise(r=>setTimeout(r,500));}}if(win&&!win.closed)win.location=url;}"
+            + "async function playRun(button){const label=button.dataset.label||'Open simulation';const windowName='microduck-viser-'+button.dataset.runId.replace(/[^a-zA-Z0-9]/g,'-');const viser=window.open('about:blank',windowName);button.disabled=true;button.textContent='Starting simulation…';try{const result=await api('/api/play',{run_id:button.dataset.runId});await refreshStatus();await openWhenReady(viser,result.viser_url);}catch(error){if(viser&&!viser.closed)viser.close();alert(error.message);}finally{button.disabled=false;button.textContent=label;}}"
             + "document.querySelectorAll('.play').forEach(button=>button.addEventListener('click',()=>playRun(button)));"
             + "document.querySelectorAll('.star').forEach(button=>button.addEventListener('click',async()=>{try{const starred=button.textContent.includes('Star');await api('/api/star',{run_id:button.dataset.runId,star:starred});location.reload();}catch(error){alert(error.message);}}));"
-            + "document.querySelector('#stop-viewer').addEventListener('click',async()=>{try{const result=await api('/api/stop-viewer',{});say('DuckLab',result.message||'Viewer stopped.');document.querySelectorAll('.play').forEach(button=>{button.disabled=false;button.textContent=button.dataset.label||'▶ Play';});refreshStatus();}catch(error){say('DuckLab',error.message);}});"
-            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const v=s.viewer.running?'Playing '+s.viewer.run_id:'Viewer stopped';const detected=s.training.detected.length;const p=s.training.progress;const t=detected?'Training running (PID '+s.training.detected[0].pid+')'+(p?' · iteration '+p.iteration+(p.total?' / '+p.total:'')+' · ETA '+p.eta:''):'No training detected';document.querySelector('#system-status').textContent=v+' · '+t;document.querySelector('#training-progress').textContent=t;const bar=document.querySelector('#training-progress-bar');bar.style.width=p&&p.total?Math.min(100,100*p.iteration/p.total)+'%':'0%';document.querySelector('#stop-viewer').disabled=!s.viewer.running;document.querySelector('#stop-viewer').textContent=s.viewer.running?'Stop viewer':'No viewer running';if(s.viewer.running)showPlayLinks({viser_url:'http://localhost:8080',controller_url:'http://localhost:8090'});}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
-            + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('DuckLab',response.reply);if(response.kind==='confirm-training'){const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const result=await api('/api/train',response.action);say('DuckLab','Training started as PID '+result.pid+'. Log: '+result.log);refreshStatus();}catch(error){say('DuckLab',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){const a=document.createElement('a');a.href=response.result.viser_url;a.target='_blank';a.textContent='Open Viser';document.querySelector('#chat-action').appendChild(a);}}catch(error){say('DuckLab',error.message);}});"
+            + "document.querySelector('#stop-all-viewers').addEventListener('click',async()=>{try{await api('/api/stop-viewer',{});await refreshStatus();}catch(error){alert(error.message);}});"
+            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const detected=s.training.detected.length;const p=s.training.progress;const pct=p&&p.total?Math.min(100,100*p.iteration/p.total):0;const t=detected?'Training running'+(p?' · iteration '+p.iteration+(p.total?' / '+p.total:'')+(p.eta?' · ETA '+p.eta:''):''):'No training running';document.querySelector('#system-status').textContent=t+' · '+s.viewers.length+' simulation'+(s.viewers.length===1?'':'s')+' open';document.querySelector('#training-progress').textContent=t+(p&&p.total?' · '+pct.toFixed(1)+'% complete':'');document.querySelector('#training-progress-bar').style.width=pct+'%';renderReward(p&&p.reward_history);renderSessions(s.viewers||[]);}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
+            + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('DuckLab',response.reply);if(response.kind==='confirm-training'){const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const result=await api('/api/train',response.action);say('DuckLab','Training started.');refreshStatus();}catch(error){say('DuckLab',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){await refreshStatus();}}catch(error){say('DuckLab',error.message);}});"
             + "refreshStatus();setInterval(refreshStatus,5000);"
             + "</script>"
         )
@@ -651,13 +668,24 @@ def load_metrics_module():
 def page(title: str, body: str) -> str:
     return f"""<!doctype html><html lang='en'><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'><title>{html.escape(title)}</title>
-<style>body{{font:16px system-ui;max-width:1200px;margin:40px auto;padding:0 20px;background:#101418;color:#edf2f7}}
-a{{color:#65c7ff}}table{{width:100%;border-collapse:collapse}}th,td{{padding:9px;border-bottom:1px solid #34404b;text-align:left}}
-.badge{{background:#1f6f50;border-radius:999px;padding:3px 9px}}pre,.mono{{font-family:ui-monospace,monospace;overflow:auto;background:#171d23;padding:12px}}
-.panel{{background:#171d23;border:1px solid #34404b;border-radius:10px;padding:14px;margin:12px 0}}button{{background:#1f8a63;color:white;border:0;border-radius:7px;padding:8px 12px;cursor:pointer}}
-button:disabled{{opacity:.55;cursor:wait}}form{{display:flex;gap:8px}}input{{flex:1;background:#0d1115;color:#edf2f7;border:1px solid #51606e;border-radius:7px;padding:10px}}
-.chat-log{{max-height:280px;overflow:auto}}#chat-action{{margin-top:10px}}#chat-action a{{margin-left:10px}}
-.chart{{background:#171d23;border:1px solid #34404b;border-radius:10px;padding:10px;margin:12px 0}}.chart svg{{display:block;width:100%;height:auto}}.muted{{color:#9aa7b2;font-size:.9em}}details{{margin-top:8px;padding:8px 10px;background:#11171c;border:1px solid #34404b;border-radius:8px}}details summary{{cursor:pointer;font-weight:600}}details table{{margin-top:10px;font-size:.92em}}td button{{margin:2px 4px 2px 0}}.progress{{height:14px;background:#27313a;border-radius:99px;overflow:hidden;margin:10px 0}}.progress span{{display:block;height:100%;background:#31c48d;width:0;transition:width .5s}}</style></head>
+<style>
+:root{{--bg:#0b0f14;--surface:#121922;--surface-2:#18222e;--line:#2a3948;--text:#f2f7fb;--muted:#99a9b8;--brand:#45d6a0;--brand-2:#5dbdff;--danger:#dc5d68}}
+*{{box-sizing:border-box}}body{{font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;max-width:1240px;margin:0 auto;padding:44px 24px 80px;background:radial-gradient(circle at 50% -20%,#162638 0,var(--bg) 42%);color:var(--text)}}
+h1{{font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.045em;margin:0 0 8px}}h2{{font-size:1.22rem;letter-spacing:-.015em;margin:34px 0 10px}}p{{margin:7px 0}}a{{color:var(--brand-2);text-decoration:none}}a:hover{{text-decoration:underline}}
+.lede{{font-size:1.05rem;color:var(--muted);margin-bottom:22px}}.summary-strip{{display:flex;align-items:center;min-height:48px;padding:12px 16px;border:1px solid #285345;border-radius:12px;background:#10251f;color:#c9f9e7}}
+.panel{{background:color-mix(in srgb,var(--surface) 94%,transparent);border:1px solid var(--line);border-radius:14px;padding:18px;margin:10px 0;box-shadow:0 14px 35px rgba(0,0,0,.14)}}
+.section-heading,.run-card,.session-card,.session-actions{{display:flex;align-items:center;gap:12px}}.section-heading,.run-card,.session-card{{justify-content:space-between}}.run-card{{padding:4px 0 14px}}.run-card+.run-card{{border-top:1px solid var(--line);padding-top:14px}}
+.status-dot{{display:inline-block;width:9px;height:9px;margin-right:9px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 5px rgba(69,214,160,.12)}}.pill,.badge{{display:inline-block;background:#203445;color:#cfeaff;border-radius:999px;padding:2px 9px;font-size:.78rem;margin-left:7px}}
+button,.session-actions a{{appearance:none;border:0;border-radius:9px;padding:9px 13px;background:#197c5c;color:white;font:inherit;font-weight:650;cursor:pointer;white-space:nowrap}}button:hover,.session-actions a:hover{{filter:brightness(1.12);text-decoration:none}}button:disabled{{opacity:.48;cursor:not-allowed}}button.secondary{{background:#293847}}button.danger{{background:#552b32;color:#ffcdd2}}
+.session-grid{{display:grid;gap:10px}}.session-card{{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:14px 15px}}.session-actions a{{background:#24445d}}.session-actions a:first-child{{background:#197c5c}}
+.progress{{height:12px;background:#26323d;border-radius:99px;overflow:hidden;margin:15px 0 8px}}.progress span{{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#79e8ff);transition:width .5s}}.progress-copy{{color:#d5e2eb}}
+.live-curve{{margin-top:15px;padding:12px 13px;background:#0d141b;border:1px solid var(--line);border-radius:10px}}.live-curve[hidden]{{display:none}}.curve-heading{{display:flex;justify-content:space-between;gap:12px;align-items:baseline}}.live-curve svg{{display:block;width:100%;height:auto;max-height:180px}}.live-curve line{{stroke:#30404e}}.live-curve polyline{{fill:none;stroke:var(--brand-2);stroke-width:2.5;vector-effect:non-scaling-stroke}}
+.table-wrap{{overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}}table{{width:100%;border-collapse:collapse;min-width:920px}}th,td{{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}}th{{color:#b7c7d5;font-size:.78rem;text-transform:uppercase;letter-spacing:.055em;background:#151e28}}tr:last-child td{{border-bottom:0}}tbody tr:hover,table tr:hover td{{background:rgba(93,189,255,.025)}}
+details{{margin-top:9px;padding:9px 11px;background:#0e151c;border:1px solid var(--line);border-radius:9px;min-width:360px}}details summary{{cursor:pointer;font-weight:650;color:#d7e4ee}}details table{{margin-top:10px;min-width:670px;font-size:.9em}}td button{{margin:2px 4px 2px 0}}
+form{{display:flex;gap:9px;margin-top:12px}}input{{flex:1;min-width:0;background:#0b1117;color:var(--text);border:1px solid #435567;border-radius:9px;padding:11px 12px;font:inherit}}input:focus{{outline:2px solid rgba(93,189,255,.4);border-color:var(--brand-2)}}.chat-log{{max-height:280px;overflow:auto}}#chat-action{{margin-top:10px}}#chat-action a{{margin-left:10px}}
+pre,.mono{{font-family:ui-monospace,SFMono-Regular,monospace;overflow:auto;background:#10171f;padding:13px;border-radius:9px}}.chart{{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0}}.chart svg{{display:block;width:100%;height:auto}}.muted{{color:var(--muted);font-size:.9em}}
+@media(max-width:720px){{body{{padding:28px 14px 60px}}.section-heading,.run-card,.session-card{{align-items:flex-start;flex-direction:column}}.session-actions{{width:100%;flex-wrap:wrap}}.session-actions a,.session-actions button,.run-card>button{{flex:1;text-align:center}}form{{flex-direction:column}}details{{min-width:280px}}}}
+</style></head>
 <body><h1>{html.escape(title)}</h1>{body}</body></html>"""
 
 

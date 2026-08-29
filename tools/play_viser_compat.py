@@ -12,7 +12,21 @@ sys.setswitchinterval(0.001)
 
 from gamepad_bridge import GamepadBridge
 
+import viser
 from viser._gui_api import GuiApi
+
+
+_ViserServer = viser.ViserServer
+
+
+def _viser_server_on_session_port(*args, **kwargs):
+    kwargs.setdefault("port", int(os.environ.get("DUCKLAB_VISER_PORT", "8080")))
+    return _ViserServer(*args, **kwargs)
+
+
+# mjlab constructs its server internally. Route it to the port assigned by the
+# dashboard before importing mjlab.scripts.play.
+viser.ViserServer = _viser_server_on_session_port
 
 
 _add_slider = GuiApi.add_slider

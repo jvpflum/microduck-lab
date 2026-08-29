@@ -54,3 +54,11 @@ operator clears it.
 This is a simulation control surface, not a physical-robot safety system. A real
 deployment requires a hardware emergency stop, an independent runtime watchdog,
 conservative limits, and authenticated command transport.
+
+## Policy Bench sessions
+
+When a model is opened from Policy Bench, do not assume it uses 8080/8090. The
+dashboard assigns a dedicated pair and lists it under **Open simulations**.
+Always open the arena and Xbox controller from the same session card. This is
+what keeps controller commands attached to the selected policy when multiple
+models are being compared side by side.
