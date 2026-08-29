@@ -117,6 +117,9 @@ class PolicyBenchTests(unittest.TestCase):
         dashboard = self.bench.render_dashboard()
         content = dashboard.read_text()
         self.assertIn("MicroDuck Policy Bench", content)
+        self.assertIn("▶ Play", content)
+        self.assertIn("DuckLab Assistant", content)
+        self.assertIn("__CONTROL_TOKEN__", content)
         self.assertNotIn("https://", content)
 
 

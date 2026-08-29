@@ -93,6 +93,13 @@ make bench-list
 make bench-dashboard
 ```
 
+The dashboard provides one-click **Play** buttons that launch the selected
+checkpoint and open Viser plus the Xbox controller. Its local DuckLab Assistant
+can turn a request such as “train swizzle for 8000 iterations with 4096
+environments” into a validated configuration and an explicit confirmation
+button. It cannot execute arbitrary shell commands and blocks concurrent full
+training.
+
 Promoted policies move sequentially through experimental, evaluated,
 sim-qualified, hardware-candidate, and production stages. Hardware stages
 require explicit sign-off, and the viewer automatically selects the current

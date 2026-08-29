@@ -374,7 +374,8 @@ class Bench:
                 f"<td><a href='runs/{html.escape(manifest['run_id'])}/report.html'>{html.escape(manifest['run_id'])}</a></td>"
                 f"<td>{html.escape(manifest['task'])}</td><td><span class='badge'>{html.escape(manifest['stage'])}</span></td>"
                 f"<td>{manifest.get('latest_iteration')}</td><td>{len(manifest.get('evaluations', []))}</td>"
-                f"<td>{'yes' if manifest.get('has_exported_policy') else 'no'}</td></tr>"
+                f"<td>{'yes' if manifest.get('has_exported_policy') else 'no'}</td>"
+                f"<td><button class='play' data-run-id='{html.escape(manifest['run_id'])}'>▶ Play</button></td></tr>"
             )
         champions = "".join(
             f"<li><strong>{html.escape(task)}</strong>: "
@@ -383,11 +384,29 @@ class Bench:
             for task, stages in registry.get("tasks", {}).items()
         ) or "<li>No promoted policies yet</li>"
         content = (
-            "<p>Offline policy lineage, evaluation, comparison, and promotion.</p>"
+            "<p>Offline policy lineage, evaluation, comparison, promotion, and interactive play.</p>"
+            "<div class='panel'><span id='system-status'>Checking viewer and training status…</span> "
+            "<button id='stop-viewer' type='button'>Stop viewer</button></div>"
             f"<h2>Registry</h2><ul>{champions}</ul>"
-            "<h2>Runs</h2><table><tr><th>Run</th><th>Task</th><th>Stage</th><th>Iteration</th><th>Evals</th><th>ONNX</th></tr>"
+            "<h2>Runs</h2><p>Choose any immutable checkpoint and press Play. The controller and Viser open in new tabs.</p>"
+            "<table><tr><th>Run</th><th>Task</th><th>Stage</th><th>Iteration</th><th>Evals</th><th>ONNX</th><th>Action</th></tr>"
             + "".join(rows)
             + "</table>"
+            + "<h2>DuckLab Assistant</h2><div class='panel'><div id='chat-log' class='chat-log'>"
+            + "<p><strong>DuckLab:</strong> Tell me what you want to do. Try “train swizzle for 8000 iterations with 4096 environments”.</p>"
+            + "</div><form id='chat-form'><input id='chat-input' autocomplete='off' placeholder='What should MicroDuck learn next?'>"
+            + "<button type='submit'>Send</button></form><div id='chat-action'></div></div>"
+            + "<script>"
+            + "const TOKEN='__CONTROL_TOKEN__';"
+            + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
+            + "function say(who,text){const p=document.createElement('p');const b=document.createElement('strong');b.textContent=who+': ';p.appendChild(b);p.appendChild(document.createTextNode(text));document.querySelector('#chat-log').appendChild(p);p.scrollIntoView();}"
+            + "async function playRun(button){const viser=window.open('about:blank','microduck-viser');const controller=window.open('about:blank','microduck-controller');button.disabled=true;button.textContent='Starting…';try{const result=await api('/api/play',{run_id:button.dataset.runId});viser.location=result.viser_url;controller.location=result.controller_url;button.textContent='Running';setTimeout(refreshStatus,1000);}catch(error){if(viser)viser.close();if(controller)controller.close();alert(error.message);button.disabled=false;button.textContent='▶ Play';}}"
+            + "document.querySelectorAll('.play').forEach(button=>button.addEventListener('click',()=>playRun(button)));"
+            + "document.querySelector('#stop-viewer').addEventListener('click',async()=>{try{const result=await api('/api/stop-viewer',{});say('DuckLab',result.message||'Viewer stopped.');document.querySelectorAll('.play').forEach(button=>{button.disabled=false;button.textContent='▶ Play';});refreshStatus();}catch(error){say('DuckLab',error.message);}});"
+            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const v=s.viewer.running?'Playing '+s.viewer.run_id:'Viewer stopped';const detected=s.training.detected.length;const t=detected?'Training running (PID '+s.training.detected[0].pid+')':'No training detected';document.querySelector('#system-status').textContent=v+' · '+t;}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
+            + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('DuckLab',response.reply);if(response.kind==='confirm-training'){const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const result=await api('/api/train',response.action);say('DuckLab','Training started as PID '+result.pid+'. Log: '+result.log);refreshStatus();}catch(error){say('DuckLab',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){const a=document.createElement('a');a.href=response.result.viser_url;a.target='_blank';a.textContent='Open Viser';document.querySelector('#chat-action').appendChild(a);}}catch(error){say('DuckLab',error.message);}});"
+            + "refreshStatus();setInterval(refreshStatus,5000);"
+            + "</script>"
         )
         output = self.state_dir / "index.html"
         output.write_text(page("MicroDuck Policy Bench", content))
@@ -410,7 +429,10 @@ def page(title: str, body: str) -> str:
 <meta name='viewport' content='width=device-width,initial-scale=1'><title>{html.escape(title)}</title>
 <style>body{{font:16px system-ui;max-width:1200px;margin:40px auto;padding:0 20px;background:#101418;color:#edf2f7}}
 a{{color:#65c7ff}}table{{width:100%;border-collapse:collapse}}th,td{{padding:9px;border-bottom:1px solid #34404b;text-align:left}}
-.badge{{background:#1f6f50;border-radius:999px;padding:3px 9px}}pre,.mono{{font-family:ui-monospace,monospace;overflow:auto;background:#171d23;padding:12px}}</style></head>
+.badge{{background:#1f6f50;border-radius:999px;padding:3px 9px}}pre,.mono{{font-family:ui-monospace,monospace;overflow:auto;background:#171d23;padding:12px}}
+.panel{{background:#171d23;border:1px solid #34404b;border-radius:10px;padding:14px;margin:12px 0}}button{{background:#1f8a63;color:white;border:0;border-radius:7px;padding:8px 12px;cursor:pointer}}
+button:disabled{{opacity:.55;cursor:wait}}form{{display:flex;gap:8px}}input{{flex:1;background:#0d1115;color:#edf2f7;border:1px solid #51606e;border-radius:7px;padding:10px}}
+.chat-log{{max-height:280px;overflow:auto}}#chat-action{{margin-top:10px}}#chat-action a{{margin-left:10px}}</style></head>
 <body><h1>{html.escape(title)}</h1>{body}</body></html>"""
 
 

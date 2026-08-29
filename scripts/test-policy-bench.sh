@@ -2,4 +2,5 @@
 set -euo pipefail
 
 lab_root="$(cd "$(dirname "$0")/.." && pwd)"
-python3 -m unittest -v "${lab_root}/tests/test_policy_bench.py"
+cd "${lab_root}"
+python3 -m unittest -v tests.test_policy_bench tests.test_policy_bench_server

@@ -87,7 +87,7 @@ checkpoint when one exists and passes its hash check. Until then it retains the
 known roller fallback. Override the selected stage with
 `DUCKLAB_POLICY_STAGE`.
 
-## Dashboard
+## Dashboard control center
 
 Serve the local report on port 8091:
 
@@ -95,9 +95,47 @@ Serve the local report on port 8091:
 make bench-dashboard
 ```
 
-For remote access, add `-L 8091:localhost:8091` to the SSH command and open
-`http://localhost:8091`. Reports contain no external JavaScript, fonts,
-analytics, or network calls.
+For remote interactive play, forward all three local services:
+
+```bash
+ssh -L 8080:localhost:8080 \
+    -L 8090:localhost:8090 \
+    -L 8091:localhost:8091 \
+    <ssh-user>@<spark-address>
+```
+
+Open `http://localhost:8091`. Every immutable run has a **Play** button. A
+click validates the checkpoint hash, launches the correct mjlab task on CPU,
+and opens Viser and the Xbox controller in separate browser tabs. If the
+browser blocks those tabs, allow pop-ups for `localhost:8091`. Only one viewer
+is managed at a time; use **Stop viewer** before selecting another candidate.
+The control center refuses to take over or kill an older viewer it did not
+launch, so manually stop an existing terminal-launched Viser session first.
+
+### DuckLab Assistant
+
+The dashboard chat accepts guarded, structured requests such as:
+
+```text
+train swizzle for 8000 iterations with 4096 environments
+play iteration 2250
+what is running?
+stop the viewer
+```
+
+Training language is parsed into a bounded task, iteration count, and parallel
+environment count. The proposed configuration is shown back to the user and
+requires a separate **Confirm training launch** click. Full training is refused
+while another training process is detected. No arbitrary shell text is ever
+executed.
+
+This first assistant is deliberately deterministic and local rather than an
+LLM with permission to execute commands. A local open-weights model can later
+improve conversational planning, but validated actions and confirmation gates
+will remain the only path to launching processes.
+
+Reports and controls contain no external JavaScript, fonts, analytics, or
+network calls. Training continues in its own process if the dashboard closes.
 
 ## End-of-training automation
 
