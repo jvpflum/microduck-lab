@@ -178,6 +178,13 @@ policy actions. After landing a useful manual backflip, immediately click
 attempts can simply be left unsaved. The gray live-training viewer retains its
 engineering recorder as well: choose the robot under **Scene → Environment**
 and use **Demonstration recorder → Save last attempt**.
+
+Accepted captures can be normalized with `tools/curate_demonstration.py`. The
+first validated reference is
+`datasets/demonstrations/backflip/rolling-backflip-v1.json`; its curation block
+records rotation, inversion, apex, landing stability, displacement, source
+hash, and the important constraint that externally assisted actions are motion
+references rather than behavior-cloning labels.
 **Evaluate** runs the exported ONNX policy
 through Pollen's CPU MuJoCo runtime and adds a scored forward/reverse/coast/
 heading evaluation to the run. Its local DuckLab Assistant

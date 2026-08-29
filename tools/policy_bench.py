@@ -46,8 +46,10 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
         final_speed = float(hop.get("final_speed_mean_mps", 1.0))
         grounded = float(hop.get("final_both_grounded_fraction", 0.0))
         components = {
-            "clearance": bounded_score(clearance, 0.020, 0.020),
-            "air_time": min(1.0, max(0.0, air_time / 0.10)),
+            # An obvious robot-scale jump, not a contact-sensor flicker. The
+            # old 15 mm / 60 ms gates falsely qualified a head twitch.
+            "clearance": bounded_score(clearance, 0.080, 0.080),
+            "air_time": min(1.0, max(0.0, air_time / 0.20)),
             "landing": grounded if hop.get("landing_detected") else 0.0,
             "upright": max(0.0, 1.0 - final_tilt / 25.0),
             "stillness": max(0.0, 1.0 - final_speed / 0.15) if hop.get("landing_detected") else 0.0,
@@ -63,15 +65,15 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
         }
         gates = {
             "takeoff": {"passed": bool(hop.get("takeoff_detected")), "value": bool(hop.get("takeoff_detected"))},
-            "clearance": {"passed": clearance >= 0.015, "value": round(clearance, 4), "minimum": 0.015},
-            "air_time": {"passed": air_time >= 0.06, "value": round(air_time, 4), "minimum": 0.06},
+            "clearance": {"passed": clearance >= 0.050, "value": round(clearance, 4), "minimum": 0.050},
+            "air_time": {"passed": air_time >= 0.12, "value": round(air_time, 4), "minimum": 0.12},
             "landing": {"passed": bool(hop.get("landing_detected")), "value": bool(hop.get("landing_detected"))},
             "upright": {"passed": final_tilt <= 15.0, "value": round(final_tilt, 2), "maximum": 15.0},
             "settled": {"passed": final_speed <= 0.10, "value": round(final_speed, 4), "maximum": 0.10},
             "drift": {"passed": drift <= 0.05, "value": round(drift, 4), "maximum": 0.05},
         }
         overall = 100.0 * sum(components[key] * weights[key] for key in weights)
-        if not gates["takeoff"]["passed"] or not gates["landing"]["passed"]:
+        if not all(item["passed"] for item in gates.values()):
             overall = min(overall, 49.0)
         return {
             "overall": round(overall, 2),

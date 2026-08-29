@@ -182,8 +182,8 @@ class PolicyBenchTests(unittest.TestCase):
             "hop": {
                 "takeoff_detected": True,
                 "landing_detected": True,
-                "peak_clearance_m": 0.02,
-                "air_time_s": 0.12,
+                "peak_clearance_m": 0.08,
+                "air_time_s": 0.20,
                 "horizontal_drift_m": 0.01,
                 "final_tilt_mean_deg": 3.0,
                 "final_speed_mean_mps": 0.02,
@@ -196,6 +196,25 @@ class PolicyBenchTests(unittest.TestCase):
         evaluation["hop"]["takeoff_detected"] = False
         score = policy_bench.score_evaluation(evaluation, "hop")
         self.assertFalse(score["qualified"])
+        self.assertLessEqual(score["overall"], 49.0)
+
+    def test_hop_score_rejects_contact_flicker_as_a_jump(self) -> None:
+        evaluation = {
+            "hop": {
+                "takeoff_detected": True,
+                "landing_detected": True,
+                "peak_clearance_m": 0.0278,
+                "air_time_s": 0.06,
+                "horizontal_drift_m": 0.0155,
+                "final_tilt_mean_deg": 0.37,
+                "final_speed_mean_mps": 0.0042,
+                "final_both_grounded_fraction": 1.0,
+            }
+        }
+        score = policy_bench.score_evaluation(evaluation, "hop")
+        self.assertFalse(score["qualified"])
+        self.assertFalse(score["qualification_gates"]["clearance"]["passed"])
+        self.assertFalse(score["qualification_gates"]["air_time"]["passed"])
         self.assertLessEqual(score["overall"], 49.0)
 
 
