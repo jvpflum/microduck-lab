@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://microduck.local/schemas/policy-bench-manifest-v1.schema.json",
+  "title": "MicroDuck Policy Bench Run Manifest v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "task",
+    "stage",
+    "created_at",
+    "source_run_dir",
+    "artifacts",
+    "source",
+    "evaluations",
+    "promotion_history"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "task": {"type": "string", "minLength": 1},
+    "stage": {
+      "enum": ["experimental", "evaluated", "sim-qualified", "hardware-candidate", "production"]
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "source_run_dir": {"type": "string"},
+    "has_exported_policy": {"type": "boolean"},
+    "latest_iteration": {"type": ["integer", "null"]},
+    "artifacts": {"type": "object"},
+    "source": {"type": "object"},
+    "evaluations": {"type": "array"},
+    "promotion_history": {"type": "array"}
+  },
+  "additionalProperties": true
+}

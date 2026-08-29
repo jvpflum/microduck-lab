@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 
-.PHONY: bootstrap preflight test test-gamepad list-envs smoke skate-smoke swizzle-smoke \
+.PHONY: bootstrap preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke swizzle-smoke \
 	verify-artifact verify-skate-artifact evaluate-swizzle train-baseline train-skate \
-	train-swizzle verify
+	train-swizzle bench-discover bench-list bench-dashboard verify
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -15,6 +15,9 @@ test:
 
 test-gamepad:
 	./scripts/test-gamepad.sh
+
+test-policy-bench:
+	./scripts/test-policy-bench.sh
 
 list-envs:
 	./scripts/ducklab.sh list-envs
@@ -45,5 +48,14 @@ train-skate:
 
 train-swizzle:
 	./scripts/train-swizzle.sh
+
+bench-discover:
+	./scripts/policy-bench.sh discover
+
+bench-list:
+	./scripts/policy-bench.sh list
+
+bench-dashboard:
+	./scripts/serve-policy-bench.sh
 
 verify: preflight test smoke verify-artifact

@@ -8,7 +8,9 @@ ARTIFACT_DIR="${LAB_ROOT}/artifacts"
 REPORT_DIR="${LAB_ROOT}/reports"
 
 export UV_HTTP_TIMEOUT="${UV_HTTP_TIMEOUT:-600}"
-export WANDB_MODE="${WANDB_MODE:-offline}"
+# Policy Bench is the system of record. Keep upstream W&B compatibility hooks
+# disabled so training never requires or contacts a proprietary service.
+export WANDB_MODE="${WANDB_MODE:-disabled}"
 export PYTHONUNBUFFERED=1
 
 require_checkout() {

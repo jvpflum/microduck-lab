@@ -79,6 +79,26 @@ See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
 qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
 for active braking, spin, recovery, and supervisor design.
 
+### Compare and promote policies
+
+MicroDuck Policy Bench provides an entirely open-source, offline workflow for
+immutable checkpoint snapshots, evaluation history, candidate comparisons,
+human-reviewed promotion, and a local HTML dashboard:
+
+```bash
+make bench-discover
+make bench-list
+./scripts/policy-bench.sh evaluate <run-id>
+./scripts/policy-bench.sh compare <candidate-run-id> <baseline-run-id>
+make bench-dashboard
+```
+
+Promoted policies move sequentially through experimental, evaluated,
+sim-qualified, hardware-candidate, and production stages. Hardware stages
+require explicit sign-off, and the viewer automatically selects the current
+sim-qualified swizzle checkpoint after verifying its hash. See
+[docs/POLICY_BENCH.md](docs/POLICY_BENCH.md) for the complete workflow.
+
 ### Test a policy with an Xbox controller
 
 The remote Viser launcher includes a browser-based Xbox controller bridge. Stop

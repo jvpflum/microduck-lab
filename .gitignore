@@ -4,6 +4,7 @@ artifacts/
 reports/*.json
 reports/*.log
 reports/*.png
+policy-bench/
 upstream/microduck_rl/logs/
 upstream/microduck_rl/wandb/
 upstream/microduck_rl/*.onnx

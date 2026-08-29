@@ -22,6 +22,14 @@ if [[ -n "${policy_path}" && -f "${policy_path}" ]]; then
         --roller "${policy_path}" \
         > "${lab_root}/reports/swizzle-policy-verification.json" \
         || verification_status=$?
+    if [[ "${verification_status}" -eq 0 ]]; then
+        "${lab_root}/scripts/policy-bench.sh" discover --task swizzle
+        bench_run="$("${lab_root}/scripts/policy-bench.sh" list --task swizzle --latest | cut -f1)"
+        if [[ -n "${bench_run}" ]]; then
+            "${lab_root}/scripts/policy-bench.sh" evaluate "${bench_run}" \
+                || verification_status=$?
+        fi
+    fi
 else
     echo "No final swizzle ONNX artifact found." >&2
     verification_status=1
