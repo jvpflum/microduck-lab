@@ -84,6 +84,16 @@ class PolicyBenchServerTests(unittest.TestCase):
         request = server.parse_training_request("train something cool")
         self.assertIn("error", request)
 
+    def test_shipped_capability_defaults_to_factory_playground(self) -> None:
+        response = server.DashboardServer.chat(mock.Mock(), "train MicroDuck to skate backwards")
+        self.assertEqual(response["kind"], "factory-play")
+        self.assertEqual(response["url"], "http://localhost:8070/?boot=1")
+
+    @mock.patch.object(server, "running_training_processes", return_value=[])
+    def test_explicit_custom_improvement_can_propose_training(self, _running) -> None:
+        response = server.DashboardServer.chat(mock.Mock(), "train a custom swizzle policy for 8000 iterations")
+        self.assertEqual(response["kind"], "confirm-training")
+
     def test_training_progress_includes_recent_reward_curve(self) -> None:
         reports = self.root / "reports"
         reports.mkdir()

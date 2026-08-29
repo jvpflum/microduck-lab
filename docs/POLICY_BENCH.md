@@ -5,6 +5,10 @@ candidates. It snapshots model bytes, records their hashes and source commits,
 attaches deployment-rehearsal evaluations, compares candidates, and promotes a
 reviewed policy through explicit safety stages.
 
+It is not a replacement for Pollen's robot runtime or browser simulator.
+Factory policies and the official playground are the default experience;
+Policy Bench exists to prove when a custom candidate is actually better.
+
 It is the engineering backbone beneath the simple product flow described in
 [PRODUCT_VISION.md](PRODUCT_VISION.md); advanced users can use its CLI while a
 future guided UI hides these details.
@@ -69,7 +73,8 @@ policies establish reviewed baselines.
 
 Each evaluated checkpoint receives a transparent 0–100 heuristic score. It
 combines command tracking, ground contact, stability, smoothness, lateral slip,
-and (for swizzle) reverse tracking and stroke cycles. Component scores and
+and (for roller/swizzle policies) reverse tracking, stopping, turning, and
+stroke cycles. Component scores and
 weights are visible in the evaluation JSON; the score is a triage aid, never an
 automatic promotion decision. Use the star button to keep a human shortlist.
 Only one candidate per skill is starred at a time:
@@ -128,6 +133,7 @@ arena without reconnecting:
 Host microduck-spark
     HostName <spark-address>
     User ducklab-user
+    LocalForward 8070 localhost:8070
     LocalForward 8091 localhost:8091
     LocalForward 8080 localhost:8080
     LocalForward 8090 localhost:8090
@@ -143,9 +149,12 @@ Host microduck-spark
     LocalForward 8096 localhost:8096
 ```
 
-Connect with `ssh microduck-spark`, then open `http://localhost:8091`. **Drive
-training arena** validates that exact saved checkpoint, assigns it an isolated
-arena/controller pair, and opens its combined controller view. The **Open simulations** section is
+Connect with `ssh microduck-spark`, then open `http://localhost:8091`. The
+recommended **Open factory playground** action opens Pollen's official arena at
+`http://localhost:8070` with its native gamepad implementation. For a custom
+candidate, **Open checkpoint debugger** validates that exact saved checkpoint,
+assigns it an isolated Viser/controller pair, and opens its combined controller
+view. The **Checkpoint debuggers** section is
 the source of truth: it identifies every model, its ports, and provides explicit
 **Open arena**, **Open Xbox controller**, and **Stop** actions. Reopening a model
 reuses its own session; opening another model does not replace it. Up to six can

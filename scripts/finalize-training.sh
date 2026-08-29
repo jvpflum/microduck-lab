@@ -14,16 +14,19 @@ uv="${lab_root}/.tools/uv/bin/uv"
 case "${task}" in
     swizzle)
         experiment="velocity_swizzle"
+        bench_task="swizzle"
         roller_flag=(--roller)
         auto_score=true
         ;;
     roller)
         experiment="velocity_rollers"
+        bench_task="roller"
         roller_flag=(--roller)
         auto_score=true
         ;;
     walking)
         experiment="velocity"
+        bench_task="walking"
         roller_flag=()
         auto_score=false
         ;;
@@ -56,8 +59,8 @@ cd "${upstream}"
     "${roller_flag[@]}" "${policy_path}" \
     >"${lab_root}/reports/${task}-policy-verification.json"
 
-"${lab_root}/scripts/policy-bench.sh" discover --task "${task}"
-bench_run="$("${lab_root}/scripts/policy-bench.sh" list --task "${task}" --latest | cut -f1)"
+"${lab_root}/scripts/policy-bench.sh" discover --task "${bench_task}"
+bench_run="$("${lab_root}/scripts/policy-bench.sh" list --task "${bench_task}" --latest | cut -f1)"
 if [[ -z "${bench_run}" ]]; then
     echo "Policy Bench did not register the completed ${task} run." >&2
     exit 1

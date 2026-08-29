@@ -40,12 +40,14 @@ class Phase:
     heading_error: float = 0.0
 
 
+CONTROL_DT = 0.02
+
 PHASES = (
     Phase("settle", 2.0, 0.0),
     Phase("forward", 8.0, 0.3),
-    Phase("coast_forward", 4.0, 0.0),
+    Phase("stop_forward", 4.0, 0.0),
     Phase("reverse", 8.0, -0.3),
-    Phase("coast_reverse", 4.0, 0.0),
+    Phase("stop_reverse", 4.0, 0.0),
     Phase("heading_left", 6.0, 0.2, 0.3),
     Phase("heading_right", 6.0, 0.2, -0.3),
 )
@@ -74,6 +76,8 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
     actions = np.asarray([row["action_acc"] for row in rows], dtype=np.float64)
     grounded = values("both_grounded")
     wheel_speed = values("mean_abs_wheel_speed")
+    command_x = values("command_x")
+    yaw = np.unwrap(values("yaw"))
     cycles = 0
     separation_range = float(np.ptp(separation))
     # Ignore numerical/contact chatter. A real outward/inward stroke must move
@@ -89,9 +93,40 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
                 cycles += 1
                 expanded = False
 
+    duration = float(rows[-1]["phase_time"] if rows else 0.0)
+    tracking_rmse = float(np.sqrt(np.mean(np.square(forward - command_x))))
+    nonzero_command = abs(float(command_x[-1])) > 1e-6
+    direction = math.copysign(1.0, float(command_x[-1])) if nonzero_command else 0.0
+    response_time = None
+    if nonzero_command:
+        threshold = 0.8 * abs(float(command_x[-1]))
+        reached = np.flatnonzero(direction * forward >= threshold)
+        if reached.size:
+            response_time = float((reached[0] + 1) * CONTROL_DT)
+
+    stop_time = None
+    if not nonzero_command:
+        quiet = np.abs(forward) <= 0.05
+        window = max(1, int(round(0.5 / CONTROL_DT)))
+        for index in range(0, max(0, len(quiet) - window + 1)):
+            if bool(np.all(quiet[index : index + window])):
+                stop_time = float((index + 1) * CONTROL_DT)
+                break
+
     return {
-        "duration_s": float(rows[-1]["phase_time"] if rows else 0.0),
+        "duration_s": duration,
+        "command_x_mps": float(command_x[-1]),
         "mean_forward_speed_mps": float(forward.mean()),
+        "mean_abs_forward_speed_mps": float(np.abs(forward).mean()),
+        "peak_abs_forward_speed_mps": float(np.abs(forward).max()),
+        "end_abs_forward_speed_mps": float(np.abs(forward[-min(len(forward), 25) :]).mean()),
+        "forward_distance_m": float(np.sum(forward) * CONTROL_DT),
+        "tracking_rmse_mps": tracking_rmse,
+        "command_direction_fraction": float(np.mean(direction * forward > 0.02)) if nonzero_command else 0.0,
+        "response_time_80pct_s": response_time,
+        "stop_time_below_0_05_mps_s": stop_time,
+        "yaw_change_deg": float(np.degrees(yaw[-1] - yaw[0])) if len(yaw) > 1 else 0.0,
+        "mean_yaw_rate_rad_s": float((yaw[-1] - yaw[0]) / max(CONTROL_DT, duration - CONTROL_DT)) if len(yaw) > 1 else 0.0,
         "mean_abs_lateral_speed_mps": float(np.abs(lateral).mean()),
         "trunk_height_mean_m": float(trunk_z.mean()),
         "trunk_height_std_m": float(trunk_z.std()),
@@ -174,7 +209,7 @@ def main() -> None:
     if left_body < 0 or right_body < 0:
         raise SystemExit("Roller model is missing left/right ankle bodies")
 
-    control_dt = 0.02
+    control_dt = CONTROL_DT
     decimation = int(round(control_dt / model.opt.timestep))
     all_results: dict[str, dict[str, float]] = {}
     previous_action = np.zeros(model.nu, dtype=np.float32)
@@ -216,10 +251,12 @@ def main() -> None:
             rows.append(
                 {
                     "phase_time": (step + 1) * control_dt,
+                    "command_x": phase.command_x,
                     "forward_speed": forward_speed,
                     "lateral_speed": lateral_speed,
                     "trunk_z": float(data.qpos[qpos_adr + 2]),
                     "tilt": quat_tilt(quat),
+                    "yaw": yaw,
                     "skate_separation": separation,
                     "both_grounded": float(len(grounded_sides) == 2),
                     "mean_abs_wheel_speed": float(
@@ -229,9 +266,20 @@ def main() -> None:
                 }
             )
 
-        # Ignore the first second of each command transition in steady metrics.
+        # Keep transition data for response/stopping metrics.  Steady-state
+        # fields remain available separately for unbiased speed comparison.
+        all_results[phase.name] = summarize(rows)
         steady_rows = rows[min(50, max(0, len(rows) - 1)) :]
-        all_results[phase.name] = summarize(steady_rows or rows)
+        steady = summarize(steady_rows or rows)
+        for name in (
+            "mean_forward_speed_mps",
+            "mean_abs_lateral_speed_mps",
+            "tracking_rmse_mps",
+            "tilt_rms_deg",
+            "both_blades_grounded_fraction",
+            "mean_action_acceleration",
+        ):
+            all_results[phase.name][f"steady_{name}"] = steady[name]
 
     result = {
         "policy": str(policy_path),

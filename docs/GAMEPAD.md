@@ -1,4 +1,21 @@
-# Xbox controller for mjlab/Viser
+# Xbox controller testing
+
+## Recommended: Pollen factory playground
+
+Pollen's official browser arena is the default controller path. Forward the
+dashboard and arena from the operator computer:
+
+```bash
+ssh -L 8091:localhost:8091 -L 8070:localhost:8070 <ssh-user>@<spark-address>
+```
+
+Open <http://localhost:8091> and select **Open factory playground**. Press any
+controller button so the browser detects it. The left stick drives and turns;
+hold D-pad up for about one second to switch between legs and rollers. This
+uses Pollen's native mapping and requires no Viser checkbox, bridge arming, or
+Spark-side USB forwarding.
+
+## Advanced: exact checkpoint debugging
 
 The Viser launcher includes a local browser Gamepad bridge. The browser reads
 the controller attached to the operator's computer and sends bounded commands
@@ -75,7 +92,7 @@ conservative limits, and authenticated command transport.
 ## Policy Bench sessions
 
 When a model is opened from Policy Bench, do not assume it uses 8080/8090. The
-dashboard assigns a dedicated pair and lists it under **Open simulations**.
+dashboard assigns a dedicated pair and lists it under **Checkpoint debuggers**.
 Always open the arena and Xbox controller from the same session card. This is
 what keeps controller commands attached to the selected policy when multiple
 models are being compared side by side.

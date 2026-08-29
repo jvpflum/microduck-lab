@@ -1,17 +1,33 @@
 # MicroDuck Lab
 
-Reproducible reinforcement-learning workspace for training Pollen Robotics'
-MicroDuck on an NVIDIA DGX Spark before the physical robot arrives.
+Factory-first control, evaluation, and reinforcement-learning workspace for
+Pollen Robotics' MicroDuck on an NVIDIA DGX Spark.
 
-The lab pins Pollen's official `microduck_rl` project as a Git submodule and
-adds guarded setup, validation, smoke-training, and baseline-training commands.
-It does not fork or alter the robot's observation contract, actuator model,
-domain randomization, or ONNX export path.
+The lab pins Pollen's official robot runtime, browser simulator, and
+`microduck_rl` training project as Git submodules. Pollen's shipped policies,
+arena, gamepad controls, runtime, and safety behavior are the defaults. DuckLab
+adds local evaluation, comparison, provenance, promotion, and guarded custom
+training; it does not rebuild upstream capabilities.
 
 The product goal is a simple robotics teaching loop—sign in, describe a skill,
 train, understand the result, promote a policy, and drive the robot. See
 [docs/PRODUCT_VISION.md](docs/PRODUCT_VISION.md) for the user-facing contract
 and staged platform roadmap.
+
+## Default workflow: factory first
+
+1. Open Pollen's factory playground and test the shipped skill with keyboard,
+   touch, or an Xbox controller.
+2. Run the repeatable DuckLab evaluation and name the failed gate.
+3. Train a custom policy only when the factory policy cannot meet that gate.
+4. Require checkpoint/ONNX parity, a better score, and human review before
+   replacing the factory champion.
+
+The shipped roller policy is the current `sim-qualified` champion. In the same
+CPU MuJoCo battery it scored **80.9/100** and passed forward, reverse, stopping,
+left/right turning, and stability gates; the latest custom swizzle scored
+**42.72/100**. See [docs/UPSTREAM_FIRST_AUDIT.md](docs/UPSTREAM_FIRST_AUDIT.md)
+for the adoption boundary and evidence.
 
 ## Requirements
 
@@ -29,9 +45,13 @@ cd microduck-lab
 make bootstrap
 make preflight
 make test
-make smoke
-make verify-artifact
+make import-pollen-baselines
+make bench-dashboard
 ```
+
+Forward ports 8091 and 8070 over SSH, open `http://localhost:8091`, then click
+**Open factory playground**. In the arena, hold D-pad up for about one second
+to switch between walking and rollers; the left stick drives and turns.
 
 `make smoke` follows Pollen's required 64-environment, five-iteration gate.
 Weights & Biases is disabled; Policy Bench remains the local system of record.
@@ -42,7 +62,10 @@ Successful skating runs are then automatically verified, registered, scored in
 the CPU deployment battery, and given training-curve metrics. They are never
 automatically starred or promoted.
 
-## Train a walking baseline
+## Train a custom walking baseline
+
+Custom training is an advanced path. Test Pollen's factory policies first and
+write down the specific capability or evaluation gate that needs improvement.
 
 ```bash
 make train-baseline
@@ -70,7 +93,7 @@ The dashboard offers two explicit resource modes for new runs:
   `policy-bench/training-priority.json`; run
   `./scripts/resource-profile.sh restore` if manual recovery is ever required.
 
-## Train a roller-skating policy
+## Train a custom roller-skating policy
 
 Qualify Pollen's official passive-wheel environment before a long run:
 
@@ -113,9 +136,10 @@ make bench-list
 make bench-dashboard
 ```
 
-The dashboard provides one-click **Drive training arena** buttons that launch
-each selected checkpoint in its exact Pollen mjlab task, with an isolated
-Viser/controller session. Multiple saved policies
+The dashboard's primary action opens Pollen's official browser playground with
+native gamepad support. Custom saved checkpoints expose an **Open checkpoint
+debugger** action that launches the exact Pollen mjlab task in an isolated
+Viser/controller session. Multiple custom policies
 can remain open side by side, and the dashboard always shows which arena and
 controller belong together. **Deployment check** runs the exported ONNX policy
 through Pollen's CPU MuJoCo runtime and adds a scored forward/reverse/coast/
@@ -131,11 +155,22 @@ require explicit sign-off, and the viewer automatically selects the current
 sim-qualified swizzle checkpoint after verifying its hash. See
 [docs/POLICY_BENCH.md](docs/POLICY_BENCH.md) for the complete workflow.
 
-### Test a policy with an Xbox controller
+### Drive the factory robot with an Xbox controller
 
-The remote Viser launcher includes a browser-based Xbox controller bridge. For
-a single direct viewer, connect to the Spark from your local computer with both
-ports forwarded:
+Connect from your laptop with the dashboard and factory arena forwarded:
+
+```bash
+ssh -L 8091:localhost:8091 -L 8070:localhost:8070 <ssh-user>@<spark-address>
+```
+
+Open `http://localhost:8091`, click **Open factory playground**, press a button
+on the controller so the browser detects it, and drive with the left stick.
+This is Pollen's controller implementation and is the default test path.
+
+### Debug an exact custom checkpoint
+
+The Viser launcher remains an advanced compatibility tool. For a single direct
+viewer, forward both of its ports:
 
 ```bash
 ssh -L 8080:localhost:8080 -L 8090:localhost:8090 <ssh-user>@<spark-address>

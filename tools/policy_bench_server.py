@@ -20,7 +20,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-from policy_bench import Bench, DEFAULT_STATE, LAB_ROOT, UPSTREAM, sha256
+from policy_bench import Bench, DEFAULT_STATE, FACTORY_ARENA_URL, LAB_ROOT, UPSTREAM, sha256
 
 
 TASKS = {
@@ -313,6 +313,7 @@ class ProcessManager:
         with self.lock:
             self._reap_finished_locked()
             training_alive = self._alive(self.training)
+            detected_training = running_training_processes()
             viewers = [
                 self._viewer_result(session, reused=True)
                 for session in sorted(self.viewers.values(), key=lambda item: item.started_at)
@@ -330,8 +331,8 @@ class ProcessManager:
                     "managed_running": training_alive,
                     "config": self.training_config if training_alive else None,
                     "pid": self.training.pid if training_alive and self.training else None,
-                    "detected": running_training_processes(),
-                    "progress": training_progress(),
+                    "detected": detected_training,
+                    "progress": training_progress() if training_alive or detected_training else None,
                 },
                 "resources": resource_status(),
             }
@@ -653,6 +654,15 @@ class DashboardServer(ThreadingHTTPServer):
             if status["viewers"]:
                 reply += f" {len(status['viewers'])} simulation(s) are open."
             return {"kind": "status", "reply": reply, "status": status}
+        shipped_capabilities = ("walk", "walking", "skate", "skating", "roller", "reverse", "turn", "spin", "sit", "stand", "recover", "kick", "crouch")
+        wants_custom_training = any(word in lowered for word in ("custom", "retrain", "improve", "beat", "new policy"))
+        asks_for_capability = any(word in lowered for word in shipped_capabilities)
+        if asks_for_capability and not wants_custom_training:
+            return {
+                "kind": "factory-play",
+                "reply": "Pollen already ships that capability. Start in the factory playground with the native Xbox controls; train only if a named evaluation gate fails.",
+                "url": FACTORY_ARENA_URL,
+            }
         request = parse_training_request(text)
         if request is not None:
             if "error" in request:
@@ -702,7 +712,7 @@ class DashboardServer(ThreadingHTTPServer):
             "kind": "message",
             "reply": (
                 "Tell me a goal in plain English, such as ‘train MicroDuck to skate backwards’. "
-                "I’ll map it to a registered task, show the plan, and wait for your confirmation. "
+                "I’ll check Pollen’s shipped skills first, then map a genuinely new goal to a registered task and wait for confirmation. "
                 "I also understand play, status, and stop viewer."
             ),
         }

@@ -121,15 +121,16 @@ class PolicyBenchTests(unittest.TestCase):
         content = dashboard.read_text()
         self.assertIn("MicroDuck Policy Bench", content)
         self.assertIn("Open simulation", content)
-        self.assertIn("Open simulations", content)
+        self.assertIn("Checkpoint debuggers", content)
         self.assertIn("viewer-sessions", content)
         self.assertIn("reward-scope", content)
         self.assertIn("Entire run", content)
         self.assertIn("Drive arena", content)
-        self.assertIn("Drive training arena", content)
+        self.assertIn("Open checkpoint debugger", content)
+        self.assertIn("Open factory playground", content)
         self.assertIn("Deployment check", content)
         self.assertIn("Resource mode", content)
-        self.assertIn("Pollen microduck_rl", content)
+        self.assertIn("Pollen stack", content)
         self.assertIn("outliers clipped", content)
         self.assertNotIn("raw range", content)
         self.assertIn("MicroDuck Control Room", content)
@@ -145,12 +146,19 @@ class PolicyBenchTests(unittest.TestCase):
             "phases": {
                 "forward": {"mean_forward_speed_mps": 0.3, "both_blades_grounded_fraction": 1.0, "tilt_max_deg": 0.0, "mean_action_acceleration": 0.0, "mean_abs_lateral_speed_mps": 0.0, "estimated_swizzle_cycles": 8},
                 "reverse": {"mean_forward_speed_mps": -0.3, "both_blades_grounded_fraction": 1.0, "tilt_max_deg": 0.0, "mean_action_acceleration": 0.0, "mean_abs_lateral_speed_mps": 0.0, "estimated_swizzle_cycles": 8},
+                "stop_forward": {"end_abs_forward_speed_mps": 0.0},
+                "stop_reverse": {"end_abs_forward_speed_mps": 0.0},
+                "heading_left": {"mean_yaw_rate_rad_s": 0.25, "both_blades_grounded_fraction": 1.0, "tilt_max_deg": 0.0, "mean_action_acceleration": 0.0, "mean_abs_lateral_speed_mps": 0.0},
+                "heading_right": {"mean_yaw_rate_rad_s": -0.25, "both_blades_grounded_fraction": 1.0, "tilt_max_deg": 0.0, "mean_action_acceleration": 0.0, "mean_abs_lateral_speed_mps": 0.0},
             }
         }
         score = policy_bench.score_evaluation(evaluation, "swizzle")
         self.assertGreaterEqual(score["overall"], 0.0)
         self.assertLessEqual(score["overall"], 100.0)
         self.assertIn("reverse_tracking", score["components"])
+        self.assertTrue(score["qualified"])
+        self.assertIn("stopping", score["qualification_gates"])
+        self.assertTrue(policy_bench.score_evaluation(evaluation, "roller")["qualified"])
 
 
 if __name__ == "__main__":

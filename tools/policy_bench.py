@@ -20,7 +20,11 @@ from typing import Any
 
 LAB_ROOT = Path(__file__).resolve().parents[1]
 UPSTREAM = LAB_ROOT / "upstream" / "microduck_rl"
+POLLEN_RUNTIME = LAB_ROOT / "upstream" / "microduck"
+POLLEN_SIMULATOR = LAB_ROOT / "upstream" / "microduck-simulator"
 DEFAULT_STATE = LAB_ROOT / "policy-bench"
+FACTORY_ARENA_PORT = int(os.environ.get("DUCKLAB_ARENA_PORT", "8070"))
+FACTORY_ARENA_URL = f"http://localhost:{FACTORY_ARENA_PORT}/?boot=1"
 SCHEMA_VERSION = 1
 STAGES = ("experimental", "evaluated", "sim-qualified", "hardware-candidate", "production")
 
@@ -37,20 +41,47 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
     powered = [phases[name] for name in ("forward", "reverse", "heading_left", "heading_right") if name in phases]
     if not forward:
         return {"overall": None, "label": "not scorable", "components": {}, "weights": {}}
+    forward_speed = float(forward.get("steady_mean_forward_speed_mps", forward.get("mean_forward_speed_mps", 0.0)))
     components = {
-        "forward_tracking": bounded_score(float(forward.get("mean_forward_speed_mps", 0.0)), 0.3, 0.3),
+        "forward_tracking": bounded_score(forward_speed, 0.3, 0.3),
         "ground_contact": sum(float(item.get("both_blades_grounded_fraction", 0.0)) for item in powered) / max(1, len(powered)),
         "stability": max(0.0, 1.0 - max(float(item.get("tilt_max_deg", 90.0)) for item in powered) / 20.0),
         "smoothness": max(0.0, 1.0 - sum(float(item.get("mean_action_acceleration", 1.0)) for item in powered) / max(1, len(powered)) / 0.08),
         "low_lateral_slip": max(0.0, 1.0 - sum(float(item.get("mean_abs_lateral_speed_mps", 1.0)) for item in powered) / max(1, len(powered)) / 0.1),
     }
     weights = {"forward_tracking": 0.25, "ground_contact": 0.2, "stability": 0.2, "smoothness": 0.15, "low_lateral_slip": 0.2}
-    if task == "swizzle" and reverse:
-        components["reverse_tracking"] = bounded_score(abs(float(reverse.get("mean_forward_speed_mps", 0.0))), 0.3, 0.3)
+    gates: dict[str, dict[str, Any]] = {}
+    if task in {"swizzle", "roller"} and reverse:
+        reverse_speed = float(reverse.get("steady_mean_forward_speed_mps", reverse.get("mean_forward_speed_mps", 0.0)))
+        stop_forward = phases.get("stop_forward", phases.get("coast_forward", {}))
+        stop_reverse = phases.get("stop_reverse", phases.get("coast_reverse", {}))
+        heading_left = phases.get("heading_left", {})
+        heading_right = phases.get("heading_right", {})
+        stop_end = max(
+            float(stop_forward.get("end_abs_forward_speed_mps", 1.0)),
+            float(stop_reverse.get("end_abs_forward_speed_mps", 1.0)),
+        )
+        left_rate = float(heading_left.get("mean_yaw_rate_rad_s", 0.0))
+        right_rate = float(heading_right.get("mean_yaw_rate_rad_s", 0.0))
+        components["reverse_tracking"] = bounded_score(reverse_speed, -0.3, 0.3)
+        components["stopping"] = max(0.0, 1.0 - stop_end / 0.15)
+        components["turning"] = 0.5 * min(1.0, max(0.0, left_rate / 0.25)) + 0.5 * min(1.0, max(0.0, -right_rate / 0.25))
         components["swizzle_cycles"] = min(1.0, sum(float(phases.get(name, {}).get("estimated_swizzle_cycles", 0.0)) for name in ("forward", "reverse")) / 16.0)
-        weights = {"forward_tracking": 0.2, "reverse_tracking": 0.2, "ground_contact": 0.15, "stability": 0.15, "smoothness": 0.1, "low_lateral_slip": 0.1, "swizzle_cycles": 0.1}
+        weights = {"forward_tracking": 0.2, "reverse_tracking": 0.15, "stopping": 0.15, "turning": 0.15, "stability": 0.1, "low_lateral_slip": 0.1, "ground_contact": 0.05, "smoothness": 0.05, "swizzle_cycles": 0.05}
+        gates = {
+            "forward_speed": {"passed": forward_speed >= 0.15, "value": round(forward_speed, 4), "minimum": 0.15},
+            "reverse_speed": {"passed": reverse_speed <= -0.10, "value": round(reverse_speed, 4), "maximum": -0.10},
+            "stopping": {"passed": stop_end <= 0.05, "value": round(stop_end, 4), "maximum": 0.05},
+            "turn_left": {"passed": left_rate >= 0.15, "value": round(left_rate, 4), "minimum": 0.15},
+            "turn_right": {"passed": right_rate <= -0.15, "value": round(right_rate, 4), "maximum": -0.15},
+            "stability": {"passed": max(float(item.get("tilt_max_deg", 90.0)) for item in powered) <= 25.0, "value": round(max(float(item.get("tilt_max_deg", 90.0)) for item in powered), 2), "maximum": 25.0},
+        }
     overall = 100.0 * sum(components[key] * weights[key] for key in weights) / sum(weights.values())
-    return {"overall": round(overall, 2), "label": "heuristic simulation score", "components": {key: round(value * 100.0, 2) for key, value in components.items()}, "weights": weights}
+    if gates and not gates["forward_speed"]["passed"]:
+        overall = min(overall, 49.0)
+    if gates and not gates["reverse_speed"]["passed"]:
+        overall = min(overall, 49.0)
+    return {"overall": round(overall, 2), "label": "heuristic simulation score", "components": {key: round(value * 100.0, 2) for key, value in components.items()}, "weights": weights, "qualification_gates": gates, "qualified": bool(gates) and all(item["passed"] for item in gates.values())}
 
 
 def utc_now() -> str:
@@ -153,6 +184,8 @@ def make_run_id(run_dir: Path, task: str, iteration: int | None) -> str:
 
 
 def experiment_kind(run_dir: Path) -> str:
+    if LAB_ROOT / "baselines" in run_dir.parents:
+        return "factory"
     return "smoke" if "smoke" in run_dir.name.lower() else "training"
 
 
@@ -239,6 +272,11 @@ class Bench:
                 if previous.get(key) != value:
                     previous[key] = value
                     changed = True
+            source = previous.setdefault("source", {})
+            for key, path in (("runtime", POLLEN_RUNTIME), ("simulator", POLLEN_SIMULATOR)):
+                if key not in source:
+                    source[key] = git_revision(path)
+                    changed = True
             if changed:
                 previous["updated_at"] = utc_now()
                 self.save_manifest(previous)
@@ -273,6 +311,8 @@ class Bench:
             "source": {
                 "lab": git_revision(LAB_ROOT),
                 "upstream": git_revision(UPSTREAM),
+                "runtime": git_revision(POLLEN_RUNTIME),
+                "simulator": git_revision(POLLEN_SIMULATOR),
             },
             "evaluations": [],
             "promotion_history": [],
@@ -510,7 +550,7 @@ class Bench:
             manifest["run_id"],
             f"<p><span class='badge'>{html.escape(manifest['stage'])}</span> Task: {html.escape(manifest['task'])} · "
             f"{'★ Starred' if manifest.get('starred') else 'Not starred'}</p>"
-            f"<p>Iteration: {manifest.get('latest_iteration')} · ONNX export: {manifest.get('has_exported_policy')}</p>"
+            f"<p>{'Factory policy' if manifest.get('experiment_kind') == 'factory' else 'Iteration: ' + str(manifest.get('latest_iteration'))} · ONNX export: {manifest.get('has_exported_policy')}</p>"
             f"<p class='mono'>{html.escape(manifest['source_run_dir'])}</p>"
             f"<h2>Evaluations</h2><table><tr><th>Suite</th><th>Created</th><th>Data</th></tr>{rows}</table>"
             f"<h2>Comparisons</h2><ul>{comparison_rows}</ul>"
@@ -527,6 +567,8 @@ class Bench:
         upstream_source = git_revision(UPSTREAM)
         upstream_commit = str(upstream_source.get("commit") or "unknown")[:8]
         upstream_branch = str(upstream_source.get("branch") or "detached")
+        runtime_commit = str(git_revision(POLLEN_RUNTIME).get("commit") or "unknown")[:8]
+        simulator_commit = str(git_revision(POLLEN_SIMULATOR).get("commit") or "unknown")[:8]
         # Smoke launches validate wiring for a few iterations; they are not
         # user-facing training jobs and should never inflate the run count.
         real_tasks = {item.get("task") for item in all_manifests if item.get("experiment_kind", "training") != "smoke"}
@@ -573,10 +615,11 @@ class Bench:
                             score = score_evaluation(evaluation_data, manifest["task"]).get("overall")
                     except (OSError, KeyError, TypeError, json.JSONDecodeError):
                         pass
+                version_name = "Factory release" if manifest.get("experiment_kind") == "factory" else f"Iteration {manifest.get('latest_iteration')}"
                 snapshots.append(
                     "<article class='saved-model'>"
                     "<div class='saved-model-title'>"
-                    f"<strong>Iteration {manifest.get('latest_iteration')}</strong>"
+                    f"<strong>{html.escape(version_name)}</strong>"
                     f"<span class='stage-badge'>{html.escape(manifest['stage'])}</span></div>"
                     "<div class='saved-model-stats'>"
                     f"<span><small>Score</small>{score if score is not None else '—'}</span>"
@@ -591,6 +634,8 @@ class Bench:
                 distinct_versions.values(),
                 key=lambda item: (item.get("latest_iteration") or -1, item.get("created_at", "")),
             )
+            is_factory = latest.get("experiment_kind") == "factory"
+            latest_iteration = max((item.get("latest_iteration") for item in group if item.get("latest_iteration") is not None), default=None)
             if state == "active":
                 active_rows.append(
                     "<article class='run-card'>"
@@ -600,20 +645,25 @@ class Bench:
                     f"<button class='play' data-run-id='{html.escape(latest['run_id'])}' "
                     "data-label='Open saved model'>Open saved model</button></article>"
                 )
+            primary_action = (
+                f"<a class='button-link primary-action' href='{FACTORY_ARENA_URL}' target='_blank'>Open factory playground</a>"
+                if is_factory
+                else f"<button class='play primary-action' data-run-id='{html.escape(latest['run_id'])}' data-label='Open checkpoint debugger'>Open checkpoint debugger</button>"
+            )
             row = (
                 "<article class='finished-card'>"
                 "<div class='finished-card-top'><div>"
                 f"<h3>{html.escape(label)}</h3>"
                 f"<div class='run-tags'><span class='pill'>{html.escape(newest['task'])}</span>"
-                f"<span class='kind-tag'>{'Smoke check' if newest.get('experiment_kind') == 'smoke' else 'Training run'}</span>"
+                f"<span class='kind-tag'>{'Factory baseline' if is_factory else ('Smoke check' if newest.get('experiment_kind') == 'smoke' else 'Training run')}</span>"
                 "<span class='complete-tag'>Finished</span></div></div>"
                 "<div class='launch-cluster'>"
-                f"<button class='play primary-action' data-run-id='{html.escape(latest['run_id'])}' data-label='Drive training arena'>Drive training arena</button>"
+                f"{primary_action}"
                 f"<button class='deployment secondary' data-run-id='{html.escape(latest['run_id'])}' "
                 f"{'disabled ' if not latest.get('has_exported_policy') or latest.get('task') not in {'roller', 'swizzle'} else ''}"
                 "title='Run the exported ONNX through Pollen CPU MuJoCo'>Deployment check</button></div></div>"
                 "<div class='run-stats'>"
-                f"<div><small>Latest iteration</small><strong>{max(item.get('latest_iteration') or -1 for item in group):,}</strong></div>"
+                f"<div><small>{'Source' if is_factory else 'Latest iteration'}</small><strong>{'Pollen official' if is_factory else f'{latest_iteration:,}'}</strong></div>"
                 f"<div><small>Saved models</small><strong>{len(distinct_versions)}</strong></div>"
                 f"<div><small>Skill</small><strong>{html.escape(newest['task']).title()}</strong></div>"
                 f"<div><small>Upstream</small><strong>{html.escape(str(latest.get('source', {}).get('upstream', {}).get('commit') or 'unknown')[:8])}</strong></div></div>"
@@ -634,11 +684,12 @@ class Bench:
         content = (
             "<header class='product-header'><div class='brand-lockup'>"
             "<div class='duck-mark' aria-hidden='true'>MD</div><div><p class='eyebrow'>DUCKLAB · POLICY BENCH</p>"
-            "<h1>MicroDuck Control Room</h1><p class='tagline'>Train. Test. Promote.</p></div></div>"
+            "<h1>MicroDuck Control Room</h1><p class='tagline'>Use proven skills. Measure. Improve only when needed.</p></div></div>"
             "<div class='header-side'><span class='local-badge'><i></i> Local &amp; open source</span>"
-            f"<span class='stack-badge'>Pollen microduck_rl · {html.escape(upstream_branch)}@{html.escape(upstream_commit)}</span>"
+            f"<span class='stack-badge'>Pollen stack · runtime@{html.escape(runtime_commit)} · sim@{html.escape(simulator_commit)} · RL {html.escape(upstream_branch)}@{html.escape(upstream_commit)}</span>"
             "<div class='header-status'><span id='system-status'>Checking system status…</span></div></div></header>"
-            "<nav class='quick-nav' aria-label='Dashboard sections'><a href='#training'>Training</a><a href='#simulations'>Simulations</a><a href='#runs'>Finished runs</a><a href='#assistant'>Assistant</a></nav>"
+            "<nav class='quick-nav' aria-label='Dashboard sections'><a href='#factory'>Factory playground</a><a href='#training'>Training</a><a href='#runs'>Policy library</a><a href='#simulations'>Advanced debug</a><a href='#assistant'>Assistant</a></nav>"
+            f"<section id='factory' class='factory-hero'><div><p class='eyebrow'>RECOMMENDED START</p><h2>Drive Pollen’s proven MicroDuck</h2><p>Walking, roller skating, recovery, sit/stand, kicks, and crouch are already included. Use the official browser arena and native Xbox controls before training anything new.</p><div class='factory-skills'><span>Walk</span><span>Skate</span><span>Reverse</span><span>Turn</span><span>Recover</span><span>Kick</span></div></div><a class='button-link factory-launch' href='{FACTORY_ARENA_URL}' target='_blank'>Open factory playground</a></section>"
             "<section id='training'><div class='section-title'><div><p class='eyebrow'>NOW</p><h2>Active training</h2></div></div><div class='panel' id='active-training'>"
             + ("".join(active_rows) or "<p id='active-empty'>No active training jobs.</p>")
             + "<div class='resource-control'><div><strong>Resource mode</strong><p id='resource-copy' class='muted'>Shared keeps local AI services online.</p></div><select id='resource-profile' aria-label='Training resource mode'><option value='shared'>Shared · vLLM stays online</option><option value='training-priority'>Training priority · pause vLLM</option></select></div>"
@@ -646,18 +697,18 @@ class Bench:
             "<p id='training-progress' class='progress-copy'>Checking progress…</p>"
             "<div id='live-reward' class='live-curve' hidden><div class='curve-heading'><div><strong id='reward-title'>Recent mean reward</strong><span id='reward-range' class='muted'></span></div><button id='reward-scope' class='secondary curve-scope' type='button'>Entire run</button></div>"
             "<svg viewBox='0 0 720 170' role='img' aria-label='Recent training mean reward'><line x1='28' y1='145' x2='700' y2='145'></line><polyline id='reward-line' points=''></polyline></svg></div></div></section>"
-            "<section id='simulations'><div class='section-title'><div><p class='eyebrow'>PLAYGROUND</p><h2>Open simulations</h2></div></div><div class='panel'>"
-            "<div class='section-heading'><p class='muted'>Each model runs in its own arena. Open its controller only when you want to drive that model.</p>"
+            "<section id='simulations'><div class='section-title'><div><p class='eyebrow'>ADVANCED</p><h2>Checkpoint debuggers</h2></div></div><div class='panel'>"
+            "<div class='section-heading'><p class='muted'>Viser sessions are for diagnosing exact custom checkpoints. Normal driving belongs in the factory playground.</p>"
             "<button id='stop-all-viewers' class='secondary' type='button' disabled>Stop all</button></div>"
             "<div id='viewer-sessions' class='session-grid'><p>No simulations open.</p></div></div></section>"
-            "<section id='runs'><div class='section-title'><div><p class='eyebrow'>LIBRARY</p><h2>Finished training runs</h2></div>"
-            "<p class='section-note'>Open the latest model, or expand a run to inspect its saved history.</p></div>"
+            "<section id='runs'><div class='section-title'><div><p class='eyebrow'>LIBRARY</p><h2>Factory and trained policies</h2></div>"
+            "<p class='section-note'>Factory policies are the default. Expand custom runs only when comparing an improvement.</p></div>"
             "<div class='finished-grid'>"
             + "".join(finished_rows)
             + "</div></section>"
             f"<section><div class='section-title'><div><p class='eyebrow'>REGISTRY</p><h2>Promoted policies</h2></div></div><div class='panel'><ul>{champions}</ul></div></section>"
             + "<section id='assistant'><div class='section-title'><div><p class='eyebrow'>COPILOT</p><h2>DuckLab Assistant</h2></div></div><div class='panel assistant-panel'><div id='chat-log' class='chat-log'>"
-            + "<p><strong>DuckLab:</strong> Tell me what you want MicroDuck to learn or ask what is running.</p>"
+            + "<p><strong>DuckLab:</strong> Tell me what you want MicroDuck to do. I’ll check shipped Pollen skills before proposing training.</p>"
             + "</div><form id='chat-form'><input id='chat-input' autocomplete='off' placeholder='Example: train MicroDuck to skate backwards'>"
             + "<button type='submit'>Send</button></form><div id='chat-action'></div></div></section>"
             + "<script>"
@@ -677,7 +728,7 @@ class Bench:
             + "document.querySelectorAll('.star').forEach(button=>button.addEventListener('click',async()=>{try{const starred=button.textContent.includes('Star');await api('/api/star',{run_id:button.dataset.runId,star:starred});location.reload();}catch(error){alert(error.message);}}));"
             + "document.querySelector('#stop-all-viewers').addEventListener('click',async()=>{try{await api('/api/stop-viewer',{});await refreshStatus();}catch(error){alert(error.message);}});"
             + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const detected=s.training.detected.length;const p=s.training.progress;const pct=p&&p.total?Math.min(100,100*p.iteration/p.total):0;const t=detected?'Training running'+(p?' · iteration '+p.iteration+(p.total?' / '+p.total:'')+(p.eta?' · ETA '+p.eta:''):''):'No training running';const resource=s.resources||{profile:'shared',vllm_online:false};document.querySelector('#system-status').textContent=t+' · '+s.viewers.length+' simulation'+(s.viewers.length===1?'':'s')+' open · vLLM '+(resource.vllm_online?'online':'paused');document.querySelector('#resource-copy').textContent=resource.profile==='training-priority'?'Training priority active; vLLM is paused until training exits.':'Shared keeps vLLM and Hermes inference online during training.';document.querySelector('#training-progress').textContent=t+(p&&p.total?' · '+pct.toFixed(1)+'% complete':'');document.querySelector('#training-progress-bar').style.width=pct+'%';renderReward(p);renderSessions(s.viewers||[]);}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
-            + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('DuckLab',response.reply);if(response.kind==='confirm-training'){const profile=document.querySelector('#resource-profile');if(response.action.resource_profile)profile.value=response.action.resource_profile;const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const action={...response.action,resource_profile:profile.value};const result=await api('/api/train',action);say('DuckLab','Training started in '+result.resource_profile+' mode.');refreshStatus();}catch(error){say('DuckLab',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){await refreshStatus();}}catch(error){say('DuckLab',error.message);}});"
+            + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('DuckLab',response.reply);if(response.kind==='factory-play'){const link=document.createElement('a');link.className='button-link';link.href=response.url;link.target='_blank';link.textContent='Open factory playground';document.querySelector('#chat-action').appendChild(link);}if(response.kind==='confirm-training'){const profile=document.querySelector('#resource-profile');if(response.action.resource_profile)profile.value=response.action.resource_profile;const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const action={...response.action,resource_profile:profile.value};const result=await api('/api/train',action);say('DuckLab','Training started in '+result.resource_profile+' mode.');refreshStatus();}catch(error){say('DuckLab',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){await refreshStatus();}}catch(error){say('DuckLab',error.message);}});"
             + "document.querySelector('#reward-scope').addEventListener('click',()=>{rewardScope=rewardScope==='recent'?'full':'recent';drawReward();});refreshStatus();setInterval(refreshStatus,5000);"
             + "</script>"
         )
@@ -733,12 +784,14 @@ html{{scroll-behavior:smooth}}body{{max-width:1320px;padding:30px 28px 90px;back
 .quick-nav{{position:sticky;top:12px;z-index:10;display:flex;gap:6px;width:max-content;max-width:100%;margin:14px auto 0;padding:6px;border:1px solid rgba(58,79,96,.9);border-radius:12px;background:rgba(13,19,26,.9);box-shadow:0 12px 35px rgba(0,0,0,.26);backdrop-filter:blur(14px);overflow:auto}}.quick-nav a{{padding:7px 12px;border-radius:8px;color:#b9c8d4;font-size:.84rem;font-weight:650;white-space:nowrap}}.quick-nav a:hover{{background:#1c2934;color:#fff;text-decoration:none}}
 .section-title{{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:11px}}.section-title h2{{margin:0;font-size:1.35rem}}.section-title .eyebrow{{margin-bottom:3px}}.section-note{{color:var(--muted);font-size:.9rem;text-align:right;max-width:480px}}.panel{{margin:0;border-radius:16px;padding:20px;background:rgba(18,25,34,.94)}}
 button,.session-actions a{{border:1px solid transparent;font-weight:700;transition:transform .15s ease,filter .15s ease,border-color .15s ease}}button:hover,.session-actions a:hover{{transform:translateY(-1px)}}button:disabled{{transform:none}}button.secondary{{background:#263644;border-color:#3a4c5c}}.primary-action{{padding:10px 16px}}
+.button-link{{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border:0;border-radius:9px;background:linear-gradient(135deg,var(--brand),#7fe6bd);color:#06130e;font-weight:800;white-space:nowrap;text-decoration:none}}.button-link:hover{{filter:brightness(1.07);text-decoration:none}}
+.factory-hero{{display:flex;justify-content:space-between;align-items:center;gap:30px;margin:28px 0;padding:30px;border:1px solid rgba(69,214,160,.42);border-radius:20px;background:linear-gradient(120deg,rgba(69,214,160,.13),rgba(93,189,255,.07) 55%,rgba(18,25,34,.92));box-shadow:0 18px 45px rgba(0,0,0,.18)}}.factory-hero h2{{font-size:clamp(24px,4vw,38px);margin:2px 0 8px}}.factory-hero p{{max-width:750px;margin:0;color:#c1ced9}}.factory-skills{{display:flex;flex-wrap:wrap;gap:7px;margin-top:17px}}.factory-skills span{{padding:5px 9px;border:1px solid rgba(69,214,160,.25);border-radius:999px;background:rgba(5,20,15,.4);color:#baf2dc;font-size:12px;font-weight:750;letter-spacing:.03em}}.factory-launch{{min-width:220px;padding:14px 20px;font-size:16px}}
 .finished-grid{{display:grid;gap:14px}}.finished-card{{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(20,29,39,.98),rgba(15,22,29,.98));box-shadow:0 12px 30px rgba(0,0,0,.12)}}.finished-card-top{{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 21px 13px}}.finished-card h3{{font-size:1.08rem;margin:0;letter-spacing:-.015em}}.run-tags{{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:9px}}.run-tags .pill{{margin:0}}.kind-tag,.complete-tag,.stage-badge{{padding:3px 8px;border-radius:999px;background:#252f39;color:#b6c4d0;font-size:.74rem;font-weight:700}}.complete-tag{{background:#143c31;color:#9ee8ce}}.launch-cluster{{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}}.run-stats{{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(42,57,72,.65)}}.run-stats>div{{display:flex;flex-direction:column;gap:2px;padding:13px 21px;border-right:1px solid rgba(42,57,72,.65)}}.run-stats>div:last-child{{border:0}}small{{display:block;color:var(--muted);font-size:.69rem;text-transform:uppercase;letter-spacing:.07em;font-weight:750}}
 .saved-dropdown{{margin:0;min-width:0;padding:0;border:0;border-top:1px solid var(--line);border-radius:0;background:#0d141b}}.saved-dropdown>summary{{display:flex;align-items:center;gap:9px;padding:13px 21px;cursor:pointer;color:#cfdae3;font-weight:700;list-style:none;user-select:none}}.saved-dropdown>summary::-webkit-details-marker{{display:none}}.saved-dropdown>summary:hover{{background:#111b24}}.summary-count{{display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#243441;color:#b9d3e5;font-size:.72rem}}.chevron{{margin-left:auto;font-size:1.2rem;transition:transform .18s ease}}.saved-dropdown[open] .chevron{{transform:rotate(180deg)}}.saved-list{{display:grid;gap:8px;padding:0 12px 12px}}.saved-model{{display:grid;grid-template-columns:minmax(150px,1fr) minmax(250px,1.6fr) auto;align-items:center;gap:18px;padding:13px 14px;border:1px solid #263744;border-radius:10px;background:#131d25}}.saved-model-title{{display:flex;align-items:center;gap:8px;flex-wrap:wrap}}.stage-badge{{background:#203545;color:#bfe2fa}}.saved-model-stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}}.saved-model-stats span{{font-weight:750}}.saved-model-actions{{display:flex;align-items:center;justify-content:flex-end;gap:10px}}.text-action{{font-weight:700;white-space:nowrap}}
 .assistant-panel{{background:linear-gradient(145deg,#121b24,#101820)}}
 .resource-control{{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:14px 0;padding:13px 14px;border:1px solid #2b4050;border-radius:11px;background:#101a22}}.resource-control select{{min-width:300px}}
 @media(max-width:900px){{.product-header{{align-items:flex-start;flex-direction:column;min-height:0}}.header-side{{align-items:flex-start;max-width:none}}.header-status{{text-align:left}}.saved-model{{grid-template-columns:1fr}}.saved-model-actions{{justify-content:flex-start}}}}
-@media(max-width:720px){{body{{padding:14px 13px 60px}}.product-header{{padding:25px 20px;border-radius:18px}}.brand-lockup{{align-items:flex-start;gap:14px}}.duck-mark{{flex-basis:52px;height:52px;border-radius:14px;font-size:.95rem}}.quick-nav{{justify-content:flex-start;margin-top:10px}}.section-title,.section-heading,.run-card,.session-card,.finished-card-top,.resource-control{{align-items:flex-start;flex-direction:column}}.section-note{{text-align:left}}.session-actions,.launch-cluster{{width:100%;flex-wrap:wrap}}.session-actions a,.session-actions button,.run-card>button,.launch-cluster button{{width:100%;text-align:center}}.resource-control select{{width:100%;min-width:0}}.run-stats{{grid-template-columns:1fr}}.run-stats>div{{border-right:0;border-bottom:1px solid var(--line)}}.saved-model-stats{{grid-template-columns:repeat(3,1fr)}}.saved-model-actions{{flex-wrap:wrap}}form{{flex-direction:column}}}}
+@media(max-width:720px){{body{{padding:14px 13px 60px}}.product-header{{padding:25px 20px;border-radius:18px}}.brand-lockup{{align-items:flex-start;gap:14px}}.duck-mark{{flex-basis:52px;height:52px;border-radius:14px;font-size:.95rem}}.quick-nav{{justify-content:flex-start;margin-top:10px}}.section-title,.section-heading,.run-card,.session-card,.finished-card-top,.resource-control,.factory-hero{{align-items:flex-start;flex-direction:column}}.section-note{{text-align:left}}.session-actions,.launch-cluster{{width:100%;flex-wrap:wrap}}.session-actions a,.session-actions button,.run-card>button,.launch-cluster button,.launch-cluster a,.factory-launch{{width:100%;text-align:center}}.resource-control select{{width:100%;min-width:0}}.run-stats{{grid-template-columns:1fr}}.run-stats>div{{border-right:0;border-bottom:1px solid var(--line)}}.saved-model-stats{{grid-template-columns:repeat(3,1fr)}}.saved-model-actions{{flex-wrap:wrap}}form{{flex-direction:column}}}}
 </style></head>
 <body>{heading}{body}</body></html>"""
 

@@ -2,3 +2,9 @@
 	path = upstream/microduck_rl
 	url = https://github.com/pollen-robotics/microduck_rl.git
 	branch = develop
+[submodule "upstream/microduck"]
+	path = upstream/microduck
+	url = https://github.com/pollen-robotics/microduck.git
+[submodule "upstream/microduck-simulator"]
+	path = upstream/microduck-simulator
+	url = https://huggingface.co/spaces/pollen-robotics/microduck-simulator
