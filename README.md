@@ -38,6 +38,9 @@ Weights & Biases is disabled; Policy Bench remains the local system of record.
 Training automatically exports the final checkpoint through Pollen's official
 normalizer-aware ONNX path. `make verify-artifact` validates its 61-to-14
 contract, metadata, finite CPU inference, and a 100-step CPU MuJoCo rehearsal.
+Successful skating runs are then automatically verified, registered, scored in
+the CPU deployment battery, and given training-curve metrics. They are never
+automatically starred or promoted.
 
 ## Train a walking baseline
 

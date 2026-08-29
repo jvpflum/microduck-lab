@@ -225,7 +225,14 @@ network calls. Training continues in its own process if the dashboard closes.
 
 ## End-of-training automation
 
-The swizzle completion watcher verifies the final ONNX contract, registers its
-immutable candidate, evaluates it, and leaves it at `evaluated`. It never
-auto-promotes a policy. Visual review and an explicit human promotion remain
-required.
+Every standard training launcher now owns its complete finish path. After a
+successful skating run it verifies the ONNX contract, registers the immutable
+candidate, executes the deployment simulation score, imports training curves,
+and leaves the model at `evaluated`. Walking runs are verified, registered, and
+receive curves while their dedicated locomotion scoring battery is still being
+built. A failed trainer never scores a stale artifact.
+
+Scoring is automatic; judgment is not. Policy Bench never auto-stars or
+auto-promotes a model. Interactive controller review and explicit human
+promotion remain required. The **Deployment check** button can rerun the same
+deterministic score at any time.

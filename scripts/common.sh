@@ -60,3 +60,8 @@ restore_resource_profile() {
 install_resource_profile_trap() {
     trap 'training_status=$?; restore_resource_profile; exit "${training_status}"' EXIT
 }
+
+mark_training_start() {
+    DUCKLAB_TRAINING_STARTED_AT="$(date +%s)"
+    export DUCKLAB_TRAINING_STARTED_AT
+}

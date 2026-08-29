@@ -199,11 +199,11 @@ class PolicyBenchServerTests(unittest.TestCase):
         with mock.patch.object(
             self.bench,
             "evaluate",
-            return_value={"suite": "deployment-v1", "path": str(result_path)},
+            return_value={"suite": "skating-v1", "path": str(result_path)},
         ):
             result = manager.run_deployment_check(self.manifest["run_id"])
         self.assertEqual(result["score"], 72.5)
-        self.assertEqual(result["suite"], "deployment-v1")
+        self.assertEqual(result["suite"], "skating-v1")
 
     @mock.patch.object(server, "running_training_processes", return_value=[])
     @mock.patch.object(server.subprocess, "Popen", side_effect=FakeProcess)

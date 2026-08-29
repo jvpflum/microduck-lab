@@ -347,7 +347,7 @@ class ProcessManager:
                 raise ValueError("A Deployment Check is already running for this model")
             self.deployment_checks.add(run_id)
         try:
-            record = self.bench.evaluate(run_id, "deployment-v1")
+            record = self.bench.evaluate(run_id, "skating-v1")
         finally:
             with self.lock:
                 self.deployment_checks.discard(run_id)

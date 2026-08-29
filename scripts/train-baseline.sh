@@ -11,6 +11,7 @@ install_resource_profile_trap
 
 env_count="${DUCKLAB_ENVS:-4096}"
 iterations="${DUCKLAB_ITERATIONS:-4000}"
+mark_training_start
 
 cd "${UPSTREAM_DIR}"
 "${UV_BIN}" run train Mjlab-Velocity-Flat-MicroDuck \
@@ -18,3 +19,5 @@ cd "${UPSTREAM_DIR}"
     --agent.max_iterations "${iterations}" \
     --agent.run-name ducklab-v1-walk \
     2>&1 | tee "${REPORT_DIR}/train-baseline.log"
+
+"${LAB_ROOT}/scripts/finalize-training.sh" walking

@@ -13,12 +13,4 @@ while kill -0 "${training_pid}" 2>/dev/null; do
     sleep 30
 done
 
-verification_status=0
-"${lab_root}/scripts/verify-skate-artifact.sh" || verification_status=$?
-
-sudo docker update --restart=unless-stopped qwen38-hermes-vllm
-sudo docker start qwen38-hermes-vllm
-systemctl --user start reachy-local-backend.service
-hermes cron resume 7443b5d995b6
-
-exit "${verification_status}"
+exec "${lab_root}/scripts/finalize-training.sh" roller
