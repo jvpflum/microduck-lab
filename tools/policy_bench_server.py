@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import mimetypes
 import os
 import re
@@ -192,6 +193,79 @@ def training_progress() -> dict[str, Any] | None:
                 full_history_for_chart = [full_history[index] for index in indices]
             else:
                 full_history_for_chart = full_history
+            latest_start = text.rfind("Learning iteration")
+            latest_block = text[latest_start:] if latest_start >= 0 else text
+
+            def latest_number(label: str) -> float | None:
+                matches = re.findall(rf"{re.escape(label)}:\s*([-+\d.eE]+)", latest_block)
+                return float(matches[-1]) if matches else None
+
+            recent_values = [item["reward"] for item in full_history[-20:]]
+            previous_values = [item["reward"] for item in full_history[-40:-20]]
+            recent_mean = sum(recent_values) / len(recent_values) if recent_values else None
+            previous_mean = sum(previous_values) / len(previous_values) if previous_values else None
+            trend_delta = (
+                recent_mean - previous_mean
+                if recent_mean is not None and previous_mean is not None
+                else None
+            )
+            volatility = None
+            if recent_values:
+                volatility = math.sqrt(
+                    sum((value - recent_mean) ** 2 for value in recent_values) / len(recent_values)
+                )
+            trend_threshold = max(0.1, abs(previous_mean or 0.0) * 0.03)
+            if len(full_history) < 20:
+                trend = "warming up"
+            elif trend_delta is not None and trend_delta > trend_threshold:
+                trend = "improving"
+            elif trend_delta is not None and trend_delta < -trend_threshold:
+                trend = "regressing"
+            else:
+                trend = "steady"
+
+            episode_rewards = {
+                name: float(value)
+                for name, value in re.findall(
+                    r"Episode_Reward/([\w_]+):\s*([-+\d.eE]+)", latest_block
+                )
+            }
+            nan_terminations = latest_number("Episode_Termination/nan_state") or 0.0
+            verdict_tone = "good" if trend == "improving" else "neutral"
+            verdict = {
+                "improving": "The policy is learning; reward has risen over the last 20 iterations.",
+                "regressing": "Recent reward is falling. Let it run briefly, then inspect a checkpoint if this continues.",
+                "steady": "Reward is stable. This may be consolidation or the start of a plateau.",
+                "warming up": "The run is still warming up; there is not enough history for a reliable trend.",
+            }[trend]
+            if nan_terminations > 0:
+                verdict_tone = "bad"
+                verdict = "Numerical failures are present. Do not promote this run until they are resolved."
+            elif "hop_takeoff_velocity" in episode_rewards:
+                takeoff = episode_rewards.get("hop_takeoff_velocity", 0.0)
+                landing = episode_rewards.get("hop_landing", 0.0)
+                stillness = episode_rewards.get("hop_landing_stillness", 0.0)
+                if takeoff < 0.005:
+                    verdict_tone = "watch"
+                    verdict = (
+                        "Reward is rising, but the takeoff signal is near zero. The policy may be "
+                        "collecting shaping reward without a strong jump; inspect the latest checkpoint."
+                    )
+                elif landing < 0.1 or stillness < 0.01:
+                    verdict_tone = "watch"
+                    verdict = "Takeoff is emerging, but controlled landing is not learned yet. Keep training."
+
+            checkpoints = sorted(
+                (LAB_ROOT / "upstream" / "microduck_rl" / "logs" / "rsl_rl").glob(
+                    "*/*/model_*.pt"
+                ),
+                key=lambda candidate: candidate.stat().st_mtime,
+                reverse=True,
+            )
+            checkpoint_iteration = None
+            if checkpoints:
+                match = re.fullmatch(r"model_(\d+)\.pt", checkpoints[0].name)
+                checkpoint_iteration = int(match.group(1)) if match else None
             return {
                 "log": str(path),
                 "iteration": int(iterations[-1]),
@@ -200,6 +274,25 @@ def training_progress() -> dict[str, Any] | None:
                 "reward_history": full_history[-80:],
                 "reward_history_full": full_history_for_chart,
                 "reward_history_count": len(full_history),
+                "intelligence": {
+                    "current_reward": full_history[-1]["reward"] if full_history else None,
+                    "best_reward": max((item["reward"] for item in full_history), default=None),
+                    "recent_mean": recent_mean,
+                    "trend_delta": trend_delta,
+                    "trend": trend,
+                    "volatility": volatility,
+                    "verdict": verdict,
+                    "verdict_tone": verdict_tone,
+                    "steps_per_second": latest_number("Steps per second"),
+                    "total_steps": latest_number("Total steps"),
+                    "mean_episode_length": latest_number("Mean episode length"),
+                    "mean_action_std": latest_number("Mean action std"),
+                    "value_loss": latest_number("Mean value loss"),
+                    "surrogate_loss": latest_number("Mean surrogate loss"),
+                    "nan_terminations": nan_terminations,
+                    "latest_checkpoint_iteration": checkpoint_iteration,
+                    "episode_rewards": episode_rewards,
+                },
             }
     return None
 
@@ -304,6 +397,8 @@ class ProcessManager:
         self.training_config: dict[str, Any] | None = None
         self.training_log = None
         self.deployment_checks: set[str] = set()
+        self._last_training_discovery = 0.0
+        self._training_candidates: list[dict[str, Any]] = []
 
     @staticmethod
     def _alive(process: subprocess.Popen[bytes] | None) -> bool:
@@ -326,6 +421,32 @@ class ProcessManager:
             self._reap_finished_locked()
             training_alive = self._alive(self.training)
             detected_training = running_training_processes()
+            now = time.monotonic()
+            # Snapshot newly saved checkpoints while a real dashboard-owned
+            # training job is active. A page refresh then exposes the latest
+            # immutable checkpoint debugger without waiting for finalization.
+            if (
+                detected_training
+                and self.bench.state_dir == DEFAULT_STATE.resolve()
+                and now - self._last_training_discovery >= 30.0
+            ):
+                registered = self.bench.discover(UPSTREAM / "logs" / "rsl_rl")
+                active_names = {
+                    match.group(1)
+                    for item in detected_training
+                    if (match := re.search(r"--agent\.run-name\s+([^\s]+)", item.get("command", "")))
+                }
+                self._training_candidates = [
+                    {
+                        "run_id": item["run_id"],
+                        "task": item["task"],
+                        "iteration": item.get("latest_iteration"),
+                        "label": item.get("experiment_label"),
+                    }
+                    for item in registered
+                    if item.get("experiment_label") in active_names
+                ]
+                self._last_training_discovery = now
             viewers = [
                 self._viewer_result(session, reused=True)
                 for session in sorted(self.viewers.values(), key=lambda item: item.started_at)
@@ -345,6 +466,7 @@ class ProcessManager:
                     "pid": self.training.pid if training_alive and self.training else None,
                     "detected": detected_training,
                     "progress": training_progress() if training_alive or detected_training else None,
+                    "candidates": self._training_candidates if detected_training else [],
                 },
                 "resources": resource_status(),
             }
@@ -370,7 +492,7 @@ class ProcessManager:
             "run_id": run_id,
             "suite": record["suite"],
             "score": evaluation.get("policy_bench_score", {}).get("overall"),
-            "report_url": f"runs/{run_id}/report.html",
+            "report_url": f"/runs/{run_id}/report.html",
         }
 
     def launch_viewer(self, run_id: str) -> dict[str, Any]:
@@ -462,7 +584,7 @@ class ProcessManager:
 
     @staticmethod
     def _viewer_result(session: ViewerSession, reused: bool) -> dict[str, Any]:
-        return {
+        result = {
             "run_id": session.run_id,
             "label": session.label,
             "task": session.task,
@@ -479,6 +601,8 @@ class ProcessManager:
             "log": str(session.log_path),
             "started_at": session.started_at,
         }
+        result["open_url"] = result["viser_url"] if session.task == "hop" else result["controller_url"]
+        return result
 
     @staticmethod
     def _terminate_viewer(session: ViewerSession) -> None:
@@ -628,9 +752,23 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             ducklab_style = (
                 b'<style id="ducklab-arena-overrides">'
                 b'div:has(>div>a[href*="store.pollen-robotics.com"]){display:none!important}'
+                b'#dark-wing-arena-brand{position:fixed;left:18px;bottom:18px;z-index:2147483646;'
+                b'display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid rgba(163,126,255,.38);'
+                b'border-radius:9px;background:rgba(12,8,23,.72);backdrop-filter:blur(10px);'
+                b'box-shadow:0 8px 24px rgba(0,0,0,.28);color:#f6f2ff;font-family:inherit;'
+                b'font-size:11px;font-weight:750;letter-spacing:.12em;line-height:1;pointer-events:none;'
+                b'text-transform:uppercase}'
+                b'#dark-wing-arena-brand i{display:block;width:8px;height:8px;border-radius:50%;'
+                b'background:#8157ff;box-shadow:0 0 0 3px rgba(129,87,255,.18)}'
+                b'#dark-wing-arena-brand em{color:#f3c969;font-style:normal;font-weight:800}'
                 b'</style>'
             )
             payload = payload.replace(b"</head>", ducklab_style + b"</head>")
+            dark_wing_brand = (
+                b'<div id="dark-wing-arena-brand" aria-label="Dark Wing Duck Enterprise">'
+                b'<i></i><span>Dark Wing Duck <em>Enterprise</em></span></div>'
+            )
+            payload = payload.replace(b"</body>", dark_wing_brand + b"</body>")
         content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", content_type)
@@ -639,10 +777,30 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(payload)
 
+    def _serve_bench_run_asset(self) -> None:
+        request_path = unquote(urlsplit(self.path).path)
+        relative = request_path.removeprefix("/runs/")
+        root = self.server.bench.runs_dir.resolve()
+        target = (root / relative).resolve()
+        if not target.is_relative_to(root) or not target.is_file():
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        payload = target.read_bytes()
+        content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(payload)
+
     def do_GET(self) -> None:  # noqa: N802
         request_path = urlsplit(self.path).path
         if request_path in {"/factory", "/factory/"} or request_path.startswith("/factory/"):
             self._serve_factory_arena()
+            return
+        if request_path.startswith("/runs/"):
+            self._serve_bench_run_asset()
             return
         # Pollen's app intentionally uses page-relative fetch URLs. Some
         # browser APIs resolve those against the origin root after the bundle

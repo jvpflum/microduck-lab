@@ -118,6 +118,35 @@ class PolicyBenchServerTests(unittest.TestCase):
         )
         self.assertEqual(progress["reward_history_full"], progress["reward_history"])
         self.assertEqual(progress["reward_history_count"], 2)
+        self.assertEqual(progress["intelligence"]["current_reward"], 13.75)
+        self.assertEqual(progress["intelligence"]["best_reward"], 13.75)
+        self.assertEqual(progress["intelligence"]["trend"], "warming up")
+
+    def test_training_intelligence_flags_hop_reward_without_takeoff(self) -> None:
+        reports = self.root / "reports"
+        reports.mkdir()
+        blocks = []
+        for iteration in range(1, 42):
+            blocks.append(
+                f"Learning iteration {iteration}/100\n"
+                f"Mean reward: {iteration / 10:.2f}\n"
+                "Steps per second: 30000\n"
+                "Episode_Reward/hop_takeoff_velocity: 0.0001\n"
+                "Episode_Reward/hop_clearance_progress: 2.5\n"
+                "Episode_Reward/hop_landing: 0.02\n"
+                "Episode_Reward/hop_landing_stillness: 0.0\n"
+                "Episode_Termination/nan_state: 0.0\n"
+                "ETA: 00:10:00\n"
+            )
+        (reports / "train-hop.log").write_text("".join(blocks))
+        with mock.patch.object(server, "LAB_ROOT", self.root):
+            progress = server.training_progress()
+        assert progress is not None
+        intelligence = progress["intelligence"]
+        self.assertEqual(intelligence["trend"], "improving")
+        self.assertEqual(intelligence["verdict_tone"], "watch")
+        self.assertIn("takeoff signal is near zero", intelligence["verdict"])
+        self.assertEqual(intelligence["steps_per_second"], 30000.0)
 
     def test_training_progress_full_curve_spans_entire_large_run(self) -> None:
         reports = self.root / "reports"
@@ -167,6 +196,7 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(result["task"], "swizzle")
         self.assertEqual(result["iteration"], 250)
         self.assertEqual(result["controller_url"], "http://localhost:8090/?arena_port=8080")
+        self.assertEqual(result["open_url"], result["controller_url"])
         self.assertIn("Mjlab-Velocity-Swizzle-MicroDuck", process.command)
         self.assertNotIsInstance(process.command, str)
         self.assertEqual(process.kwargs["env"]["WANDB_MODE"], "disabled")
@@ -220,6 +250,7 @@ class PolicyBenchServerTests(unittest.TestCase):
             result = manager.run_deployment_check(self.manifest["run_id"])
         self.assertEqual(result["score"], 72.5)
         self.assertEqual(result["suite"], "skating-v1")
+        self.assertEqual(result["report_url"], f"/runs/{self.manifest['run_id']}/report.html")
 
     @mock.patch.object(server, "running_training_processes", return_value=[])
     @mock.patch.object(server.subprocess, "Popen", side_effect=FakeProcess)

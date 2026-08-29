@@ -4,6 +4,7 @@ import atexit
 import os
 import sys
 import time
+from pathlib import Path
 
 # Keep the gamepad HTTP thread responsive while the CPU viewer performs its
 # physics/inference loop. The default interpreter switch interval is too coarse
@@ -19,8 +20,21 @@ from viser._gui_api import GuiApi
 _ViserServer = viser.ViserServer
 
 
+def _argument_value(flag: str) -> str | None:
+    try:
+        return sys.argv[sys.argv.index(flag) + 1]
+    except (ValueError, IndexError):
+        return None
+
+
+_task_id = next((argument for argument in sys.argv[1:] if argument.startswith("Mjlab-")), "Mjlab policy")
+_checkpoint_file = _argument_value("--checkpoint-file")
+_checkpoint_name = Path(_checkpoint_file).name if _checkpoint_file else "unknown checkpoint"
+
+
 def _viser_server_on_session_port(*args, **kwargs):
     kwargs.setdefault("port", int(os.environ.get("DUCKLAB_VISER_PORT", "8080")))
+    kwargs["label"] = "Dark Wing · Pollen microduck_rl"
     return _ViserServer(*args, **kwargs)
 
 
@@ -103,6 +117,10 @@ _ViserPlayViewer = play_module.ViserPlayViewer
 class GamepadViserPlayViewer(_ViserPlayViewer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._server.gui.add_markdown(
+            "### Dark Wing Duck Enterprise\n"
+            f"**Pollen microduck_rl · Mjlab**  \nTask: `{_task_id}`  \nCheckpoint: `{_checkpoint_name}`"
+        )
         bridge.start()
         bridge.bind_viewer(self)
 
