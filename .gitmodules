@@ -7,4 +7,4 @@
 	url = https://github.com/pollen-robotics/microduck.git
 [submodule "upstream/microduck-simulator"]
 	path = upstream/microduck-simulator
-	url = https://huggingface.co/spaces/pollen-robotics/microduck-simulator
+	url = https://github.com/jvpflum/microduck-simulator.git

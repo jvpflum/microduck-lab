@@ -157,12 +157,27 @@ make bench-list
 make bench-dashboard
 ```
 
-The dashboard's primary action opens Pollen's official browser playground with
-native gamepad support. Custom saved checkpoints expose an **Open checkpoint
-debugger** action that launches the exact Pollen mjlab task in an isolated
-Viser/controller session. Multiple custom policies
-can remain open side by side, and the dashboard always shows which arena and
-controller belong together. **Deployment check** runs the exported ONNX policy
+The dashboard's **Open simulator** action opens Pollen's colorful browser arena
+with native gamepad support for both factory and custom models. For a custom
+saved model, Policy Bench verifies its immutable ONNX snapshot, loads that
+exact artifact into the correct policy slot, and selects feet or rollers
+automatically. Roller Hop keeps Pollen's factory drive policy for skating and
+uses the selected model for the hop: press Xbox **A** (or **X** / keyboard
+**R**) to trigger it. The older white Viser surface is retained only as an
+advanced engineering debugger and is never the dashboard's normal Play path.
+While a run is active, its separate **Watch training live** action opens a
+six-robot gray-tile mjlab view of the newest immutable checkpoint. The trainer
+still runs thousands of environments headlessly; this lightweight sample is
+refreshed by reopening the button after a newer checkpoint is saved and never
+replaces the finished-model arena.
+
+The live viewer continuously buffers six seconds of motion. To capture a useful
+manual maneuver, select the robot under **Scene → Environment**, choose a skill
+under **Demonstration recorder**, perform the maneuver, and immediately click
+**Save last attempt**. It writes the last five seconds of joint positions,
+velocities, actions, and timing to `reports/demonstrations/` for curriculum or
+motion-imitation work. Failed attempts can simply be left unsaved.
+**Evaluate** runs the exported ONNX policy
 through Pollen's CPU MuJoCo runtime and adds a scored forward/reverse/coast/
 heading evaluation to the run. Its local DuckLab Assistant
 can turn a request such as “train swizzle for 8000 iterations with 4096
@@ -184,9 +199,12 @@ Connect from your laptop with the dashboard and factory arena forwarded:
 ssh -L 8091:localhost:8091 <ssh-user>@<spark-address>
 ```
 
-Open `http://localhost:8091`, click **Open factory playground**, press a button
-on the controller so the browser detects it, and drive with the left stick.
-This is Pollen's controller implementation and is the default test path.
+Open `http://localhost:8091`, click **Open simulator** on a factory or saved
+model, press a button on the controller so the browser detects it, and drive
+with the left stick. This is Pollen's controller implementation and is the
+default test path. No Viser or controller port forwarding is required. Custom
+policy previews start with a clean floor; use the in-arena **Ball on / Ball
+off** control when a ball is useful.
 
 ### Debug an exact custom checkpoint
 

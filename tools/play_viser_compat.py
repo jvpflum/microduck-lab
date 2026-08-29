@@ -4,7 +4,11 @@ import atexit
 import os
 import sys
 import time
+from collections import deque
 from pathlib import Path
+from threading import Lock
+
+import numpy as np
 
 # Keep the gamepad HTTP thread responsive while the CPU viewer performs its
 # physics/inference loop. The default interpreter switch interval is too coarse
@@ -30,6 +34,8 @@ def _argument_value(flag: str) -> str | None:
 _task_id = next((argument for argument in sys.argv[1:] if argument.startswith("Mjlab-")), "Mjlab policy")
 _checkpoint_file = _argument_value("--checkpoint-file")
 _checkpoint_name = Path(_checkpoint_file).name if _checkpoint_file else "unknown checkpoint"
+_num_envs = int(_argument_value("--num-envs") or "1")
+_training_preview = os.environ.get("DUCKLAB_VIEW_KIND") == "training-preview"
 
 
 def _viser_server_on_session_port(*args, **kwargs):
@@ -117,12 +123,104 @@ _ViserPlayViewer = play_module.ViserPlayViewer
 class GamepadViserPlayViewer(_ViserPlayViewer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        step_dt = float(self.env.unwrapped.step_dt)
+        self._demo_samples = deque(maxlen=max(10, int(6.0 / step_dt) + 2))
+        self._demo_lock = Lock()
         self._server.gui.add_markdown(
             "### Dark Wing Duck Enterprise\n"
-            f"**Pollen microduck_rl · Mjlab**  \nTask: `{_task_id}`  \nCheckpoint: `{_checkpoint_name}`"
+            f"**{'Live training snapshot' if _training_preview else 'Pollen microduck_rl · Mjlab'}**  \n"
+            f"Task: `{_task_id}`  \nCheckpoint: `{_checkpoint_name}`"
+            + (f"  \nRobots shown: **{_num_envs}**" if _training_preview else "")
         )
+        with self._server.gui.add_folder("Demonstration recorder"):
+            self._demo_label = self._server.gui.add_dropdown(
+                "Skill",
+                options=["Backflip", "Front flip", "Hop", "Other"],
+                initial_value="Backflip",
+            )
+            self._demo_status = self._server.gui.add_markdown(
+                "Recorder armed. Perform the move, then save the last five seconds."
+            )
+            save_demo = self._server.gui.add_button("Save last attempt")
+
+            @save_demo.on_click
+            def _(_) -> None:
+                self._save_demo()
         bridge.start()
         bridge.bind_viewer(self)
+
+    def setup(self):
+        if _training_preview and _num_envs > 1:
+            # The task's native camera convention uses a negative elevation,
+            # which puts Viser below the floor and tracks only env 0. Frame the
+            # complete training sample from above instead.
+            self.cfg.distance = 3.0
+            self.cfg.azimuth = 45.0
+            self.cfg.elevation = 32.0
+        super().setup()
+        if _training_preview and _num_envs > 1:
+            self._scene.camera_tracking_enabled = False
+
+    def _execute_step(self):
+        success = super()._execute_step()
+        if success:
+            self._capture_demo_sample()
+        return success
+
+    def _capture_demo_sample(self):
+        env = self.env.unwrapped
+        env_idx = int(getattr(getattr(self, "_scene", None), "env_idx", 0))
+        sim = env.sim
+        action = getattr(env.action_manager, "action", None)
+        sample = {
+            "env_idx": env_idx,
+            "sim_time": float(self._step_count * env.step_dt),
+            "qpos": sim.data.qpos[env_idx].detach().cpu().numpy().copy(),
+            "qvel": sim.data.qvel[env_idx].detach().cpu().numpy().copy(),
+            "action": (
+                action[env_idx].detach().cpu().numpy().copy()
+                if action is not None
+                else np.empty(0, dtype=np.float32)
+            ),
+        }
+        with self._demo_lock:
+            self._demo_samples.append(sample)
+
+    def _save_demo(self):
+        env_idx = int(getattr(getattr(self, "_scene", None), "env_idx", 0))
+        with self._demo_lock:
+            samples = [sample for sample in self._demo_samples if sample["env_idx"] == env_idx]
+        if len(samples) < 5:
+            self._demo_status.content = "Not enough motion recorded yet. Run the simulation, then try again."
+            return
+        # Keep the last five seconds even though the ring has a one-second
+        # guard band for slow viewers.
+        cutoff = samples[-1]["sim_time"] - 5.0
+        samples = [sample for sample in samples if sample["sim_time"] >= cutoff]
+        safe_label = self._demo_label.value.lower().replace(" ", "-")
+        output_dir = Path(
+            os.environ.get("DUCKLAB_DEMO_DIR", str(Path.cwd() / "demonstrations"))
+        )
+        output_dir.mkdir(parents=True, exist_ok=True)
+        stamp = time.strftime("%Y%m%d-%H%M%S", time.gmtime())
+        output = output_dir / f"{safe_label}-{stamp}-{_checkpoint_name.removesuffix('.pt')}.npz"
+        np.savez_compressed(
+            output,
+            qpos=np.stack([sample["qpos"] for sample in samples]),
+            qvel=np.stack([sample["qvel"] for sample in samples]),
+            action=np.stack([sample["action"] for sample in samples]),
+            sim_time=np.asarray([sample["sim_time"] for sample in samples]),
+            env_idx=np.asarray(env_idx),
+            task=np.asarray(_task_id),
+            checkpoint=np.asarray(_checkpoint_name),
+            skill=np.asarray(self._demo_label.value),
+        )
+        duration = samples[-1]["sim_time"] - samples[0]["sim_time"]
+        self._demo_status.content = (
+            f"Saved **{self._demo_label.value}** · {duration:.1f}s · {len(samples)} frames  \n"
+            f"`{output.name}`"
+        )
+        print(f"[demo] saved {output}", flush=True)
 
     def close(self):
         try:

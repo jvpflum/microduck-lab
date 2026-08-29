@@ -21,7 +21,7 @@ from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import unquote, urlsplit
+from urllib.parse import quote, unquote, urlsplit
 
 from policy_bench import Bench, DEFAULT_STATE, FACTORY_ARENA_URL, LAB_ROOT, UPSTREAM, sha256
 
@@ -83,6 +83,8 @@ class ViewerSession:
     viser_port: int
     controller_port: int
     started_at: float
+    num_envs: int
+    kind: str
 
 
 def json_bytes(value: Any) -> bytes:
@@ -495,7 +497,79 @@ class ProcessManager:
             "report_url": f"/runs/{run_id}/report.html",
         }
 
-    def launch_viewer(self, run_id: str) -> dict[str, Any]:
+    def launch_simulator(self, run_id: str) -> dict[str, Any]:
+        """Open an immutable exported policy in Pollen's browser arena.
+
+        This is the product-facing path.  Viser remains available internally
+        as an engineering debugger, but the dashboard never routes Play to it.
+        """
+        manifest = self.bench.load_manifest(run_id)
+        task = manifest.get("task")
+        preview = {
+            "walking": {"slot": "walk", "loco": "legs", "label": "Run"},
+            "roller": {"slot": "drive", "loco": "rollers", "label": "Drive"},
+            "swizzle": {"slot": "drive", "loco": "rollers", "label": "Swizzle"},
+            "hop": {
+                "slot": "crouch",
+                "loco": "rollers",
+                "label": "Hop",
+                "period": "3.0",
+                "end": "1.0",
+            },
+        }.get(task)
+        if preview is None:
+            raise ValueError(f"Interactive arena preview is not configured for task {task!r}")
+        policy = manifest.get("artifacts", {}).get("policy")
+        if not policy:
+            raise ValueError(
+                "This saved model has not exported its browser policy yet. "
+                "Choose the newest saved model marked ready, or wait for the next export."
+            )
+        policy_path = Path(policy["path"])
+        if not policy_path.is_file() or sha256(policy_path) != policy["sha256"]:
+            raise ValueError("The policy snapshot is missing or failed its hash check")
+        try:
+            relative = policy_path.resolve().relative_to(self.bench.runs_dir.resolve())
+        except ValueError as error:
+            raise ValueError("The policy snapshot is outside Policy Bench storage") from error
+        policy_url = "/runs/" + quote(relative.as_posix(), safe="/")
+        params = {
+            "boot": "1",
+            "preview_policy": policy_url,
+            "preview_slot": preview["slot"],
+            "preview_loco": preview["loco"],
+            "preview_label": preview["label"],
+        }
+        if "period" in preview:
+            params["preview_period"] = preview["period"]
+            params["preview_end"] = preview["end"]
+        query = "&".join(f"{key}={quote(value, safe='/')}" for key, value in params.items())
+        return {
+            "run_id": run_id,
+            "task": task,
+            "iteration": manifest.get("latest_iteration"),
+            "renderer": "pollen-browser-arena",
+            "policy_sha256": policy["sha256"],
+            "open_url": f"/factory/?{query}",
+        }
+
+    def launch_training_viewer(self, run_id: str) -> dict[str, Any]:
+        """Render six sampled environments from the newest live checkpoint."""
+        return self.launch_viewer(
+            run_id,
+            num_envs=6,
+            kind="training-preview",
+            replace_experiment=True,
+        )
+
+    def launch_viewer(
+        self,
+        run_id: str,
+        *,
+        num_envs: int = 1,
+        kind: str = "engineering-debugger",
+        replace_experiment: bool = False,
+    ) -> dict[str, Any]:
         manifest = self.bench.load_manifest(run_id)
         task = manifest["task"]
         if task not in TASKS:
@@ -508,9 +582,25 @@ class ProcessManager:
             raise ValueError("The checkpoint snapshot is missing or failed its hash check")
         with self.lock:
             self._reap_finished_locked()
+            label = manifest.get("experiment_label") or Path(manifest["source_run_dir"]).name
+            if replace_experiment:
+                # A new live checkpoint supersedes the old preview for the
+                # same training job. Keep at most one six-robot preview so a
+                # long run cannot exhaust the bounded viewer port pool.
+                for old_run_id, old_session in list(self.viewers.items()):
+                    if (
+                        old_run_id != run_id
+                        and old_session.kind == "training-preview"
+                        and old_session.label == label
+                    ):
+                        self._terminate_viewer(old_session)
+                        del self.viewers[old_run_id]
             existing = self.viewers.get(run_id)
             if existing is not None and self._alive(existing.process):
-                return self._viewer_result(existing, reused=True)
+                if existing.num_envs == num_envs and existing.kind == kind:
+                    return self._viewer_result(existing, reused=True)
+                self._terminate_viewer(existing)
+                del self.viewers[run_id]
             reserved = {
                 port
                 for session in self.viewers.values()
@@ -545,16 +635,21 @@ class ProcessManager:
                 "--checkpoint-file",
                 str(checkpoint_path),
                 "--num-envs",
-                "1",
-                "--device",
-                "cpu",
-                "--viewer",
-                "viser",
+                str(num_envs),
             ]
+            if num_envs > 1:
+                # Keep the independent worlds visually close together. They
+                # cannot collide across environments, so tighter spacing is a
+                # pure presentation improvement for the six-robot overview.
+                command.extend(["--env.scene.env-spacing", "0.75"])
+            command.extend(["--device", "cpu", "--viewer", "viser"])
             environment = os.environ.copy()
             environment["WANDB_MODE"] = "disabled"
             environment["DUCKLAB_VISER_PORT"] = str(viser_port)
             environment["DUCKLAB_GAMEPAD_PORT"] = str(controller_port)
+            environment["DUCKLAB_VIEW_KIND"] = kind
+            environment["DUCKLAB_VIEW_NUM_ENVS"] = str(num_envs)
+            environment["DUCKLAB_DEMO_DIR"] = str(LAB_ROOT / "reports" / "demonstrations")
             try:
                 process = subprocess.Popen(
                     command,
@@ -569,7 +664,7 @@ class ProcessManager:
                 raise
             session = ViewerSession(
                 run_id=run_id,
-                label=manifest.get("experiment_label") or Path(manifest["source_run_dir"]).name,
+                label=label,
                 task=task,
                 iteration=manifest.get("latest_iteration"),
                 process=process,
@@ -578,6 +673,8 @@ class ProcessManager:
                 viser_port=viser_port,
                 controller_port=controller_port,
                 started_at=time.time(),
+                num_envs=num_envs,
+                kind=kind,
             )
             self.viewers[run_id] = session
             return self._viewer_result(session, reused=False)
@@ -600,6 +697,8 @@ class ProcessManager:
             "pid": session.process.pid,
             "log": str(session.log_path),
             "started_at": session.started_at,
+            "num_envs": session.num_envs,
+            "kind": session.kind,
         }
         result["open_url"] = result["viser_url"] if session.task == "hop" else result["controller_url"]
         return result
@@ -752,7 +851,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             ducklab_style = (
                 b'<style id="ducklab-arena-overrides">'
                 b'div:has(>div>a[href*="store.pollen-robotics.com"]){display:none!important}'
-                b'#dark-wing-arena-brand{position:fixed;left:18px;bottom:18px;z-index:2147483646;'
+                b'#dark-wing-arena-brand{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:2147483646;'
                 b'display:flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid rgba(163,126,255,.38);'
                 b'border-radius:9px;background:rgba(12,8,23,.72);backdrop-filter:blur(10px);'
                 b'box-shadow:0 8px 24px rgba(0,0,0,.28);color:#f6f2ff;font-family:inherit;'
@@ -841,7 +940,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         try:
             body = self._read_json()
             if self.path == "/api/play":
-                self._send_json(self.server.manager.launch_viewer(str(body.get("run_id", ""))))
+                self._send_json(self.server.manager.launch_simulator(str(body.get("run_id", ""))))
+            elif self.path == "/api/watch-training":
+                self._send_json(self.server.manager.launch_training_viewer(str(body.get("run_id", ""))))
             elif self.path == "/api/deployment-check":
                 self._send_json(self.server.manager.run_deployment_check(str(body.get("run_id", ""))))
             elif self.path == "/api/stop-viewer":
@@ -924,7 +1025,7 @@ class DashboardServer(ThreadingHTTPServer):
             iteration = int(play.group(1))
             matches = [item for item in self.bench.manifests() if item.get("latest_iteration") == iteration]
             if len(matches) == 1:
-                result = self.manager.launch_viewer(matches[0]["run_id"])
+                result = self.manager.launch_simulator(matches[0]["run_id"])
                 return {"kind": "play", "reply": f"Launching iteration {iteration}.", "result": result}
             if not matches:
                 return {"kind": "message", "reply": f"I could not find a registered iteration {iteration}. Run discovery first."}

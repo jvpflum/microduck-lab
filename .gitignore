@@ -4,6 +4,7 @@ artifacts/
 reports/*.json
 reports/*.log
 reports/*.png
+reports/demonstrations/
 policy-bench/
 baselines/
 upstream/microduck_rl/logs/

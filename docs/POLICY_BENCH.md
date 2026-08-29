@@ -148,17 +148,20 @@ Host microduck-spark
     LocalForward 8096 localhost:8096
 ```
 
-Connect with `ssh microduck-spark`, then open `http://localhost:8091`. The
-recommended **Open factory playground** action opens Pollen's official arena at
-`http://localhost:8091/factory/` through the same dashboard tunnel, with its
-native gamepad implementation. For a custom
-candidate, **Open checkpoint debugger** validates that exact saved checkpoint,
-assigns it an isolated Viser/controller pair, and opens its combined controller
-view. The **Checkpoint debuggers** section is
-the source of truth: it identifies every model, its ports, and provides explicit
-**Open arena**, **Open Xbox controller**, and **Stop** actions. Reopening a model
-reuses its own session; opening another model does not replace it. Up to six can
-be open concurrently.
+Connect with `ssh microduck-spark`, then open `http://localhost:8091`.
+**Open simulator** on a finished run verifies its immutable ONNX artifact and
+opens it in Pollen's colorful browser arena through the dashboard tunnel. The
+arena selects feet/rollers and the correct policy slot automatically.
+
+Active jobs have a different action: **Watch training live** launches six
+sample environments from the newest checkpoint in mjlab/Viser. The actual PPO
+trainer continues running thousands of environments headlessly; the viewer is
+a current checkpoint sample and never replaces the finished-model arena. A new
+checkpoint supersedes the prior live preview for that experiment so the port
+pool cannot fill during a long run. The live viewer also maintains a rolling
+motion buffer: choose a skill and click **Save last attempt** immediately after
+a successful manual maneuver to store five seconds under
+`reports/demonstrations/`.
 
 Each finished skating run also offers **Deployment check** when it has an ONNX
 export. This is deliberately separate from the interactive training arena: it
@@ -167,7 +170,8 @@ runs the normalizer-aware ONNX through Pollen's CPU MuJoCo inference path at
 stores the transparent score in the run report. Pollen's `infer_policy.py`
 viewer is a native desktop window rather than an SSH-forwardable browser UI;
 Policy Bench therefore uses its headless runtime path for repeatable deployment
-qualification and keeps mjlab/Viser for interactive driving.
+qualification, Pollen's browser arena for finished-policy driving, and
+mjlab/Viser only for sampled live-training visualization and advanced debugging.
 
 ## Resource modes
 
@@ -218,9 +222,10 @@ stop the viewer
 ```
 
 Codex on the Spark can translate a natural-language goal into a validated task
-plan. Only registered simulator tasks (currently walking, roller skating, and
-swizzle skating) can become a launch action; a goal such as a backflip receives
-an honest explanation that its environment and reward still need to be added.
+plan. Only registered simulator tasks (currently walking, roller skating,
+swizzle, and Roller Hop) can become a launch action; a goal such as a backflip
+receives an honest explanation that its environment and reward still need to
+be added.
 The proposed configuration is shown back to the user and requires a separate
 **Confirm training launch** click. Full training is refused while another
 training process is detected. No arbitrary shell text is ever executed.

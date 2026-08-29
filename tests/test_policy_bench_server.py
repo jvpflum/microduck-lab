@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
+from urllib.parse import parse_qs, urlsplit
 
 
 LAB_ROOT = Path(__file__).resolve().parents[1]
@@ -205,6 +206,38 @@ class PolicyBenchServerTests(unittest.TestCase):
         process.returncode = 0
         manager.status()
 
+    def test_product_play_opens_exact_policy_in_pollen_browser_arena(self) -> None:
+        manager = server.ProcessManager(self.bench)
+        result = manager.launch_simulator(self.manifest["run_id"])
+        parsed = urlsplit(result["open_url"])
+        params = parse_qs(parsed.query)
+
+        self.assertEqual(result["renderer"], "pollen-browser-arena")
+        self.assertEqual(result["iteration"], 250)
+        self.assertEqual(parsed.path, "/factory/")
+        self.assertEqual(params["preview_slot"], ["drive"])
+        self.assertEqual(params["preview_loco"], ["rollers"])
+        self.assertEqual(
+            params["preview_policy"],
+            [f"/runs/{self.manifest['run_id']}/artifacts/run.onnx"],
+        )
+        self.assertEqual(result["policy_sha256"], self.manifest["artifacts"]["policy"]["sha256"])
+
+    def test_hop_preview_uses_full_three_second_phase(self) -> None:
+        hop_dir = self.root / "logs" / "roller_hop" / "hop-a"
+        hop_dir.mkdir(parents=True)
+        (hop_dir / "model_300.pt").write_bytes(b"hop-checkpoint")
+        (hop_dir / "hop.onnx").write_bytes(b"hop-policy")
+        hop = self.bench.register(hop_dir)
+
+        result = server.ProcessManager(self.bench).launch_simulator(hop["run_id"])
+        params = parse_qs(urlsplit(result["open_url"]).query)
+        self.assertEqual(params["preview_slot"], ["crouch"])
+        self.assertEqual(params["preview_loco"], ["rollers"])
+        self.assertEqual(params["preview_label"], ["Hop"])
+        self.assertEqual(params["preview_period"], ["3.0"])
+        self.assertEqual(params["preview_end"], ["1.0"])
+
     @mock.patch.object(server, "port_available", side_effect=lambda port: port != 8080)
     def test_play_skips_an_occupied_port_pair(self, _port) -> None:
         manager = server.ProcessManager(self.bench)
@@ -214,6 +247,25 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(result["viser_port"], 8081)
         self.assertEqual(result["controller_port"], 8092)
         manager.viewers[self.manifest["run_id"]].process.returncode = 0
+        manager.status()
+
+    @mock.patch.object(server, "port_available", return_value=True)
+    @mock.patch.object(server.subprocess, "Popen", side_effect=FakeProcess)
+    def test_live_training_view_samples_six_robots(self, _popen, _port) -> None:
+        manager = server.ProcessManager(self.bench)
+        result = manager.launch_training_viewer(self.manifest["run_id"])
+        process = manager.viewers[self.manifest["run_id"]].process
+
+        self.assertEqual(result["kind"], "training-preview")
+        self.assertEqual(result["num_envs"], 6)
+        env_index = process.command.index("--num-envs")
+        self.assertEqual(process.command[env_index + 1], "6")
+        spacing_index = process.command.index("--env.scene.env-spacing")
+        self.assertEqual(process.command[spacing_index + 1], "0.75")
+        self.assertEqual(result["open_url"], result["controller_url"])
+        self.assertEqual(process.kwargs["env"]["DUCKLAB_VIEW_KIND"], "training-preview")
+        self.assertEqual(process.kwargs["env"]["DUCKLAB_VIEW_NUM_ENVS"], "6")
+        process.returncode = 0
         manager.status()
 
     @mock.patch.object(server, "port_available", return_value=True)
