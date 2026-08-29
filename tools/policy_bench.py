@@ -534,7 +534,6 @@ class Bench:
         grouped: dict[str, list[dict[str, Any]]] = {}
         for manifest in manifests:
             grouped.setdefault(experiment_key(manifest), []).append(manifest)
-        experiment_rows = []
         finished_rows = []
         active_rows = []
         for group in grouped.values():
@@ -559,12 +558,18 @@ class Bench:
                     except (OSError, KeyError, TypeError, json.JSONDecodeError):
                         pass
                 snapshots.append(
-                    "<tr>"
-                    f"<td>{manifest.get('latest_iteration')}</td><td>{html.escape(manifest['stage'])}</td>"
-                    f"<td>{score if score is not None else '—'}</td><td>{len(manifest.get('evaluations', []))}</td>"
-                    f"<td>{'★' if manifest.get('starred') else '—'}</td>"
-                    f"<td><a href='runs/{html.escape(manifest['run_id'])}/report.html'>Details</a> "
-                    f"<button class='star' data-run-id='{html.escape(manifest['run_id'])}'>{'Unstar' if manifest.get('starred') else '★ Star'}</button></td></tr>"
+                    "<article class='saved-model'>"
+                    "<div class='saved-model-title'>"
+                    f"<strong>Iteration {manifest.get('latest_iteration')}</strong>"
+                    f"<span class='stage-badge'>{html.escape(manifest['stage'])}</span></div>"
+                    "<div class='saved-model-stats'>"
+                    f"<span><small>Score</small>{score if score is not None else '—'}</span>"
+                    f"<span><small>Evaluations</small>{len(manifest.get('evaluations', []))}</span>"
+                    f"<span><small>Shortlisted</small>{'Yes ★' if manifest.get('starred') else 'No'}</span></div>"
+                    "<div class='saved-model-actions'>"
+                    f"<a class='text-action' href='runs/{html.escape(manifest['run_id'])}/report.html'>View details</a>"
+                    f"<button class='star secondary' data-run-id='{html.escape(manifest['run_id'])}'>{'Remove star' if manifest.get('starred') else '★ Star model'}</button>"
+                    "</div></article>"
                 )
             latest = max(
                 distinct_versions.values(),
@@ -580,16 +585,22 @@ class Bench:
                     "data-label='Open saved model'>Open saved model</button></article>"
                 )
             row = (
-                "<tr>"
-                f"<td>{html.escape(label)}</td><td>{html.escape(newest['task'])}</td>"
-                f"<td>{'Smoke check' if newest.get('experiment_kind') == 'smoke' else 'Training'}</td>"
-                f"<td>{'Active' if state == 'active' else 'Finished'}</td><td>{len(distinct_versions)}</td>"
-                f"<td>{max(item.get('latest_iteration') or -1 for item in group)}</td>"
-                f"<td><button class='play' data-run-id='{html.escape(latest['run_id'])}' data-label='Open simulation'>Open simulation</button> "
-                "<details><summary>Saved versions</summary>"
-                "<table><tr><th>Saved version</th><th>Stage</th><th>Score</th><th>Evaluations</th><th>Star</th><th>Actions</th></tr>"
+                "<article class='finished-card'>"
+                "<div class='finished-card-top'><div>"
+                f"<h3>{html.escape(label)}</h3>"
+                f"<div class='run-tags'><span class='pill'>{html.escape(newest['task'])}</span>"
+                f"<span class='kind-tag'>{'Smoke check' if newest.get('experiment_kind') == 'smoke' else 'Training run'}</span>"
+                "<span class='complete-tag'>Finished</span></div></div>"
+                f"<button class='play primary-action' data-run-id='{html.escape(latest['run_id'])}' data-label='Open simulation'>Open simulation</button></div>"
+                "<div class='run-stats'>"
+                f"<div><small>Latest iteration</small><strong>{max(item.get('latest_iteration') or -1 for item in group):,}</strong></div>"
+                f"<div><small>Saved models</small><strong>{len(distinct_versions)}</strong></div>"
+                f"<div><small>Skill</small><strong>{html.escape(newest['task']).title()}</strong></div></div>"
+                "<details class='saved-dropdown'><summary><span>Saved models</span>"
+                f"<span class='summary-count'>{len(distinct_versions)}</span><span class='chevron'>⌄</span></summary>"
+                "<div class='saved-list'>"
                 + "".join(snapshots)
-                + "</table></details></td></tr>"
+                + "</div></details></article>"
             )
             if state != "active":
                 finished_rows.append(row)
@@ -600,26 +611,32 @@ class Bench:
             for task, stages in registry.get("tasks", {}).items()
         ) or "<li>No promoted policies yet</li>"
         content = (
-            "<div class='summary-strip'><span id='system-status'>Checking system status…</span></div>"
-            "<h2>Active training</h2><div class='panel' id='active-training'>"
+            "<header class='product-header'><div class='brand-lockup'>"
+            "<div class='duck-mark' aria-hidden='true'>MD</div><div><p class='eyebrow'>DUCKLAB · POLICY BENCH</p>"
+            "<h1>MicroDuck Control Room</h1><p class='tagline'>Train. Test. Promote.</p></div></div>"
+            "<div class='header-side'><span class='local-badge'><i></i> Local &amp; open source</span>"
+            "<div class='header-status'><span id='system-status'>Checking system status…</span></div></div></header>"
+            "<nav class='quick-nav' aria-label='Dashboard sections'><a href='#training'>Training</a><a href='#simulations'>Simulations</a><a href='#runs'>Finished runs</a><a href='#assistant'>Assistant</a></nav>"
+            "<section id='training'><div class='section-title'><div><p class='eyebrow'>NOW</p><h2>Active training</h2></div></div><div class='panel' id='active-training'>"
             + ("".join(active_rows) or "<p id='active-empty'>No active training jobs.</p>")
             + "<div class='progress' aria-label='Training progress'><span id='training-progress-bar'></span></div>"
             "<p id='training-progress' class='progress-copy'>Checking progress…</p>"
             "<div id='live-reward' class='live-curve' hidden><div class='curve-heading'><strong>Recent mean reward</strong><span id='reward-range' class='muted'></span></div>"
-            "<svg viewBox='0 0 720 170' role='img' aria-label='Recent training mean reward'><line x1='28' y1='145' x2='700' y2='145'></line><polyline id='reward-line' points=''></polyline></svg></div></div>"
-            "<h2>Open simulations</h2><div class='panel'>"
+            "<svg viewBox='0 0 720 170' role='img' aria-label='Recent training mean reward'><line x1='28' y1='145' x2='700' y2='145'></line><polyline id='reward-line' points=''></polyline></svg></div></div></section>"
+            "<section id='simulations'><div class='section-title'><div><p class='eyebrow'>PLAYGROUND</p><h2>Open simulations</h2></div></div><div class='panel'>"
             "<div class='section-heading'><p class='muted'>Each model runs in its own arena. Open its controller only when you want to drive that model.</p>"
-            "<button id='stop-all-viewers' class='secondary' type='button'>Stop all</button></div>"
-            "<div id='viewer-sessions' class='session-grid'><p>No simulations open.</p></div></div>"
-            "<h2>Finished training runs</h2><p class='muted'>Open a run's latest saved model. Older saved versions stay tucked away unless you need them.</p>"
-            "<div class='table-wrap'><table><tr><th>Training run</th><th>Skill</th><th>Kind</th><th>Status</th><th>Saved models</th><th>Latest iteration</th><th>Actions</th></tr>"
+            "<button id='stop-all-viewers' class='secondary' type='button' disabled>Stop all</button></div>"
+            "<div id='viewer-sessions' class='session-grid'><p>No simulations open.</p></div></div></section>"
+            "<section id='runs'><div class='section-title'><div><p class='eyebrow'>LIBRARY</p><h2>Finished training runs</h2></div>"
+            "<p class='section-note'>Open the latest model, or expand a run to inspect its saved history.</p></div>"
+            "<div class='finished-grid'>"
             + "".join(finished_rows)
-            + "</table></div>"
-            f"<h2>Promoted policies</h2><div class='panel'><ul>{champions}</ul></div>"
-            + "<h2>DuckLab Assistant</h2><div class='panel'><div id='chat-log' class='chat-log'>"
+            + "</div></section>"
+            f"<section><div class='section-title'><div><p class='eyebrow'>REGISTRY</p><h2>Promoted policies</h2></div></div><div class='panel'><ul>{champions}</ul></div></section>"
+            + "<section id='assistant'><div class='section-title'><div><p class='eyebrow'>COPILOT</p><h2>DuckLab Assistant</h2></div></div><div class='panel assistant-panel'><div id='chat-log' class='chat-log'>"
             + "<p><strong>DuckLab:</strong> Tell me what you want MicroDuck to learn or ask what is running.</p>"
             + "</div><form id='chat-form'><input id='chat-input' autocomplete='off' placeholder='Example: train MicroDuck to skate backwards'>"
-            + "<button type='submit'>Send</button></form><div id='chat-action'></div></div>"
+            + "<button type='submit'>Send</button></form><div id='chat-action'></div></div></section>"
             + "<script>"
             + "const TOKEN='__CONTROL_TOKEN__';"
             + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
@@ -639,7 +656,7 @@ class Bench:
             + "</script>"
         )
         output = self.state_dir / "index.html"
-        output.write_text(page("MicroDuck Policy Bench", content))
+        output.write_text(page("MicroDuck Policy Bench", content, show_title=False))
         return output
 
 
@@ -665,7 +682,8 @@ def load_metrics_module():
     return module
 
 
-def page(title: str, body: str) -> str:
+def page(title: str, body: str, show_title: bool = True) -> str:
+    heading = f"<h1>{html.escape(title)}</h1>" if show_title else ""
     return f"""<!doctype html><html lang='en'><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'><title>{html.escape(title)}</title>
 <style>
@@ -684,9 +702,18 @@ button,.session-actions a{{appearance:none;border:0;border-radius:9px;padding:9p
 details{{margin-top:9px;padding:9px 11px;background:#0e151c;border:1px solid var(--line);border-radius:9px;min-width:360px}}details summary{{cursor:pointer;font-weight:650;color:#d7e4ee}}details table{{margin-top:10px;min-width:670px;font-size:.9em}}td button{{margin:2px 4px 2px 0}}
 form{{display:flex;gap:9px;margin-top:12px}}input{{flex:1;min-width:0;background:#0b1117;color:var(--text);border:1px solid #435567;border-radius:9px;padding:11px 12px;font:inherit}}input:focus{{outline:2px solid rgba(93,189,255,.4);border-color:var(--brand-2)}}.chat-log{{max-height:280px;overflow:auto}}#chat-action{{margin-top:10px}}#chat-action a{{margin-left:10px}}
 pre,.mono{{font-family:ui-monospace,SFMono-Regular,monospace;overflow:auto;background:#10171f;padding:13px;border-radius:9px}}.chart{{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0}}.chart svg{{display:block;width:100%;height:auto}}.muted{{color:var(--muted);font-size:.9em}}
-@media(max-width:720px){{body{{padding:28px 14px 60px}}.section-heading,.run-card,.session-card{{align-items:flex-start;flex-direction:column}}.session-actions{{width:100%;flex-wrap:wrap}}.session-actions a,.session-actions button,.run-card>button{{flex:1;text-align:center}}form{{flex-direction:column}}details{{min-width:280px}}}}
+html{{scroll-behavior:smooth}}body{{max-width:1320px;padding:30px 28px 90px;background:radial-gradient(circle at 78% -12%,rgba(32,102,123,.28),transparent 34%),radial-gradient(circle at 4% 8%,rgba(32,105,78,.2),transparent 28%),var(--bg)}}section{{scroll-margin-top:86px;margin-top:36px}}
+.product-header{{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:flex-end;gap:28px;min-height:230px;padding:34px 36px;border:1px solid #304656;border-radius:24px;background:linear-gradient(135deg,rgba(24,38,51,.98),rgba(13,23,31,.98));box-shadow:0 24px 70px rgba(0,0,0,.3)}}.product-header:after{{content:'';position:absolute;width:360px;height:360px;right:-120px;top:-190px;border-radius:50%;background:radial-gradient(circle,rgba(93,189,255,.24),transparent 65%);pointer-events:none}}.brand-lockup{{display:flex;align-items:center;gap:22px;z-index:1}}.duck-mark{{display:grid;place-items:center;flex:0 0 72px;height:72px;border-radius:20px;background:linear-gradient(145deg,var(--brand),#2a94aa);box-shadow:0 13px 38px rgba(69,214,160,.22);color:#07120e;font-weight:900;font-size:1.25rem;letter-spacing:-.08em}}.product-header h1{{font-size:clamp(2.4rem,5vw,4rem);line-height:1;letter-spacing:-.055em;margin:7px 0 12px}}.eyebrow{{margin:0;color:#72dbbb;font-size:.72rem;font-weight:800;letter-spacing:.14em}}.tagline{{margin:0;color:#b9c8d4;font-size:1.08rem}}.header-side{{display:flex;flex-direction:column;align-items:flex-end;gap:12px;z-index:1;max-width:430px}}.local-badge{{display:flex;align-items:center;gap:8px;color:#cce9df;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}}.local-badge i{{width:8px;height:8px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 5px rgba(69,214,160,.12)}}.header-status{{padding:12px 15px;border:1px solid #335366;border-radius:11px;background:rgba(6,15,21,.6);color:#d9e9f2;text-align:right}}
+.quick-nav{{position:sticky;top:12px;z-index:10;display:flex;gap:6px;width:max-content;max-width:100%;margin:14px auto 0;padding:6px;border:1px solid rgba(58,79,96,.9);border-radius:12px;background:rgba(13,19,26,.9);box-shadow:0 12px 35px rgba(0,0,0,.26);backdrop-filter:blur(14px);overflow:auto}}.quick-nav a{{padding:7px 12px;border-radius:8px;color:#b9c8d4;font-size:.84rem;font-weight:650;white-space:nowrap}}.quick-nav a:hover{{background:#1c2934;color:#fff;text-decoration:none}}
+.section-title{{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:11px}}.section-title h2{{margin:0;font-size:1.35rem}}.section-title .eyebrow{{margin-bottom:3px}}.section-note{{color:var(--muted);font-size:.9rem;text-align:right;max-width:480px}}.panel{{margin:0;border-radius:16px;padding:20px;background:rgba(18,25,34,.94)}}
+button,.session-actions a{{border:1px solid transparent;font-weight:700;transition:transform .15s ease,filter .15s ease,border-color .15s ease}}button:hover,.session-actions a:hover{{transform:translateY(-1px)}}button:disabled{{transform:none}}button.secondary{{background:#263644;border-color:#3a4c5c}}.primary-action{{padding:10px 16px}}
+.finished-grid{{display:grid;gap:14px}}.finished-card{{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(20,29,39,.98),rgba(15,22,29,.98));box-shadow:0 12px 30px rgba(0,0,0,.12)}}.finished-card-top{{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 21px 13px}}.finished-card h3{{font-size:1.08rem;margin:0;letter-spacing:-.015em}}.run-tags{{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:9px}}.run-tags .pill{{margin:0}}.kind-tag,.complete-tag,.stage-badge{{padding:3px 8px;border-radius:999px;background:#252f39;color:#b6c4d0;font-size:.74rem;font-weight:700}}.complete-tag{{background:#143c31;color:#9ee8ce}}.run-stats{{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(42,57,72,.65)}}.run-stats>div{{display:flex;flex-direction:column;gap:2px;padding:13px 21px;border-right:1px solid rgba(42,57,72,.65)}}.run-stats>div:last-child{{border:0}}small{{display:block;color:var(--muted);font-size:.69rem;text-transform:uppercase;letter-spacing:.07em;font-weight:750}}
+.saved-dropdown{{margin:0;min-width:0;padding:0;border:0;border-top:1px solid var(--line);border-radius:0;background:#0d141b}}.saved-dropdown>summary{{display:flex;align-items:center;gap:9px;padding:13px 21px;cursor:pointer;color:#cfdae3;font-weight:700;list-style:none;user-select:none}}.saved-dropdown>summary::-webkit-details-marker{{display:none}}.saved-dropdown>summary:hover{{background:#111b24}}.summary-count{{display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#243441;color:#b9d3e5;font-size:.72rem}}.chevron{{margin-left:auto;font-size:1.2rem;transition:transform .18s ease}}.saved-dropdown[open] .chevron{{transform:rotate(180deg)}}.saved-list{{display:grid;gap:8px;padding:0 12px 12px}}.saved-model{{display:grid;grid-template-columns:minmax(150px,1fr) minmax(250px,1.6fr) auto;align-items:center;gap:18px;padding:13px 14px;border:1px solid #263744;border-radius:10px;background:#131d25}}.saved-model-title{{display:flex;align-items:center;gap:8px;flex-wrap:wrap}}.stage-badge{{background:#203545;color:#bfe2fa}}.saved-model-stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}}.saved-model-stats span{{font-weight:750}}.saved-model-actions{{display:flex;align-items:center;justify-content:flex-end;gap:10px}}.text-action{{font-weight:700;white-space:nowrap}}
+.assistant-panel{{background:linear-gradient(145deg,#121b24,#101820)}}
+@media(max-width:900px){{.product-header{{align-items:flex-start;flex-direction:column;min-height:0}}.header-side{{align-items:flex-start;max-width:none}}.header-status{{text-align:left}}.saved-model{{grid-template-columns:1fr}}.saved-model-actions{{justify-content:flex-start}}}}
+@media(max-width:720px){{body{{padding:14px 13px 60px}}.product-header{{padding:25px 20px;border-radius:18px}}.brand-lockup{{align-items:flex-start;gap:14px}}.duck-mark{{flex-basis:52px;height:52px;border-radius:14px;font-size:.95rem}}.quick-nav{{justify-content:flex-start;margin-top:10px}}.section-title,.section-heading,.run-card,.session-card,.finished-card-top{{align-items:flex-start;flex-direction:column}}.section-note{{text-align:left}}.session-actions{{width:100%;flex-wrap:wrap}}.session-actions a,.session-actions button,.run-card>button,.finished-card-top>button{{width:100%;text-align:center}}.run-stats{{grid-template-columns:1fr}}.run-stats>div{{border-right:0;border-bottom:1px solid var(--line)}}.saved-model-stats{{grid-template-columns:repeat(3,1fr)}}.saved-model-actions{{flex-wrap:wrap}}form{{flex-direction:column}}}}
 </style></head>
-<body><h1>{html.escape(title)}</h1>{body}</body></html>"""
+<body>{heading}{body}</body></html>"""
 
 
 def metric_svg(tag: str, points: list[dict[str, float]]) -> str:
