@@ -108,7 +108,9 @@ async function send(payload) {
 }
 
 function loop() {
-  const pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [];
+  // GamepadList is not spreadable in every Chromium build. Array.from keeps
+  // the 20 Hz command heartbeat alive instead of silently stopping the loop.
+  const pads = navigator.getGamepads ? Array.from(navigator.getGamepads()).filter(Boolean) : [];
   const pad = pads[0];
   const connected = Boolean(pad);
   $('arm').disabled = !connected;
@@ -141,6 +143,10 @@ function loop() {
   send({armed, connected, emergency_stop: emergency, command_x: commandX, heading, reset, pause});
   setTimeout(loop, 50);
 }
+window.addEventListener('error', event => {
+  $('status').textContent = 'Controller page error: ' + event.message;
+  $('dot').classList.remove('ok');
+});
 window.addEventListener('gamepadconnected', () => {});
 loop();
 </script></body></html>
