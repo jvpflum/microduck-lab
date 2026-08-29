@@ -79,8 +79,35 @@ See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
 qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
 for active braking, spin, recovery, and supervisor design.
 
-The remote Viser launcher also includes a browser-based Xbox controller bridge.
-Forward ports 8080 and 8090, then follow [docs/GAMEPAD.md](docs/GAMEPAD.md).
+### Test a policy with an Xbox controller
+
+The remote Viser launcher includes a browser-based Xbox controller bridge. Stop
+any older viewer process, then connect to the Spark from your local computer
+with both ports forwarded:
+
+```bash
+ssh -L 8080:localhost:8080 -L 8090:localhost:8090 <ssh-user>@<spark-address>
+```
+
+In that SSH session, launch the final skating checkpoint:
+
+```bash
+./scripts/view-final-skate.sh
+```
+
+Open `http://localhost:8080` for Viser and `http://localhost:8090` for the
+controller. Connect the Xbox controller to the local computer, press a button
+so the browser detects it, and select **Arm Controller**. The left stick or
+triggers control propulsion, the right stick controls heading, A resets, Start
+pauses, X coasts, and B latches emergency zero. Commands automatically fall
+back to zero if the browser disconnects or stops updating for 500 ms.
+
+Use the **Original roller** preset with the first roller checkpoint; its
+negative command means braking and it was not trained for reverse. Use the
+**Swizzle** preset with a qualified swizzle checkpoint for symmetric forward
+and reverse control. This interface controls simulation only and is not a
+physical-robot safety system. See [docs/GAMEPAD.md](docs/GAMEPAD.md) for the
+complete workflow and troubleshooting notes.
 
 The default is 4,096 environments and 5,000 PPO iterations. Override either
 setting with `DUCKLAB_ENVS` and `DUCKLAB_ITERATIONS`, as with walking. The
