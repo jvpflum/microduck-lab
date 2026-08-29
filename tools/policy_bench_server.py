@@ -233,11 +233,19 @@ class ProcessManager:
                 raise ValueError("Another dashboard-managed viewer is running. Stop it before playing a different run.")
             unavailable = [port for port in (8080, 8090) if not port_available(port)]
             if unavailable:
-                raise ValueError(
-                    "Viewer ports are already occupied: "
-                    + ", ".join(str(port) for port in unavailable)
-                    + ". Stop the older Viser/controller session first."
-                )
+                # A viewer may have survived a dashboard restart, so the
+                # manager no longer owns its Popen handle even though the
+                # standard endpoints are healthy. Reuse those endpoints and
+                # let the UI open them instead of failing with a port error.
+                return {
+                    "run_id": run_id,
+                    "reused": True,
+                    "external": True,
+                    "viser_url": "http://localhost:8080",
+                    "controller_url": "http://localhost:8090",
+                    "pid": None,
+                    "log": None,
+                }
             log_path = LAB_ROOT / "reports" / f"policy-bench-viewer-{int(time.time())}.log"
             log_path.parent.mkdir(parents=True, exist_ok=True)
             self.viewer_log = log_path.open("ab", buffering=0)

@@ -91,8 +91,9 @@ class PolicyBenchServerTests(unittest.TestCase):
     @mock.patch.object(server, "port_available", side_effect=lambda port: port != 8080)
     def test_play_refuses_occupied_ports(self, _port) -> None:
         manager = server.ProcessManager(self.bench)
-        with self.assertRaisesRegex(ValueError, "8080"):
-            manager.launch_viewer(self.manifest["run_id"])
+        result = manager.launch_viewer(self.manifest["run_id"])
+        self.assertTrue(result["reused"])
+        self.assertTrue(result["external"])
 
     @mock.patch.object(server, "running_training_processes", return_value=[])
     @mock.patch.object(server.subprocess, "Popen", side_effect=FakeProcess)
