@@ -667,6 +667,20 @@ class ProcessManager:
                 frictionloss = None
             if frictionloss is not None and 0.0 <= frictionloss <= 0.02:
                 params["wheel_frictionloss"] = f"{frictionloss:g}"
+        line_hold = arena_preview.get("line_hold", {}) if isinstance(arena_preview, dict) else {}
+        if isinstance(line_hold, dict):
+            for key, query_key, low, high in (
+                ("yaw_kp", "line_yaw_kp", 0.0, 3.0),
+                ("lateral_kp", "line_lateral_kp", 0.0, 1.0),
+                ("yaw_kd", "line_yaw_kd", 0.0, 1.0),
+                ("max_correction", "line_max_wz", 0.01, 0.30),
+            ):
+                try:
+                    value = float(line_hold[key])
+                except (KeyError, TypeError, ValueError):
+                    continue
+                if low <= value <= high:
+                    params[query_key] = f"{value:g}"
         if "period" in preview:
             params["preview_period"] = preview["period"]
             params["preview_end"] = preview["end"]
