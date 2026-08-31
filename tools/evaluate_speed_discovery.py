@@ -305,6 +305,12 @@ def main() -> None:
         "current_limit_a": args.current_limit,
         "wheel_frictionloss": args.wheel_friction,
         "race_line_control": args.race_line_control,
+        "line_hold": {
+            "yaw_kp": args.yaw_kp,
+            "lateral_kp": args.lateral_kp,
+            "yaw_kd": args.yaw_kd,
+            "max_correction": args.max_correction,
+        },
         "initial_joint_noise_rad": args.initial_joint_noise,
         "summary": summary,
         "episode_results": episode_rows,

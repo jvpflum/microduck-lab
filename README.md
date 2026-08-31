@@ -184,6 +184,26 @@ It does not change the normal skating or Race5 recipes. See
 2.5→6.7 m/s curriculum, 4,096/8,192 profiles, GPU telemetry, checkpoint
 selection, and evaluation metrics.
 
+### Official-friction speed sweep
+
+Once a fast donor exists, use the controlled official-friction sweep rather
+than guessing from a single PPO chart. It runs one job at a time (safe on the
+shared Spark), tests six small changes to speed/control reward balance and PPO
+exploration, then evaluates saved checkpoints with the exact Race5 bearing
+friction (`0.003`) and dashboard line-hold controller.
+
+```bash
+# 350 iterations per candidate is the inexpensive first screen.
+DUCKLAB_SWEEP_ENVS=4096 DUCKLAB_SWEEP_ITERATIONS=350 \
+./scripts/train-speed-official-sweep.sh
+```
+
+The generated `reports/official-speed-sweep-*/official_sweep_scoreboard.json`
+contains the Pareto front. A candidate must be good on sustained world-forward
+mph, survival, maximum lateral drift, and heading error; PPO reward alone does
+not promote a model. Extend only Pareto candidates to 2,000–4,000 iterations,
+then certify the finalists with the normal 5-episode, 20-second Race5 battery.
+
 ## Compare and promote policies
 
 MicroDuck Policy Bench provides an entirely open-source, offline workflow for

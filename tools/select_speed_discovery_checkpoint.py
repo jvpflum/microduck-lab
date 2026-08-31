@@ -48,9 +48,15 @@ def main() -> None:
     parser.add_argument("--force", action="store_true", help="Re-export and re-evaluate cached candidates.")
     parser.add_argument("--task", default=TASK)
     parser.add_argument("--race-line-control", action="store_true")
+    parser.add_argument("--yaw-kp", type=float, default=0.55)
+    parser.add_argument("--lateral-kp", type=float, default=0.10)
+    parser.add_argument("--yaw-kd", type=float, default=0.08)
+    parser.add_argument("--max-correction", type=float, default=0.18)
     parser.add_argument("--rank-world-x", action="store_true")
     parser.add_argument("--min-body-sustained-mps", type=float, default=0.0)
     parser.add_argument("--min-survival", type=float, default=0.0)
+    parser.add_argument("--max-lateral-deviation-m", type=float, default=float("inf"))
+    parser.add_argument("--max-mean-heading-deg", type=float, default=float("inf"))
     parser.add_argument(
         "--checkpoint-stride",
         type=int,
@@ -102,6 +108,14 @@ def main() -> None:
                     == args.wheel_friction
                     and bool(cached.get("race_line_control", False))
                     == args.race_line_control
+                    and float(cached.get("line_hold", {}).get("yaw_kp", 0.55))
+                    == args.yaw_kp
+                    and float(cached.get("line_hold", {}).get("lateral_kp", 0.10))
+                    == args.lateral_kp
+                    and float(cached.get("line_hold", {}).get("yaw_kd", 0.08))
+                    == args.yaw_kd
+                    and float(cached.get("line_hold", {}).get("max_correction", 0.18))
+                    == args.max_correction
                 )
             except (json.JSONDecodeError, OSError, TypeError, ValueError):
                 report_matches_protocol = False
@@ -124,7 +138,15 @@ def main() -> None:
                     str(args.wheel_friction),
                 ]
             if args.race_line_control:
-                evaluate_command.append("--race-line-control")
+                evaluate_command.extend(
+                    [
+                        "--race-line-control",
+                        "--yaw-kp", str(args.yaw_kp),
+                        "--lateral-kp", str(args.lateral_kp),
+                        "--yaw-kd", str(args.yaw_kd),
+                        "--max-correction", str(args.max_correction),
+                    ]
+                )
             run_checked(evaluate_command, UPSTREAM)
         report = json.loads(report_path.read_text(encoding="utf-8"))
         summary = report["summary"]
@@ -150,6 +172,8 @@ def main() -> None:
         row["qualified"] = bool(
             row["sustained_mean_mps"] >= args.min_body_sustained_mps
             and row["survival_fraction"] >= args.min_survival
+            and row["max_lateral_deviation_m"] <= args.max_lateral_deviation_m
+            and row["mean_abs_heading_deg"] <= args.max_mean_heading_deg
         )
         rows.append(row)
         print(
@@ -205,7 +229,22 @@ def main() -> None:
         "qualification": {
             "min_body_sustained_mps": args.min_body_sustained_mps,
             "min_survival": args.min_survival,
+            "max_lateral_deviation_m": args.max_lateral_deviation_m,
+            "max_mean_heading_deg": args.max_mean_heading_deg,
             "any_qualified": bool(qualified_rows),
+        },
+        "evaluation_protocol": {
+            "episodes": args.episodes,
+            "duration_s": args.duration,
+            "command_mps": args.command_mps,
+            "wheel_frictionloss": args.wheel_friction,
+            "race_line_control": args.race_line_control,
+            "line_hold": {
+                "yaw_kp": args.yaw_kp,
+                "lateral_kp": args.lateral_kp,
+                "yaw_kd": args.yaw_kd,
+                "max_correction": args.max_correction,
+            },
         },
         "best": best,
         "best_checkpoint": str(best_checkpoint),
