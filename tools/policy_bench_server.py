@@ -778,11 +778,12 @@ class ProcessManager:
                 # the donor-transfer command source (automatic line hold).
                 # Otherwise the policy is shown without the correction signal
                 # it was trained to consume and falsely appears to drift.
-                (
-                    "Mjlab-SpeedScoutTransfer-Flat-MicroDuck-Rollers"
-                    if Path(manifest.get("source_run_dir", "")).parent.name
-                    == "microduck_speed_scout_transfer"
-                    else TASKS[task]["play_task"]
+                {
+                    "microduck_speed_scout_transfer": "Mjlab-SpeedScoutTransfer-Flat-MicroDuck-Rollers",
+                    "microduck_speed_official_adaptation": "Mjlab-SpeedOfficialAdaptation-Flat-MicroDuck-Rollers",
+                }.get(
+                    Path(manifest.get("source_run_dir", "")).parent.name,
+                    TASKS[task]["play_task"],
                 ),
                 "--checkpoint-file",
                 str(checkpoint_path),

@@ -778,6 +778,7 @@ def infer_task(run_dir: Path) -> str:
         # A speed-scout transfer uses the Race5 browser contract and must be
         # evaluated/presented against Race5 once it reaches official friction.
         "microduck_speed_scout_transfer": "race5",
+        "microduck_speed_official_adaptation": "race5",
         "velocity_rollers": "roller",
         "velocity": "walking",
         "roller_hop": "hop",
