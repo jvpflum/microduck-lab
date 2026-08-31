@@ -1881,6 +1881,7 @@ class Bench:
             and item["manifest"].get("experiment_kind") not in {"smoke", "factory"}
         ]
         fastest_speed_entry = None
+        speed_scout_entry = None
         if focus_task == "race5":
             speed_candidates = [
                 item for item in leaderboard
@@ -1891,6 +1892,17 @@ class Bench:
                     speed_candidates,
                     key=lambda item: float(item["score"]["performance"]["top_speed_mph"]),
                 )
+            # Discovery policies are intentionally excluded from the official
+            # scoreboard.  They remain directly playable as a separate,
+            # physics-labelled research reference.
+            speed_scout_entry = next(
+                (
+                    item for item in all_manifests
+                    if item.get("task") == "race5"
+                    and item.get("arena_preview", {}).get("profile") == "frictionless-speed-scout"
+                ),
+                None,
+            )
 
         baseline_path = {
             "sprint": SPRINT_BASELINE_REPORT,
@@ -2289,6 +2301,18 @@ class Bench:
             "<p class='baseline-method'>The 5.41 mph checkpoint still exists and seeds transfer training, but it is not an official-friction Race5 record. Compare a policy only with results from the same physics profile and measurement window.</p></div>"
             if focus_task == "race5" else ""
         )
+        speed_scout_html = ""
+        if speed_scout_entry:
+            scout_id = html.escape(speed_scout_entry["run_id"])
+            speed_scout_html = (
+                "<div class='fastest-speed-card'><div><small>PINNED EXPERIMENT · FRICTIONLESS SPEED SCOUT</small>"
+                "<strong>5.41 mph peak-speed discovery checkpoint</strong>"
+                "<span>5.05 mph best 1 second · 4.18 mph mean over 20 seconds · 0 falls</span></div>"
+                "<div class='fastest-speed-actions'>"
+                f"<button class='play primary-action' data-run-id='{scout_id}' data-label='Try 5.41 mph speed scout'>Try it in matching arena</button>"
+                f"<a class='text-action' href='runs/{scout_id}/report.html'>View evidence</a></div>"
+                "<p>Uses wheel frictionloss 0.000 exactly as evaluated. This is a research replay, not an official Race5 or V11 replacement.</p></div>"
+            )
         content = (
             "<header class='product-header'><div class='brand-lockup'>"
             "<div class='duck-mark' aria-hidden='true'><span>DW</span></div><div><p class='eyebrow'>ROBOT LEARNING COMMAND</p>"
@@ -2319,6 +2343,7 @@ class Bench:
             f"{baseline_reference_html}"
             f"<div class='scoreboard-verdict {verdict_tone}'><strong>{html.escape(scoreboard_verdict)}</strong><span>{html.escape(scoreboard_detail)}</span></div>"
             + fastest_speed_html
+            + speed_scout_html
             + "<div class='podium-grid'>" + "".join(podium_cards) + "</div>"
             f"<details class='all-experiments'><summary>All experiments and unscored runs <span>{archive_count}</span></summary>"
             "<p class='muted'>Duplicates, raw snapshots, smoke checks, and unscored history are kept here for audit—not mixed into the leaderboard.</p>"

@@ -656,6 +656,17 @@ class ProcessManager:
         if preview["slot"] == "drive":
             params["speed_test"] = "1"
             params["speed_test_distance_ft"] = "100"
+        # A policy can carry a bounded, explicit replay profile.  This keeps
+        # experimental discovery evidence reproducible without silently
+        # changing the standard Race5 arena for every other policy.
+        arena_preview = manifest.get("arena_preview", {})
+        if isinstance(arena_preview, dict) and arena_preview.get("wheel_frictionloss") is not None:
+            try:
+                frictionloss = float(arena_preview["wheel_frictionloss"])
+            except (TypeError, ValueError):
+                frictionloss = None
+            if frictionloss is not None and 0.0 <= frictionloss <= 0.02:
+                params["wheel_frictionloss"] = f"{frictionloss:g}"
         if "period" in preview:
             params["preview_period"] = preview["period"]
             params["preview_end"] = preview["end"]
