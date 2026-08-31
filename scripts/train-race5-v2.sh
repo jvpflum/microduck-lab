@@ -12,6 +12,7 @@ install_resource_profile_trap
 env_count="${DUCKLAB_ENVS:-2048}"
 iterations="${DUCKLAB_ITERATIONS:-150}"
 seed="${DUCKLAB_SEED:-42}"
+run_name="${DUCKLAB_RACE5_RUN_NAME:-ducklab-race5-v14-lean-glide-2048-s${seed}}"
 source_checkpoint="${DUCKLAB_RACE5_WARMSTART_CHECKPOINT:-${UPSTREAM_DIR}/logs/rsl_rl/velocity_race5/2026-08-31_03-06-10_ducklab-race5-v11-drag-launch-i10-s42/model_10.pt}"
 warmstart_run="stage14_warmstart_v11_i10_lean_glide"
 warmstart_checkpoint="${UPSTREAM_DIR}/logs/rsl_rl/velocity_race5/${warmstart_run}/model_0.pt"
@@ -30,10 +31,10 @@ mark_training_start
     --env.scene.num-envs "${env_count}" \
     --agent.seed "${seed}" \
     --agent.max_iterations "${iterations}" \
-    --agent.run-name "ducklab-race5-v14-lean-glide-2048-s${seed}" \
+    --agent.run-name "${run_name}" \
     --agent.resume True \
     --agent.load-run "${warmstart_run}" \
     --agent.load-checkpoint model_0.pt \
-    2>&1 | tee "${REPORT_DIR}/train-race5-v14-lean-glide-2048-s${seed}.log"
+    2>&1 | tee "${REPORT_DIR}/train-${run_name}.log"
 
 "${LAB_ROOT}/scripts/finalize-training.sh" race5

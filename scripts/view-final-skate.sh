@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-lab_root="/home/ducklab-user/projects/microduck-lab"
+lab_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 upstream="${lab_root}/upstream/microduck_rl"
 uv_bin="${lab_root}/.tools/uv/bin/uv"
 fallback_checkpoint="${upstream}/logs/rsl_rl/velocity_rollers/2026-08-28_20-50-40_ducklab-v1.1-skate/model_4999.pt"

@@ -1,0 +1,31 @@
+{
+  "model": "ducklab-race5-v11-drag-launch-i10-s42",
+  "format": "ONNX inference export",
+  "evaluation": {
+    "engine": "CPU MuJoCo",
+    "control_hz": 50,
+    "wheel_current_limit_a": 1.75,
+    "comparison": "Pollen official roller policy with the same measured line-hold controller",
+    "hardware_validated": false
+  },
+  "v11": {
+    "sustained_forward_speed_mph": 1.419,
+    "verified_top_speed_0_5s_mph": 1.649,
+    "elapsed_time_100ft_s": 44.06,
+    "trap_speed_100ft_mph": 1.6,
+    "first_second_acceleration_mph_s": 1.121,
+    "max_lateral_drift_ft": 1.064,
+    "max_heading_error_deg": 7.3,
+    "retention_checks_passed": 14,
+    "retention_checks_total": 14
+  },
+  "pollen": {
+    "sustained_forward_speed_mph": 1.066,
+    "verified_top_speed_0_5s_mph": 1.283,
+    "elapsed_time_100ft_s": 57.589,
+    "trap_speed_100ft_mph": 1.22,
+    "first_second_acceleration_mph_s": 0.723,
+    "max_lateral_drift_ft": 1.25,
+    "max_heading_error_deg": 11.06
+  }
+}

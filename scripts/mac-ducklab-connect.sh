@@ -92,7 +92,7 @@ watcher_alive() {
 ensure_remote_dashboard() {
   local target="$1"
   ssh -S "${CONTROL_SOCKET}" "${target}" \
-    "cd /home/ducklab-user/projects/microduck-lab && if ! curl -fsS http://127.0.0.1:8091/api/status >/dev/null 2>&1; then nohup ./scripts/serve-policy-bench.sh >reports/policy-bench-server.log 2>&1 </dev/null & fi"
+    "cd \"\$HOME/projects/microduck-lab\" && if ! curl -fsS http://127.0.0.1:8091/api/status >/dev/null 2>&1; then nohup ./scripts/serve-policy-bench.sh >reports/policy-bench-server.log 2>&1 </dev/null & fi"
 }
 
 wait_for_dashboard() {

@@ -25,8 +25,8 @@ report = {
 }
 print(json.dumps(report, indent=2, sort_keys=True))
 
-if platform.machine() != "aarch64":
-    print("Expected aarch64 on DGX Spark.", file=sys.stderr)
+if platform.machine() not in {"aarch64", "x86_64", "AMD64"}:
+    print("Expected Linux aarch64 (Spark) or x86_64 (for example WSL2 on an RTX worker).", file=sys.stderr)
     raise SystemExit(1)
 if not cuda_available:
     print("CUDA is not available to PyTorch.", file=sys.stderr)

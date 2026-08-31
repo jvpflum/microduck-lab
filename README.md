@@ -48,11 +48,16 @@ still passing; **5 mph** remains the stretch goal.
 
 ## Requirements
 
-- Linux ARM64 DGX Spark / GB10 with working NVIDIA drivers
+- Linux ARM64 DGX Spark / GB10 **or** Linux x86_64 with a working NVIDIA GPU
+  (Windows workers use Ubuntu through WSL2)
 - Python 3.12 and `venv`
 - Git
 - At least 20 GiB available unified memory for GPU commands
 - Network access for the first dependency synchronization
+
+For a Windows RTX worker, follow [Windows 5090 worker setup](docs/WINDOWS_5090.md).
+The Spark and Windows machine should use separate clones and unique run names;
+Git is the code handoff, while raw training checkpoints stay private.
 
 ## Start
 

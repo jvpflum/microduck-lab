@@ -9,7 +9,7 @@ LAB_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MARKER="${DUCKLAB_RESOURCE_MARKER:-${LAB_ROOT}/policy-bench/training-priority.json}"
 CONTAINER="${DUCKLAB_VLLM_CONTAINER:-qwen38-hermes-vllm}"
 VLLM_URL="${DUCKLAB_VLLM_URL:-http://127.0.0.1:8000/v1/models}"
-VLLM_LOCK="${DUCKLAB_VLLM_LOCK:-/home/ducklab-user/.hermes/run/vllm-launch.lock}"
+VLLM_LOCK="${DUCKLAB_VLLM_LOCK:-${HOME}/.hermes/run/vllm-launch.lock}"
 
 docker_cmd() {
   sudo -n docker "$@"
@@ -94,7 +94,7 @@ restore_priority() {
       if curl -fsS --connect-timeout 3 "${VLLM_URL}" >/dev/null 2>&1; then
         echo "vLLM is healthy again."
         rm -f "${MARKER}"
-        /home/ducklab-user/.hermes/scripts/hermes-health-verify.sh || \
+        "${HOME}/.hermes/scripts/hermes-health-verify.sh" || \
           echo "WARNING: Hermes final health verification reported an issue." >&2
         return 0
       fi

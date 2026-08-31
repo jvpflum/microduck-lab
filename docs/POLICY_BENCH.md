@@ -94,7 +94,7 @@ require an identified reviewer and a review note, one stage at a time:
 
 ```bash
 ./scripts/policy-bench.sh promote <run-id> sim-qualified \
-  --approved-by ducklab-user \
+  --approved-by <reviewer> \
   --note "Passed numerical battery and Viser/gamepad review"
 ```
 
@@ -126,11 +126,11 @@ make bench-dashboard
 ```
 
 For a Mac, the DuckLab companion is the easiest path. Install it once from a
-Mac Terminal (replace the address if the Spark's Tailscale address changes):
+Mac Terminal (replace the example user and host with your SSH target):
 
 ```bash
 mkdir -p "$HOME/.local/bin"
-scp <ssh-user>@<spark-address>:/home/ducklab-user/projects/microduck-lab/scripts/mac-ducklab-connect.sh "$HOME/.local/bin/ducklab"
+scp <ssh-user>@<spark-address>:~/projects/microduck-lab/scripts/mac-ducklab-connect.sh "$HOME/.local/bin/ducklab"
 chmod +x "$HOME/.local/bin/ducklab"
 "$HOME/.local/bin/ducklab" start <ssh-user>@<spark-address>
 ```
@@ -150,7 +150,7 @@ on your laptop so every saved model can get its own arena without reconnecting:
 ```bash
 Host microduck-spark
     HostName <spark-address>
-    User ducklab-user
+    User <ssh-user>
     LocalForward 8091 localhost:8091
     LocalForward 8080 localhost:8080
     LocalForward 8090 localhost:8090
