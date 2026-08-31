@@ -125,9 +125,27 @@ Serve the local report on port 8091:
 make bench-dashboard
 ```
 
-For remote interactive play, forward the dashboard plus the viewer pool. Put
-this once in the SSH config on your laptop so every saved model can get its own
-arena without reconnecting:
+For a Mac, the DuckLab companion is the easiest path. Install it once from a
+Mac Terminal (replace the address if the Spark's Tailscale address changes):
+
+```bash
+mkdir -p "$HOME/.local/bin"
+scp <ssh-user>@<spark-address>:/home/ducklab-user/projects/microduck-lab/scripts/mac-ducklab-connect.sh "$HOME/.local/bin/ducklab"
+chmod +x "$HOME/.local/bin/ducklab"
+"$HOME/.local/bin/ducklab" start <ssh-user>@<spark-address>
+```
+
+The command starts the complete SSH forwarding pool in the background, ensures
+Policy Bench is running on the Spark, opens the dashboard, and watches for new
+viewer sessions. When Codex launches a viewer after a request such as “show me
+the latest Sprint run,” the companion opens that viewer in the Mac's default
+browser. Use `ducklab status` or `ducklab stop` when needed. The companion must
+be started again after a Mac reboot; SSH key authentication avoids password
+prompts. It can coexist with the SSH window you are already using: it reuses
+ports from an older manual tunnel and takes them over if that session closes.
+
+The equivalent manual SSH configuration is below. Put it once in the SSH config
+on your laptop so every saved model can get its own arena without reconnecting:
 
 ```bash
 Host microduck-spark
@@ -248,7 +266,18 @@ and leaves the model at `evaluated`. Walking runs are verified, registered, and
 receive curves while their dedicated locomotion scoring battery is still being
 built. A failed trainer never scores a stale artifact.
 
-Scoring is automatic; judgment is not. Policy Bench never auto-stars or
-auto-promotes a model. Interactive controller review and explicit human
-promotion remain required. The **Deployment check** button can rerun the same
+Scoring is automatic. Race5 ranks candidates by sustained mph, but a faster
+policy is eligible for automatic simulation-champion promotion only after it
+passes the straight-race checks and a retained-skill circuit: ordinary cruise,
+braking, left steering, right steering, and upright stability. The 5 mph and
+10 mph numbers are goals, not promotion gates. Interactive controller review
+and explicit human signoff remain required for hardware-candidate and
+production stages. The **Deployment check** button can rerun the same
 deterministic score at any time.
+
+Race5's official comparison is a zero-steering 100-foot A-to-B drag strip.
+Reports include 10/25/50-foot splits, elapsed time, trap speed, total top speed,
+first-second acceleration, maximum lateral drift, and maximum heading error.
+Raw sideways or circular velocity never counts as winning the race. Training
+uses a reachable 10-metre straight-line curriculum before policies graduate to
+the full evaluation distance.

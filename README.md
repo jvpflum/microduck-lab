@@ -31,6 +31,21 @@ left/right turning, and stability gates; the latest custom swizzle scored
 **42.72/100**. See [docs/UPSTREAM_FIRST_AUDIT.md](docs/UPSTREAM_FIRST_AUDIT.md)
 for the adoption boundary and evidence.
 
+## Current Race5 baseline (V11)
+
+`ducklab-race5-v11-drag-launch-i10-s42` is the current **control-safe Race5
+baseline**. It is the benchmark donor for new race work because it beats the
+Pollen roller baseline across the registered Race5 control battery while
+remaining stable, straight, and agile enough to complete the course. Its
+verified Race5 figures are **1.65 mph top speed**, **1.42 mph sustained speed**,
+and **44.06 s over 100 ft**.
+
+Faster experimental checkpoints exist, but they are not promoted over V11
+unless they also retain or exceed Pollen-level stopping, cruise, both turn
+directions, heading, drift, upright stability, and A-to-B performance. The
+current speed goal is at least **3 mph verified peak** with all those gates
+still passing; **5 mph** remains the stretch goal.
+
 ## Requirements
 
 - Linux ARM64 DGX Spark / GB10 with working NVIDIA drivers
@@ -123,6 +138,19 @@ See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
 qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
 for active braking, spin, recovery, and supervisor design.
 
+For simulation-only maximum-speed discovery, use the separate permissive task:
+
+```bash
+DUCKLAB_SPEED_WARMSTART_CHECKPOINT=/absolute/path/to/model_10.pt \
+DUCKLAB_ENVS=4096 DUCKLAB_ITERATIONS=4000 \
+./scripts/train-speed-discovery.sh
+```
+
+It does not change the normal skating or Race5 recipes. See
+[docs/SPEED_DISCOVERY.md](docs/SPEED_DISCOVERY.md) for the performance-gated
+2.5→6.7 m/s curriculum, 4,096/8,192 profiles, GPU telemetry, checkpoint
+selection, and evaluation metrics.
+
 ## Train the rolling front flip
 
 The front-flip task uses the accepted arena capture as a reverse-curriculum reset
@@ -198,6 +226,10 @@ sim-qualified swizzle checkpoint after verifying its hash. See
 [docs/POLICY_BENCH.md](docs/POLICY_BENCH.md) for the complete workflow.
 
 ### Drive the factory robot with an Xbox controller
+
+On macOS, install the Policy Bench companion once to manage every dashboard,
+Viser, and controller forward and automatically open viewers launched by Codex.
+See [the Policy Bench Mac setup](docs/POLICY_BENCH.md#dashboard-control-center).
 
 Connect from your laptop with the dashboard and factory arena forwarded:
 

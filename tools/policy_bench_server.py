@@ -40,6 +40,21 @@ FACTORY_ARENA_DIST = LAB_ROOT / "upstream" / "microduck-simulator" / "app" / "di
 
 
 TASKS = {
+    "race5": {
+        "play_task": "Mjlab-Velocity-Race5-MicroDuck",
+        "train_script": LAB_ROOT / "scripts" / "train-race5-v2.sh",
+        "default_iterations": 150,
+    },
+    "race": {
+        "play_task": "Mjlab-Velocity-Race-MicroDuck",
+        "train_script": LAB_ROOT / "scripts" / "train-race-v1.sh",
+        "default_iterations": 100,
+    },
+    "sprint": {
+        "play_task": "Mjlab-Velocity-Sprint-MicroDuck",
+        "train_script": LAB_ROOT / "scripts" / "train-sprint-probe.sh",
+        "default_iterations": 50,
+    },
     "swizzle": {
         "play_task": "Mjlab-Velocity-Swizzle-MicroDuck",
         "train_script": LAB_ROOT / "scripts" / "train-swizzle.sh",
@@ -179,9 +194,63 @@ def cleanup_orphaned_dashboard_viewers(
     return len(groups)
 
 
-def training_progress() -> dict[str, Any] | None:
-    """Read the newest local training log without depending on W&B."""
-    logs = sorted((LAB_ROOT / "reports").glob("train-*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
+def _active_training_run_dirs(active_run_names: set[str]) -> list[Path]:
+    """Find TensorBoard runs belonging to an externally launched trainer."""
+    root = UPSTREAM / "logs" / "rsl_rl"
+    candidates = [
+        path for path in root.glob("*/*")
+        if path.is_dir()
+        and any(path.name.endswith(f"_{run_name}") for run_name in active_run_names)
+        and any(path.glob("events.out.tfevents.*"))
+    ]
+    return sorted(candidates, key=lambda path: path.stat().st_mtime, reverse=True)
+
+
+def _tensorboard_training_progress(active_run_names: set[str]) -> dict[str, Any] | None:
+    """Read compact live metrics from an external trainer's event file."""
+    run_dirs = _active_training_run_dirs(active_run_names)
+    python = UPSTREAM / ".venv" / "bin" / "python"
+    if not run_dirs or not python.is_file():
+        return None
+    code = r'''
+import json, sys
+from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+acc = EventAccumulator(sys.argv[1], size_guidance={"scalars": 10000}).Reload()
+tags = set(acc.Tags().get("scalars", []))
+def values(tag): return acc.Scalars(tag) if tag in tags else []
+def latest(tag):
+    series = values(tag)
+    return float(series[-1].value) if series else None
+rewards = values("Train/mean_reward")
+print(json.dumps({"iteration": int(rewards[-1].step) if rewards else 0, "reward_history": [{"iteration": int(item.step), "reward": float(item.value)} for item in rewards[-1000:]], "metrics": {tag: latest(tag) for tag in tags}}))
+'''
+    try:
+        result = subprocess.run([str(python), "-c", code, str(run_dirs[0])], cwd=str(LAB_ROOT), capture_output=True, text=True, timeout=12, check=False)
+        payload = json.loads(result.stdout) if result.returncode == 0 else None
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError, TypeError, ValueError):
+        return None
+    if not isinstance(payload, dict) or not payload.get("reward_history"):
+        return None
+    history = payload["reward_history"]
+    metrics = payload.get("metrics", {})
+    recent = [item["reward"] for item in history[-20:]]
+    previous = [item["reward"] for item in history[-40:-20]]
+    recent_mean = sum(recent) / len(recent) if recent else None
+    previous_mean = sum(previous) / len(previous) if previous else None
+    trend_delta = recent_mean - previous_mean if recent_mean is not None and previous_mean is not None else None
+    threshold = max(0.1, abs(previous_mean or 0.0) * 0.03)
+    trend = "warming up" if len(history) < 20 else ("improving" if trend_delta is not None and trend_delta > threshold else "regressing" if trend_delta is not None and trend_delta < -threshold else "steady")
+    episode_rewards = {tag.removeprefix("Episode_Reward/"): value for tag, value in metrics.items() if tag.startswith("Episode_Reward/") and value is not None}
+    return {"log": f"TensorBoard: {run_dirs[0]}", "iteration": int(payload["iteration"]), "total": None, "eta": None, "reward_history": history[-80:], "reward_history_full": history, "reward_history_count": len(history), "intelligence": {"current_reward": history[-1]["reward"], "best_reward": max(item["reward"] for item in history), "recent_mean": recent_mean, "trend_delta": trend_delta, "trend": trend, "volatility": None, "verdict": "Live speed-discovery metrics are coming directly from the trainer.", "verdict_tone": "good" if trend == "improving" else "neutral", "steps_per_second": metrics.get("Perf/total_fps"), "total_steps": None, "mean_episode_length": metrics.get("Train/mean_episode_length"), "mean_action_std": metrics.get("Policy/mean_std"), "value_loss": metrics.get("Loss/value"), "surrogate_loss": metrics.get("Loss/surrogate"), "nan_terminations": metrics.get("Episode_Termination/nan_state") or 0.0, "latest_checkpoint_iteration": None, "episode_rewards": episode_rewards, "live_metrics": metrics}}
+
+
+def training_progress(active_run_names: set[str] | None = None) -> dict[str, Any] | None:
+    """Read active-run logs, falling back to TensorBoard for external jobs."""
+    reports = LAB_ROOT / "reports"
+    active_logs = [reports / f"train-{name}.log" for name in active_run_names or set()]
+    logs = [path for path in active_logs if path.is_file()]
+    if not logs and not active_run_names:
+        logs = sorted(reports.glob("train-*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
     for path in logs:
         try:
             text = path.read_text(errors="replace")
@@ -307,14 +376,16 @@ def training_progress() -> dict[str, Any] | None:
                     "episode_rewards": episode_rewards,
                 },
             }
-    return None
+    return _tensorboard_training_progress(active_run_names) if active_run_names else None
 
 
 def parse_training_request(message: str) -> dict[str, Any] | None:
     lowered = message.lower()
     if not re.search(r"\b(train|training|learn)\b", lowered):
         return None
-    if "frontflip" in lowered or "front flip" in lowered:
+    if "race" in lowered or "racing" in lowered or "racer" in lowered:
+        task = "race5" if re.search(r"\b(5|five|10|ten)\s*(mph|miles? per hour)\b", lowered) else "race"
+    elif "frontflip" in lowered or "front flip" in lowered:
         task = "backflip"
     elif "backflip" in lowered or "back flip" in lowered:
         return {
@@ -333,7 +404,7 @@ def parse_training_request(message: str) -> dict[str, Any] | None:
     elif "walk" in lowered:
         task = "walking"
     else:
-        return {"error": "Tell me which skill to train: front flip, swizzle, roller, or walking."}
+        return {"error": "Tell me which skill to train: race, sprint, front flip, swizzle, roller, or walking."}
     iteration_match = re.search(r"([\d,]+)\s*(?:iterations?|iters?)\b", lowered)
     environment_match = re.search(r"([\d,]+)\s*(?:environments?|envs?)\b", lowered)
     iterations = (
@@ -377,7 +448,7 @@ def codex_training_plan(message: str) -> dict[str, Any] | None:
     prompt = (
         "You are the MicroDuck training assistant. Return JSON only, with keys "
         "task, iterations, environments, resource_profile, supported, reply. task must be one of "
-        "front flip, swizzle, roller, walking, or custom. The internal task token for front flip is "
+        "race, sprint, front flip, swizzle, roller, walking, or custom. The internal task token for front flip is "
         "backflip for legacy compatibility; never use it for a real backward flip. Choose custom for a skill that has "
         "no registered simulator task. Never invent a runnable task. Defaults are "
         "8000 iterations and 4096 environments. resource_profile must be shared "
@@ -445,6 +516,11 @@ class ProcessManager:
             self._reap_finished_locked()
             training_alive = self._alive(self.training)
             detected_training = running_training_processes()
+            active_names = {
+                match.group(1)
+                for item in detected_training
+                if (match := re.search(r"--agent\.run-name\s+([^\s]+)", item.get("command", "")))
+            }
             now = time.monotonic()
             # Snapshot newly saved checkpoints while a real dashboard-owned
             # training job is active. A page refresh then exposes the latest
@@ -455,11 +531,6 @@ class ProcessManager:
                 and now - self._last_training_discovery >= 30.0
             ):
                 registered = self.bench.discover(UPSTREAM / "logs" / "rsl_rl")
-                active_names = {
-                    match.group(1)
-                    for item in detected_training
-                    if (match := re.search(r"--agent\.run-name\s+([^\s]+)", item.get("command", "")))
-                }
                 self._training_candidates = [
                     {
                         "run_id": item["run_id"],
@@ -492,7 +563,7 @@ class ProcessManager:
                     "config": self.training_config if training_alive else None,
                     "pid": self.training.pid if training_alive and self.training else None,
                     "detected": detected_training,
-                    "progress": training_progress() if training_alive or detected_training else None,
+                    "progress": training_progress(active_names) if training_alive or detected_training else None,
                     "candidates": self._training_candidates if detected_training else [],
                 },
                 "resources": resource_status(),
@@ -500,7 +571,7 @@ class ProcessManager:
 
     def run_deployment_check(self, run_id: str) -> dict[str, Any]:
         manifest = self.bench.load_manifest(run_id)
-        if manifest.get("task") not in {"roller", "swizzle", "hop"}:
+        if manifest.get("task") not in {"roller", "swizzle", "sprint", "race", "race5", "hop", "backflip"}:
             raise ValueError("Deployment Check is not configured for this policy type")
         if not manifest.get("artifacts", {}).get("policy"):
             raise ValueError("This saved model has no exported ONNX policy yet")
@@ -509,7 +580,13 @@ class ProcessManager:
                 raise ValueError("A Deployment Check is already running for this model")
             self.deployment_checks.add(run_id)
         try:
-            suite = "hop-v1" if manifest.get("task") == "hop" else "skating-v1"
+            suite = {
+                "hop": "hop-v1",
+                "backflip": "frontflip-v1",
+                "sprint": "sprint-v1",
+                "race": "race-v1",
+                "race5": "race5-v3",
+            }.get(manifest.get("task"), "skating-v1")
             record = self.bench.evaluate(run_id, suite)
         finally:
             with self.lock:
@@ -530,18 +607,34 @@ class ProcessManager:
         """
         manifest = self.bench.load_manifest(run_id)
         task = manifest.get("task")
-        preview = {
-            "walking": {"slot": "walk", "loco": "legs", "label": "Run"},
-            "roller": {"slot": "drive", "loco": "rollers", "label": "Drive"},
-            "swizzle": {"slot": "drive", "loco": "rollers", "label": "Swizzle"},
-            "backflip": {
+        # The browser arena loads an immutable ONNX policy directly. Velocity
+        # policies share the same 13-value command/observation contract, so a
+        # new skating task must not require its own viewer implementation.
+        if task == "walking":
+            preview = {"slot": "walk", "loco": "legs", "label": "Run"}
+        elif task == "backflip":
+            preview = {
                 "slot": "crouch",
                 "loco": "rollers",
                 "label": "Front Flip",
                 "period": "4.0",
                 "end": "1.0",
-            },
-        }.get(task)
+            }
+        elif task in {"roller", "swizzle", "sprint", "race", "race5", "hop"}:
+            preview = {
+                "slot": "drive",
+                "loco": "rollers",
+                "label": {
+                    "roller": "Drive",
+                    "swizzle": "Swizzle",
+                    "sprint": "Sprint",
+                    "race": "Race",
+                    "race5": "Race 5 MPH",
+                    "hop": "Hop",
+                }[task],
+            }
+        else:
+            preview = None
         if preview is None:
             raise ValueError(f"Interactive arena preview is not configured for task {task!r}")
         policy = manifest.get("artifacts", {}).get("policy")
@@ -565,6 +658,9 @@ class ProcessManager:
             "preview_loco": preview["loco"],
             "preview_label": preview["label"],
         }
+        if preview["slot"] == "drive":
+            params["speed_test"] = "1"
+            params["speed_test_distance_ft"] = "100"
         if "period" in preview:
             params["preview_period"] = preview["period"]
             params["preview_end"] = preview["end"]
@@ -956,10 +1052,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             finally:
                 self.path = original_path
             return
-        if self.path == "/api/status":
+        if request_path == "/api/status":
             self._send_json(self.server.manager.status())
             return
-        if self.path in {"/", "/index.html"}:
+        if request_path in {"/", "/index.html"}:
             active = set()
             for process in running_training_processes():
                 match = re.search(r"--agent\.run-name\s+([^\s]+)", process["command"])
@@ -996,6 +1092,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             elif self.path == "/api/star":
                 run_id = str(body.get("run_id", ""))
                 self._send_json(self.server.bench.star(run_id) if body.get("star", True) else self.server.bench.unstar(run_id))
+            elif self.path == "/api/select-champion":
+                self._send_json(self.server.bench.select_sim_champion(str(body.get("run_id", ""))))
             elif self.path == "/api/train":
                 self._send_json(self.server.manager.start_training(body))
             elif self.path == "/api/chat":
@@ -1126,6 +1224,7 @@ class DashboardServer(ThreadingHTTPServer):
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state-dir", type=Path, default=DEFAULT_STATE)
+    parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8091)
     args = parser.parse_args()
     cleaned = cleanup_orphaned_dashboard_viewers(args.state_dir)
@@ -1134,8 +1233,8 @@ def main() -> None:
     bench = Bench(args.state_dir)
     bench.initialize()
     bench.render_dashboard()
-    server = DashboardServer(("127.0.0.1", args.port), bench)
-    print(f"Policy Bench control center: http://127.0.0.1:{args.port}", flush=True)
+    server = DashboardServer((args.host, args.port), bench)
+    print(f"Policy Bench control center: http://{args.host}:{args.port}", flush=True)
     def request_shutdown(_signum: int, _frame: Any) -> None:
         raise KeyboardInterrupt
 

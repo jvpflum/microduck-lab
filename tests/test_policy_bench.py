@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 LAB_ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +43,57 @@ class PolicyBenchTests(unittest.TestCase):
         path = self.root / f"metrics-{forward}.json"
         path.write_text(json.dumps({"phases": {"forward": {"mean_forward_speed_mps": forward}}}))
         return path
+
+    def sprint_metrics(self, speed_offset: float = 0.0) -> dict:
+        phases = {}
+        for suffix, command, speed in (
+            ("030", 0.30, 0.36),
+            ("040", 0.40, 0.44),
+            ("050", 0.50, 0.48),
+            ("055", 0.55, 0.51),
+        ):
+            phases[f"speed_{suffix}"] = {
+                "command_x_mps": command,
+                "steady_mean_forward_speed_mps": speed + speed_offset,
+                "steady_mean_abs_lateral_speed_mps": 0.024,
+                "peak_abs_forward_speed_mps": speed + speed_offset + 0.04,
+                "acceleration_first_second_mps2": 0.42,
+                "time_to_0_5_mps_s": 1.1 if suffix == "055" else None,
+                "tilt_max_deg": 14.9,
+                "trunk_height_mean_m": 0.114,
+            }
+            phases[f"stop_{suffix}"] = {"stop_time_below_0_05_mps_s": 1.2}
+        return {"profile": "sprint", "phases": phases}
+
+    def test_race5_record_requires_speed_and_straightness_together(self) -> None:
+        incumbent = {
+            "performance": {
+                "finished_100ft": True,
+                "elapsed_time_100ft_s": 44.06,
+                "long_run_max_drift_ft": 1.06,
+                "long_run_max_heading_error_deg": 7.30,
+                "agility_score": 67.77,
+                "auto_steering_percent": 13.79,
+            }
+        }
+        balanced_win = {
+            "performance": {
+                "finished_100ft": True,
+                "elapsed_time_100ft_s": 43.90,
+                "long_run_max_drift_ft": 0.95,
+                "long_run_max_heading_error_deg": 7.10,
+                "agility_score": 66.0,
+                "auto_steering_percent": 13.5,
+            }
+        }
+        faster_but_drifting = json.loads(json.dumps(balanced_win))
+        faster_but_drifting["performance"]["long_run_max_drift_ft"] = 1.25
+        straighter_but_slower = json.loads(json.dumps(balanced_win))
+        straighter_but_slower["performance"]["elapsed_time_100ft_s"] = 44.20
+
+        self.assertTrue(policy_bench.race5_advances_incumbent(balanced_win, incumbent))
+        self.assertFalse(policy_bench.race5_advances_incumbent(faster_but_drifting, incumbent))
+        self.assertFalse(policy_bench.race5_advances_incumbent(straighter_but_slower, incumbent))
 
     def test_register_snapshots_artifacts_and_hashes(self) -> None:
         manifest = self.register()
@@ -225,6 +277,289 @@ class PolicyBenchTests(unittest.TestCase):
         self.assertFalse(score["qualified"])
         self.assertFalse(score["qualification_gates"]["clearance"]["passed"])
         self.assertFalse(score["qualification_gates"]["air_time"]["passed"])
+
+    def test_sprint_score_has_explicit_qualification_gates(self) -> None:
+        score = policy_bench.score_evaluation(self.sprint_metrics(), "sprint")
+        self.assertTrue(score["qualified"])
+        self.assertGreater(score["overall"], 50.0)
+        self.assertEqual(score["label"], "Sprint-v1 qualification score")
+        self.assertTrue(score["qualification_gates"]["speed_at_0_55"]["passed"])
+        self.assertAlmostEqual(score["performance"]["sustained_speed_mph"], 1.141, places=3)
+        self.assertEqual(score["performance"]["acceleration_first_second_mps2"], 0.42)
+        self.assertIn("agility_score", score["performance"])
+        failed = policy_bench.score_evaluation(self.sprint_metrics(-0.03), "sprint")
+        self.assertFalse(failed["qualified"])
+        self.assertLessEqual(failed["overall"], 49.0)
+
+    def test_race5_uses_five_mph_as_a_goal_not_a_hard_gate(self) -> None:
+        evaluation = {
+            "profile": "race-5mph",
+            "phases": {
+                "cruise": {
+                    "steady_mean_forward_speed_mps": 0.34,
+                    "yaw_change_deg": 12.0,
+                    "tilt_max_deg": 11.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "stop_cruise": {
+                    "stop_time_below_0_05_mps_s": 1.3,
+                    "end_abs_forward_speed_mps": 0.01,
+                    "tilt_max_deg": 12.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "turn_left": {
+                    "yaw_change_deg": 90.0,
+                    "tilt_max_deg": 10.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "turn_right": {
+                    "yaw_change_deg": -90.0,
+                    "tilt_max_deg": 10.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "max_speed": {
+                    "peak_horizontal_speed_mps": 2.6,
+                    "finished_100ft": True,
+                    "finish_time_100ft_s": 15.0,
+                    "trap_speed_100ft_mph": 5.4,
+                    "distance_remaining_100ft_ft": 0.0,
+                    "max_heading_error_deg": 18.0,
+                    "max_lateral_drift_ft": 1.5,
+                    "tilt_max_deg": 14.0,
+                    "trunk_height_mean_m": 0.11,
+                },
+                "race": {
+                    "finished_5m": True,
+                    "finish_time_5m_s": 2.2,
+                    "forward_progress_m": 5.01,
+                    "duration_s": 2.9,
+                    "mean_world_forward_speed_mps": 2.25,
+                    "steady_mean_world_forward_speed_mps": 2.25,
+                    "peak_world_forward_speed_mps": 2.30,
+                    "acceleration_first_second_mps2": 1.6,
+                    "time_to_0_5_mps_s": 0.4,
+                    "yaw_change_deg": 8.0,
+                    "tilt_max_deg": 12.0,
+                    "steady_mean_abs_lateral_speed_mps": 0.01,
+                    "trunk_height_mean_m": 0.11,
+                },
+            },
+        }
+        score = policy_bench.score_evaluation(evaluation, "race5")
+        self.assertTrue(score["qualified"])
+        self.assertTrue(score["five_mph_goal_reached"])
+        self.assertGreater(score["overall"], 80.0)
+        self.assertGreaterEqual(score["performance"]["top_speed_mph"], 5.0)
+        self.assertAlmostEqual(score["performance"]["ten_mph_stretch_percent"], 50.3, places=1)
+        evaluation["phases"]["race"]["steady_mean_world_forward_speed_mps"] = 1.5
+        failed = policy_bench.score_evaluation(evaluation, "race5")
+        self.assertTrue(failed["qualified"])
+        self.assertFalse(failed["five_mph_goal_reached"])
+        self.assertFalse(failed["record_qualified"])
+        self.assertTrue(failed["simulation_champion_eligible"])
+        self.assertGreater(failed["overall"], 49.0)
+        self.assertEqual(failed["label"], "Race5 speed development score")
+        self.assertNotIn("finish_5m", failed["qualification_gates"])
+        self.assertNotIn("finish_time", failed["qualification_gates"])
+        self.assertNotIn("five_mph_sustained", failed["qualification_gates"])
+        self.assertNotIn("finish", failed["components"])
+
+    def test_race5_speed_cannot_replace_lost_basic_skills(self) -> None:
+        evaluation = {
+            "profile": "race-5mph",
+            "phases": {
+                "race": {
+                    "duration_s": 8.0,
+                    "steady_mean_world_forward_speed_mps": 2.5,
+                    "peak_world_forward_speed_mps": 2.8,
+                    "acceleration_first_second_mps2": 1.8,
+                    "yaw_change_deg": 5.0,
+                    "tilt_max_deg": 10.0,
+                    "steady_mean_abs_lateral_speed_mps": 0.01,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "cruise": {
+                    "steady_mean_forward_speed_mps": 0.10,
+                    "yaw_change_deg": 100.0,
+                    "tilt_max_deg": 10.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "stop_cruise": {
+                    "stop_time_below_0_05_mps_s": None,
+                    "end_abs_forward_speed_mps": 0.2,
+                    "tilt_max_deg": 10.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "turn_left": {"yaw_change_deg": -60.0, "tilt_max_deg": 10.0, "trunk_height_mean_m": 0.115},
+                "turn_right": {"yaw_change_deg": 60.0, "tilt_max_deg": 10.0, "trunk_height_mean_m": 0.115},
+                "max_speed": {
+                    "peak_horizontal_speed_mps": 2.8,
+                    "finished_100ft": True,
+                    "finish_time_100ft_s": 14.0,
+                    "trap_speed_100ft_mph": 5.8,
+                    "distance_remaining_100ft_ft": 0.0,
+                    "max_heading_error_deg": 10.0,
+                    "max_lateral_drift_ft": 1.0,
+                    "tilt_max_deg": 10.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+            },
+        }
+        score = policy_bench.score_evaluation(evaluation, "race5")
+        self.assertTrue(score["five_mph_goal_reached"])
+        self.assertFalse(score["qualified"])
+        self.assertFalse(score["simulation_champion_eligible"])
+        self.assertFalse(score["qualification_gates"]["cruise_speed"]["passed"])
+        self.assertFalse(score["qualification_gates"]["braking"]["passed"])
+        self.assertFalse(score["qualification_gates"]["turn_left"]["passed"])
+        self.assertFalse(score["qualification_gates"]["turn_right"]["passed"])
+
+    def test_race5_rejects_sideways_speed_on_long_course(self) -> None:
+        evaluation = {
+            "profile": "race-5mph",
+            "phases": {
+                "race": {
+                    "duration_s": 8.0,
+                    "steady_mean_world_forward_speed_mps": 1.0,
+                    "peak_world_forward_speed_mps": 1.2,
+                    "acceleration_first_second_mps2": 0.5,
+                    "yaw_change_deg": 10.0,
+                    "tilt_max_deg": 12.0,
+                    "steady_mean_abs_lateral_speed_mps": 0.01,
+                    "trunk_height_mean_m": 0.11,
+                },
+                "cruise": {"steady_mean_forward_speed_mps": 0.3, "yaw_change_deg": 5.0, "tilt_max_deg": 10.0, "trunk_height_mean_m": 0.11},
+                "stop_cruise": {"stop_time_below_0_05_mps_s": 1.0, "end_abs_forward_speed_mps": 0.0, "tilt_max_deg": 10.0, "trunk_height_mean_m": 0.11},
+                "turn_left": {"yaw_change_deg": 90.0, "tilt_max_deg": 10.0, "trunk_height_mean_m": 0.11},
+                "turn_right": {"yaw_change_deg": -90.0, "tilt_max_deg": 10.0, "trunk_height_mean_m": 0.11},
+                "max_speed": {
+                    "peak_horizontal_speed_mps": 3.0,
+                    "finished_100ft": False,
+                    "finish_time_100ft_s": None,
+                    "trap_speed_100ft_mph": None,
+                    "distance_remaining_100ft_ft": 50.0,
+                    "max_heading_error_deg": 180.0,
+                    "max_lateral_drift_ft": 20.0,
+                    "tilt_max_deg": 12.0,
+                    "trunk_height_mean_m": 0.11,
+                },
+            },
+        }
+        score = policy_bench.score_evaluation(evaluation, "race5")
+        self.assertGreater(score["performance"]["top_speed_mph"], 6.0)
+        self.assertFalse(score["simulation_champion_eligible"])
+        self.assertFalse(score["qualification_gates"]["long_run_heading"]["passed"])
+        self.assertFalse(score["qualification_gates"]["long_run_drift"]["passed"])
+        self.assertFalse(score["qualification_gates"]["a_to_b_100ft"]["passed"])
+
+    def test_race5_reports_a_to_b_win_separately_from_control_qualification(self) -> None:
+        candidate = {
+            "phases": {
+                "race": {
+                    "steady_mean_world_forward_speed_mps": 0.7,
+                    "acceleration_first_second_mps2": 0.5,
+                },
+                "max_speed": {
+                    "finished_100ft": True,
+                    "finish_time_100ft_s": 46.5,
+                    "peak_horizontal_speed_mps": 0.82,
+                    "max_heading_error_deg": 33.0,
+                    "max_lateral_drift_ft": 22.0,
+                },
+            }
+        }
+        pollen = {
+            "phases": {
+                "race": {
+                    "steady_mean_world_forward_speed_mps": 0.4,
+                    "acceleration_first_second_mps2": 0.25,
+                },
+                "max_speed": {
+                    "finished_100ft": False,
+                    "finish_time_100ft_s": None,
+                    "peak_horizontal_speed_mps": 0.68,
+                    "max_heading_error_deg": 1700.0,
+                    "max_lateral_drift_ft": 10.0,
+                },
+            }
+        }
+
+        comparison = policy_bench.race_baseline_comparison(
+            candidate, pollen, self.root / "pollen.json"
+        )
+
+        self.assertTrue(comparison["a_to_b_improved"])
+        self.assertFalse(comparison["improved"])
+        self.assertEqual(
+            comparison["verdict"],
+            "Beat Pollen from A to B; control qualification pending",
+        )
+
+    def test_sprint_result_is_clear_in_dashboard_and_detail_report(self) -> None:
+        sprint_dir = self.root / "logs" / "velocity_sprint" / "sprint-run"
+        sprint_dir.mkdir(parents=True)
+        (sprint_dir / "model_49.pt").write_bytes(b"sprint-checkpoint")
+        (sprint_dir / "sprint.onnx").write_bytes(b"sprint-policy")
+        manifest = self.bench.register(sprint_dir, task="sprint")
+        candidate_path = self.root / "candidate-sprint.json"
+        candidate_path.write_text(json.dumps(self.sprint_metrics()))
+        baseline = self.sprint_metrics(-0.03)
+        baseline_path = self.root / "pollen-sprint.json"
+        baseline_path.write_text(json.dumps(baseline))
+        with mock.patch.object(policy_bench, "SPRINT_BASELINE_REPORT", baseline_path):
+            self.bench.attach_evaluation(manifest["run_id"], candidate_path, "sprint-v1")
+        dashboard = self.bench.render_dashboard().read_text()
+        report = (self.state / "runs" / manifest["run_id"] / "report.html").read_text()
+        updated = self.bench.load_manifest(manifest["run_id"])
+        self.assertIn("YES — improved vs Pollen", dashboard)
+        self.assertIn("1.23 mph command: 1.14 vs 1.07 mph", dashboard)
+        self.assertIn("Sprint podium", dashboard)
+        self.assertIn("podium-grid", dashboard)
+        self.assertIn("IMMUTABLE TRUE BASELINE", dashboard)
+        self.assertIn("Pollen official roller", dashboard)
+        if "Race5 podium" in dashboard:
+            self.assertIn("VS POLLEN", dashboard)
+            self.assertIn("measured race dimensions improved", dashboard)
+            self.assertIn("Verified top", dashboard)
+            self.assertIn("100 ft time", dashboard)
+            self.assertIn("Max straight-line drift", dashboard)
+            self.assertIn("Automatic steering", dashboard)
+        self.assertIn("Raw heat vs Pollen: YES", dashboard)
+        self.assertIn("qualified record vs Pollen: YES", dashboard)
+        self.assertIn("All experiments and unscored runs", dashboard)
+        self.assertIn("mph sustained", dashboard)
+        self.assertIn("AUTO-PROMOTED CHAMPION", dashboard)
+        self.assertEqual(updated["stage"], "sim-qualified")
+        self.assertIn("YES — this run improved skating speed", report)
+        self.assertIn("8/8 gates passed", report)
+        self.assertIn("Speed across useful commands", report)
+        self.assertIn("Sustained speed", report)
+        self.assertIn("mph", report)
+        self.assertIn("Agility score", report)
+
+    def test_frontflip_score_requires_complete_clean_unassisted_rollouts(self) -> None:
+        evaluation = {
+            "frontflip": {
+                "episodes": 256,
+                "unassisted": True,
+                "success_rate": 0.85,
+                "takeoff_rate": 0.95,
+                "landing_rate": 0.90,
+                "settled_rate": 0.85,
+                "body_contact_rate": 0.005,
+                "median_peak_clearance_m": 0.08,
+                "median_forward_rotation_deg": 360.0,
+                "median_offaxis_rotation_deg": 10.0,
+                "median_horizontal_drift_m": 0.04,
+            }
+        }
+        score = policy_bench.score_evaluation(evaluation, "backflip")
+        self.assertTrue(score["qualified"])
+        self.assertGreater(score["overall"], 80.0)
+        evaluation["frontflip"]["body_contact_rate"] = 0.25
+        score = policy_bench.score_evaluation(evaluation, "backflip")
+        self.assertFalse(score["qualified"])
+        self.assertLessEqual(score["overall"], 49.0)
         self.assertLessEqual(score["overall"], 49.0)
 
 

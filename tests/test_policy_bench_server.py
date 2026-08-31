@@ -81,6 +81,11 @@ class PolicyBenchServerTests(unittest.TestCase):
         request = server.parse_training_request("train swizzle overnight for 8000 iterations")
         self.assertEqual(request["resource_profile"], "training-priority")
 
+    def test_five_mph_race_request_selects_record_task(self) -> None:
+        request = server.parse_training_request("train a racer to hit 5 mph for 150 iterations")
+        self.assertEqual(request["task"], "race5")
+        self.assertEqual(request["iterations"], 150)
+
     def test_jump_request_explains_retired_hop_task(self) -> None:
         request = server.parse_training_request("train a roller jump overnight")
         self.assertIn("retired", request["error"])
@@ -227,21 +232,39 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(parsed.path, "/factory/")
         self.assertEqual(params["preview_slot"], ["drive"])
         self.assertEqual(params["preview_loco"], ["rollers"])
+        self.assertEqual(params["speed_test"], ["1"])
+        self.assertEqual(params["speed_test_distance_ft"], ["100"])
         self.assertEqual(
             params["preview_policy"],
             [f"/runs/{self.manifest['run_id']}/artifacts/run.onnx"],
         )
         self.assertEqual(result["policy_sha256"], self.manifest["artifacts"]["policy"]["sha256"])
 
-    def test_retired_hop_is_not_available_in_product_simulator(self) -> None:
+    def test_compatible_roller_policy_uses_universal_product_simulator(self) -> None:
         hop_dir = self.root / "logs" / "roller_hop" / "hop-a"
         hop_dir.mkdir(parents=True)
         (hop_dir / "model_300.pt").write_bytes(b"hop-checkpoint")
         (hop_dir / "hop.onnx").write_bytes(b"hop-policy")
         hop = self.bench.register(hop_dir)
 
-        with self.assertRaisesRegex(ValueError, "not configured"):
-            server.ProcessManager(self.bench).launch_simulator(hop["run_id"])
+        result = server.ProcessManager(self.bench).launch_simulator(hop["run_id"])
+        params = parse_qs(urlsplit(result["open_url"]).query)
+        self.assertEqual(params["preview_slot"], ["drive"])
+        self.assertEqual(params["preview_loco"], ["rollers"])
+
+    def test_sprint_and_race_share_the_universal_velocity_arena(self) -> None:
+        for task in ("sprint", "race", "race5"):
+            run_dir = self.root / "logs" / f"velocity_{task}" / f"{task}-a"
+            run_dir.mkdir(parents=True)
+            (run_dir / "model_20.pt").write_bytes(b"checkpoint")
+            (run_dir / f"{task}.onnx").write_bytes(b"policy")
+            manifest = self.bench.register(run_dir, task=task)
+            result = server.ProcessManager(self.bench).launch_simulator(manifest["run_id"])
+            params = parse_qs(urlsplit(result["open_url"]).query)
+            self.assertEqual(params["preview_slot"], ["drive"])
+            self.assertEqual(params["preview_loco"], ["rollers"])
+            expected_label = "Race 5 MPH" if task == "race5" else task.title()
+            self.assertEqual(params["preview_label"], [expected_label])
 
     def test_legacy_flip_policy_opens_as_front_flip(self) -> None:
         flip_dir = self.root / "logs" / "roller_backflip" / "flip-a"

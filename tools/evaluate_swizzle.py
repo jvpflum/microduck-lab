@@ -38,9 +38,11 @@ class Phase:
     duration_s: float
     command_x: float
     heading_error: float = 0.0
+    reset_before: bool = False
 
 
 CONTROL_DT = 0.02
+RACE5_LONG_RUN_DISTANCE_M = 100.0 * 0.3048
 
 PHASES = (
     Phase("settle", 2.0, 0.0),
@@ -50,6 +52,63 @@ PHASES = (
     Phase("stop_reverse", 4.0, 0.0),
     Phase("heading_left", 6.0, 0.2, 0.3),
     Phase("heading_right", 6.0, 0.2, -0.3),
+)
+
+SPRINT_PHASES = (
+    Phase("settle", 2.0, 0.0),
+    Phase("speed_020", 6.0, 0.20),
+    Phase("stop_020", 3.0, 0.0),
+    Phase("speed_030", 6.0, 0.30),
+    Phase("stop_030", 3.0, 0.0),
+    Phase("speed_040", 7.0, 0.40),
+    Phase("stop_040", 3.0, 0.0),
+    Phase("speed_050", 8.0, 0.50),
+    Phase("stop_050", 4.0, 0.0),
+    Phase("speed_055", 8.0, 0.55),
+    Phase("stop_055", 4.0, 0.0),
+)
+
+SPRINT_EXTENDED_PHASES = (
+    Phase("settle", 2.0, 0.0),
+    Phase("speed_055", 8.0, 0.55),
+    Phase("stop_055", 4.0, 0.0),
+    Phase("speed_060", 8.0, 0.60),
+    Phase("stop_060", 4.0, 0.0),
+    Phase("speed_065", 8.0, 0.65),
+    Phase("stop_065", 4.0, 0.0),
+    Phase("speed_070", 8.0, 0.70),
+    Phase("stop_070", 4.0, 0.0),
+)
+
+RACE_PHASES = (
+    Phase("settle", 2.0, 0.0),
+    Phase("race", 14.0, 0.80),
+)
+
+RACE5_PHASES = (
+    Phase("settle", 2.0, 0.0),
+    # Retention circuit: cruise -> brake is continuous so braking is measured
+    # from motion. Steering and the race heat start from identical clean poses
+    # so one test cannot corrupt the next test's heading or speed.
+    Phase("cruise", 5.0, 0.30),
+    Phase("stop_cruise", 3.0, 0.0),
+    Phase("turn_left", 4.0, 0.20, 0.30, reset_before=True),
+    Phase("turn_right", 4.0, 0.20, -0.30, reset_before=True),
+    # Race effort token; 5 mph is a measured outcome, not an OOD command.
+    Phase("race", 8.0, 0.80, reset_before=True),
+    # Match the browser's enlarged runway with a long, unassisted acceleration
+    # trial. The scene floor is effectively unbounded, so this measures the
+    # policy rather than a wall collision. Ninety seconds gives even Pollen's
+    # roughly 1 mph gait enough time to traverse a nominal 100-foot course.
+    Phase("max_speed", 90.0, 0.80, reset_before=True),
+)
+
+# Cheap checkpoint screen used before spending the full retention circuit and
+# 90-second official heat.  Twenty seconds is long enough to reject a policy
+# that begins the same looping failure as v5/v8 while preserving the exact
+# physics, command, and telemetry used by the official evaluator.
+RACE_SCREEN_PHASES = (
+    Phase("max_speed", 20.0, 0.80, reset_before=True),
 )
 
 
@@ -69,7 +128,9 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
         return np.asarray([row[key] for row in rows], dtype=np.float64)
 
     forward = values("forward_speed")
+    world_forward = values("world_forward_speed")
     lateral = values("lateral_speed")
+    lateral_position = values("lateral_position")
     trunk_z = values("trunk_z")
     tilt = values("tilt")
     separation = values("skate_separation")
@@ -77,7 +138,24 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
     grounded = values("both_grounded")
     wheel_speed = values("mean_abs_wheel_speed")
     command_x = values("command_x")
+    auto_steering = values("auto_steering")
+    forward_position = values("forward_position")
     yaw = np.unwrap(values("yaw"))
+    horizontal_speed = np.hypot(world_forward, values("world_lateral_speed"))
+    # A one-sample contact impulse is not a defensible top-speed record.
+    # Report a 0.5 s rolling peak (25 control samples at 50 Hz), alongside
+    # the raw peak for diagnostics. This mirrors a short timing trap while
+    # preserving enough resolution to capture the fastest part of the run.
+    top_window = min(len(horizontal_speed), max(1, int(round(0.5 / CONTROL_DT))))
+    verified_top_speed = float(
+        np.convolve(
+            horizontal_speed,
+            np.full(top_window, 1.0 / top_window, dtype=np.float64),
+            mode="valid",
+        ).max()
+    )
+    lateral_drift = np.abs(lateral_position - lateral_position[0])
+    heading_error = np.abs(yaw - yaw[0])
     cycles = 0
     separation_range = float(np.ptp(separation))
     # Ignore numerical/contact chatter. A real outward/inward stroke must move
@@ -104,6 +182,15 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
         if reached.size:
             response_time = float((reached[0] + 1) * CONTROL_DT)
 
+    commanded_speed = direction * forward if nonzero_command else np.abs(forward)
+    first_second_index = min(len(commanded_speed) - 1, max(1, int(round(1.0 / CONTROL_DT)) - 1))
+    acceleration_first_second = float(
+        (commanded_speed[first_second_index] - commanded_speed[0])
+        / max(CONTROL_DT, first_second_index * CONTROL_DT)
+    )
+    half_speed = np.flatnonzero(commanded_speed >= 0.5)
+    time_to_half = float((half_speed[0] + 1) * CONTROL_DT) if half_speed.size else None
+
     stop_time = None
     if not nonzero_command:
         quiet = np.abs(forward) <= 0.05
@@ -113,14 +200,89 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
                 stop_time = float((index + 1) * CONTROL_DT)
                 break
 
+    progress = forward_position - forward_position[0]
+    finish_indices = np.flatnonzero(progress >= 5.0)
+    finish_time = float((finish_indices[0] + 1) * CONTROL_DT) if finish_indices.size else None
+
+    def split_time(distance_m: float) -> float | None:
+        indices = np.flatnonzero(progress >= distance_m)
+        if not indices.size:
+            return None
+        index = int(indices[0])
+        if index == 0:
+            return CONTROL_DT
+        p0, p1 = float(progress[index - 1]), float(progress[index])
+        fraction = (distance_m - p0) / max(p1 - p0, 1e-9)
+        return float((index + fraction) * CONTROL_DT)
+
+    split_10ft = split_time(10.0 * 0.3048)
+    split_25ft = split_time(25.0 * 0.3048)
+    split_50ft = split_time(50.0 * 0.3048)
+    split_100ft = split_time(RACE5_LONG_RUN_DISTANCE_M)
+    trap_speed_100ft = None
+    if split_100ft is not None:
+        trap_rows = (progress >= 80.0 * 0.3048) & (progress <= RACE5_LONG_RUN_DISTANCE_M)
+        if np.any(trap_rows):
+            trap_speed_100ft = float(world_forward[trap_rows].mean())
+
+    world_forward_integral = float(world_forward.sum() * CONTROL_DT)
+    measured_progress = float(progress[-1])
+    integration_error = abs(world_forward_integral - measured_progress)
+    distance_time_speed = float(
+        RACE5_LONG_RUN_DISTANCE_M / split_100ft
+        if split_100ft is not None
+        else measured_progress / max(duration, CONTROL_DT)
+    )
+
     return {
         "duration_s": duration,
         "command_x_mps": float(command_x[-1]),
         "mean_forward_speed_mps": float(forward.mean()),
+        "mean_forward_speed_mph": float(forward.mean() * 2.2369362921),
         "mean_abs_forward_speed_mps": float(np.abs(forward).mean()),
         "peak_abs_forward_speed_mps": float(np.abs(forward).max()),
+        "peak_abs_forward_speed_mph": float(np.abs(forward).max() * 2.2369362921),
+        "mean_world_forward_speed_mps": float(world_forward.mean()),
+        "mean_world_forward_speed_mph": float(world_forward.mean() * 2.2369362921),
+        "peak_world_forward_speed_mps": float(world_forward.max()),
+        "peak_world_forward_speed_mph": float(world_forward.max() * 2.2369362921),
+        "peak_horizontal_speed_mps": float(horizontal_speed.max()),
+        "peak_horizontal_speed_mph": float(horizontal_speed.max() * 2.2369362921),
+        "verified_top_speed_0_5s_mps": verified_top_speed,
+        "verified_top_speed_0_5s_mph": verified_top_speed * 2.2369362921,
+        "max_lateral_drift_m": float(lateral_drift.max()),
+        "max_lateral_drift_ft": float(lateral_drift.max() * 3.280839895),
+        "final_lateral_offset_m": float(lateral_position[-1] - lateral_position[0]),
+        "final_lateral_offset_ft": float(
+            (lateral_position[-1] - lateral_position[0]) * 3.280839895
+        ),
+        "mean_world_lateral_speed_mps": float(values("world_lateral_speed").mean()),
+        "mean_abs_auto_steering_rad_s": float(np.abs(auto_steering).mean()),
+        "max_abs_auto_steering_rad_s": float(np.abs(auto_steering).max()),
+        "auto_steering_percent": float(100.0 * np.abs(auto_steering).mean() / 0.30),
+        "max_heading_error_deg": float(np.degrees(heading_error.max())),
+        "acceleration_first_second_mps2": acceleration_first_second,
+        "time_to_0_5_mps_s": time_to_half,
         "end_abs_forward_speed_mps": float(np.abs(forward[-min(len(forward), 25) :]).mean()),
         "forward_distance_m": float(np.sum(forward) * CONTROL_DT),
+        "forward_progress_m": float(progress[-1]),
+        "distance_time_average_speed_mps": distance_time_speed,
+        "distance_time_average_speed_mph": distance_time_speed * 2.2369362921,
+        "world_forward_velocity_integral_m": world_forward_integral,
+        "position_velocity_integration_error_m": integration_error,
+        "position_velocity_integration_error_percent": float(
+            100.0 * integration_error / max(abs(measured_progress), 1e-9)
+        ),
+        "finished_5m": finish_time is not None,
+        "finish_time_5m_s": finish_time,
+        "finished_100ft": split_100ft is not None,
+        "finish_time_100ft_s": split_100ft,
+        "split_time_10ft_s": split_10ft,
+        "split_time_25ft_s": split_25ft,
+        "split_time_50ft_s": split_50ft,
+        "trap_speed_100ft_mps": trap_speed_100ft,
+        "trap_speed_100ft_mph": trap_speed_100ft * 2.2369362921 if trap_speed_100ft is not None else None,
+        "distance_remaining_100ft_ft": float(max(0.0, RACE5_LONG_RUN_DISTANCE_M - progress.max()) * 3.280839895),
         "tracking_rmse_mps": tracking_rmse,
         "command_direction_fraction": float(np.mean(direction * forward > 0.02)) if nonzero_command else 0.0,
         "response_time_80pct_s": response_time,
@@ -149,6 +311,16 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--current-limit", type=float, default=1.75)
     parser.add_argument("--wheel-friction", type=float, default=0.003)
+    parser.add_argument("--line-hold", action="store_true")
+    parser.add_argument("--line-yaw-kp", type=float, default=0.55)
+    parser.add_argument("--line-lateral-kp", type=float, default=0.10)
+    parser.add_argument("--line-yaw-kd", type=float, default=0.08)
+    parser.add_argument("--line-max-wz", type=float, default=0.18)
+    parser.add_argument(
+        "--profile",
+        choices=("swizzle", "sprint", "sprint-extended", "race", "race-5mph", "race-screen"),
+        default="swizzle",
+    )
     args = parser.parse_args()
 
     policy_path = args.policy.resolve()
@@ -198,11 +370,18 @@ def main() -> None:
     )
     qpos_adr = int(model.jnt_qposadr[free_joint])
     qvel_adr = int(model.jnt_dofadr[free_joint])
-    data.qpos[qpos_adr : qpos_adr + 7] = [0.0, 0.0, 0.1385, 1.0, 0.0, 0.0, 0.0]
-    for index, joint_qpos in enumerate(controller.joint_qpos_indices):
-        data.qpos[joint_qpos] = controller.default_pose[index]
-    data.ctrl[:] = controller.default_pose
-    mujoco.mj_forward(model, data)
+    def reset_rollout() -> None:
+        mujoco.mj_resetData(model, data)
+        data.qpos[qpos_adr : qpos_adr + 7] = [
+            0.0, 0.0, 0.1385, 1.0, 0.0, 0.0, 0.0
+        ]
+        for index, joint_qpos in enumerate(controller.joint_qpos_indices):
+            data.qpos[joint_qpos] = controller.default_pose[index]
+        data.ctrl[:] = controller.default_pose
+        controller.last_action.fill(0.0)
+        mujoco.mj_forward(model, data)
+
+    reset_rollout()
 
     left_body = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "ankle_l_v1")
     right_body = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "ankle_r_v1")
@@ -215,11 +394,42 @@ def main() -> None:
     previous_action = np.zeros(model.nu, dtype=np.float32)
     previous_delta = np.zeros(model.nu, dtype=np.float32)
 
-    for phase in PHASES:
+    phases = {
+        "swizzle": PHASES,
+        "sprint": SPRINT_PHASES,
+        "sprint-extended": SPRINT_EXTENDED_PHASES,
+        "race": RACE_PHASES,
+        "race-5mph": RACE5_PHASES,
+        "race-screen": RACE_SCREEN_PHASES,
+    }[args.profile]
+    for phase in phases:
+        if phase.reset_before:
+            reset_rollout()
+            previous_action.fill(0.0)
+            previous_delta.fill(0.0)
         controller.set_vel_cmd(phase.command_x, 0.0, phase.heading_error)
         rows: list[dict[str, float]] = []
+        phase_start_x = float(data.qpos[qpos_adr])
+        phase_start_y = float(data.qpos[qpos_adr + 1])
+        phase_start_yaw = quat_to_yaw(data.qpos[qpos_adr + 3 : qpos_adr + 7])
         steps = int(round(phase.duration_s / control_dt))
         for step in range(steps):
+            auto_steering = 0.0
+            if args.line_hold and phase.name in {"race", "max_speed"} and phase.command_x > 0.05:
+                yaw = quat_to_yaw(data.qpos[qpos_adr + 3 : qpos_adr + 7])
+                yaw_error = math.atan2(
+                    math.sin(yaw - phase_start_yaw), math.cos(yaw - phase_start_yaw)
+                )
+                lateral_error = float(data.qpos[qpos_adr + 1]) - phase_start_y
+                yaw_rate = float(data.qvel[qvel_adr + 5])
+                auto_steering = float(np.clip(
+                    -args.line_yaw_kp * yaw_error
+                    - args.line_lateral_kp * lateral_error
+                    - args.line_yaw_kd * yaw_rate,
+                    -args.line_max_wz,
+                    args.line_max_wz,
+                ))
+                controller.set_vel_cmd(phase.command_x, 0.0, auto_steering)
             action = controller.infer()
             controller.apply_action(action)
             for _ in range(decimation):
@@ -252,7 +462,12 @@ def main() -> None:
                 {
                     "phase_time": (step + 1) * control_dt,
                     "command_x": phase.command_x,
+                    "auto_steering": auto_steering,
                     "forward_speed": forward_speed,
+                    "world_forward_speed": vx,
+                    "world_lateral_speed": vy,
+                    "forward_position": float(data.qpos[qpos_adr]),
+                    "lateral_position": float(data.qpos[qpos_adr + 1]),
                     "lateral_speed": lateral_speed,
                     "trunk_z": float(data.qpos[qpos_adr + 2]),
                     "tilt": quat_tilt(quat),
@@ -265,6 +480,20 @@ def main() -> None:
                     "action_acc": action_acc,
                 }
             )
+            # Race-v1 terminates an episode at the finish line. Do not score
+            # post-finish wandering that the training environment never sees.
+            if (
+                args.profile == "race"
+                and phase.name == "race"
+                and float(data.qpos[qpos_adr]) - phase_start_x >= 5.0
+            ):
+                break
+            if (
+                args.profile == "race-5mph"
+                and phase.name == "max_speed"
+                and float(data.qpos[qpos_adr]) - phase_start_x >= RACE5_LONG_RUN_DISTANCE_M
+            ):
+                break
 
         # Keep transition data for response/stopping metrics.  Steady-state
         # fields remain available separately for unbiased speed comparison.
@@ -273,6 +502,7 @@ def main() -> None:
         steady = summarize(steady_rows or rows)
         for name in (
             "mean_forward_speed_mps",
+            "mean_world_forward_speed_mps",
             "mean_abs_lateral_speed_mps",
             "tracking_rmse_mps",
             "tilt_rms_deg",
@@ -287,6 +517,14 @@ def main() -> None:
         "physics_hz": 200,
         "current_limit_a": args.current_limit,
         "wheel_frictionloss": args.wheel_friction,
+        "profile": args.profile,
+        "line_hold": {
+            "enabled": args.line_hold,
+            "yaw_kp": args.line_yaw_kp,
+            "lateral_kp": args.line_lateral_kp,
+            "yaw_kd": args.line_yaw_kd,
+            "max_wz": args.line_max_wz,
+        },
         "phases": all_results,
     }
     output = json.dumps(result, indent=2, sort_keys=True)

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 {swizzle|roller|walking|hop|backflip}" >&2
+    echo "Usage: $0 {race5|race|sprint|swizzle|roller|walking|hop|backflip}" >&2
     exit 2
 fi
 
@@ -12,6 +12,27 @@ upstream="${lab_root}/upstream/microduck_rl"
 uv="${lab_root}/.tools/uv/bin/uv"
 
 case "${task}" in
+    race5)
+        experiment="velocity_race5"
+        bench_task="race5"
+        roller_flag=(--roller)
+        auto_score=true
+        suite_args=(--suite race5-v6)
+        ;;
+    race)
+        experiment="velocity_race"
+        bench_task="race"
+        roller_flag=(--roller)
+        auto_score=true
+        suite_args=(--suite race-v1)
+        ;;
+    sprint)
+        experiment="velocity_sprint"
+        bench_task="sprint"
+        roller_flag=(--roller)
+        auto_score=true
+        suite_args=(--suite sprint-v1)
+        ;;
     swizzle)
         experiment="velocity_swizzle"
         bench_task="swizzle"
@@ -44,8 +65,8 @@ case "${task}" in
         experiment="roller_backflip"
         bench_task="backflip"
         roller_flag=(--roller)
-        auto_score=false
-        suite_args=()
+        auto_score=true
+        suite_args=(--suite frontflip-v1)
         ;;
     *)
         echo "Unknown training task: ${task}" >&2

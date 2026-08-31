@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 
-.PHONY: bootstrap build-pollen-arena preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke swizzle-smoke hop-smoke backflip-smoke \
-	verify-artifact verify-skate-artifact evaluate-swizzle train-baseline train-skate \
-	train-swizzle train-hop train-backflip import-pollen-baselines bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
+.PHONY: bootstrap build-pollen-arena preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke sprint-smoke swizzle-smoke hop-smoke backflip-smoke \
+	verify-artifact verify-skate-artifact evaluate-swizzle evaluate-sprint train-baseline train-skate \
+	train-sprint-probe train-swizzle train-hop train-backflip import-pollen-baselines bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -31,6 +31,9 @@ smoke:
 skate-smoke:
 	./scripts/skate-smoke.sh
 
+sprint-smoke:
+	./scripts/sprint-smoke.sh
+
 swizzle-smoke:
 	./scripts/swizzle-smoke.sh
 
@@ -49,11 +52,18 @@ verify-skate-artifact:
 evaluate-swizzle:
 	./scripts/evaluate-swizzle.sh
 
+evaluate-sprint:
+	@test -n "$(POLICY)" || (echo 'Usage: make evaluate-sprint POLICY=/path/to/policy.onnx' >&2; exit 2)
+	./scripts/evaluate-sprint.sh "$(POLICY)"
+
 train-baseline:
 	./scripts/train-baseline.sh
 
 train-skate:
 	./scripts/train-skate.sh
+
+train-sprint-probe:
+	./scripts/train-sprint-probe.sh
 
 train-swizzle:
 	./scripts/train-swizzle.sh
