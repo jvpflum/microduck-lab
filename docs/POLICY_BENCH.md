@@ -235,17 +235,14 @@ The dashboard chat accepts plain-language goals such as:
 ```text
 train swizzle for 8000 iterations with 4096 environments
 help me train MicroDuck to skate backwards
-help me train MicroDuck to do a front flip
 play iteration 2250
 what is running?
 stop the viewer
 ```
 
 Codex on the Spark can translate a natural-language goal into a validated task
-plan. Only registered simulator tasks (currently walking, roller skating,
-swizzle, and rolling Front Flip) can become a launch action. The
-front-flip task uses the accepted demonstration only for reverse-curriculum
-resets and removes assistance before qualification.
+plan. Only registered simulator tasks (currently walking, roller skating, and
+swizzle) can become a launch action.
 The proposed configuration is shown back to the user and requires a separate
 **Confirm training launch** click. Full training is refused while another
 training process is detected. No arbitrary shell text is ever executed.

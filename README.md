@@ -1,50 +1,47 @@
-# MicroDuck Lab
+# DuckLab — MicroDuck Skate Racing
 
-Factory-first control, evaluation, and reinforcement-learning workspace for
-Pollen Robotics' MicroDuck on an NVIDIA DGX Spark.
+An open, reproducible reinforcement-learning lab for making Pollen Robotics'
+MicroDuck skate faster, straighter, and more controllably in simulation.
 
-The lab pins Pollen's official robot runtime, browser simulator, and
-`microduck_rl` training project as Git submodules. Pollen's shipped policies,
-arena, gamepad controls, runtime, and safety behavior are the defaults. DuckLab
-adds local evaluation, comparison, provenance, promotion, and guarded custom
-training; it does not rebuild upstream capabilities. The locally built arena
-omits Pollen's storefront/preorder call-to-action while retaining the upstream
-physics, policies, controls, and assets.
+DuckLab uses Pollen's official robot runtime, browser arena, physics, and
+roller baseline as the reference point. It adds the practical layer around
+training: repeatable race measurements, saved ONNX policies, a simple dashboard
+to test them, and promotion only when a candidate actually improves.
 
-The product goal is a simple robotics teaching loop—sign in, describe a skill,
-train, understand the result, promote a policy, and drive the robot. See
-[docs/PRODUCT_VISION.md](docs/PRODUCT_VISION.md) for the user-facing contract
-and staged platform roadmap.
+## Why use DuckLab?
 
-## Default workflow: factory first
+Because “it looked fast” is not a benchmark. DuckLab lets you train a skating
+policy, open it in the browser simulator, and see whether it truly beat Pollen
+on speed **without giving up straight-line control, braking, turning, or
+stability**.
 
-1. Open Pollen's factory playground and test the shipped skill with keyboard,
-   touch, or an Xbox controller.
-2. Run the repeatable DuckLab evaluation and name the failed gate.
-3. Train a custom policy only when the factory policy cannot meet that gate.
-4. Require checkpoint/ONNX parity, a better score, and human review before
-   replacing the factory champion.
+The current public all-around champion is
+[`Race5 V11`](releases/v11/README.md). In the same deterministic CPU MuJoCo
+race battery, with the same measured line-hold controller applied to both
+policies, V11 beats Pollen's roller baseline:
 
-The shipped roller policy is the current `sim-qualified` champion. In the same
-CPU MuJoCo battery it scored **80.9/100** and passed forward, reverse, stopping,
-left/right turning, and stability gates; the latest custom swizzle scored
-**42.72/100**. See [docs/UPSTREAM_FIRST_AUDIT.md](docs/UPSTREAM_FIRST_AUDIT.md)
-for the adoption boundary and evidence.
+| Verified race metric | Race5 V11 | Pollen roller | Improvement |
+| --- | ---: | ---: | ---: |
+| Sustained forward speed | 1.42 mph | 1.07 mph | **33.1% faster** |
+| Verified top speed (0.5 s) | 1.65 mph | 1.28 mph | **28.5% higher** |
+| 100-ft elapsed time | 44.06 s | 57.59 s | **23.5% sooner** |
+| First-second acceleration | 1.12 mph/s | 0.72 mph/s | **55.0% higher** |
+| Maximum lateral drift | 1.06 ft | 1.25 ft | **14.9% less** |
+| Maximum heading error | 7.30° | 11.06° | **34.0% less** |
 
-## Current Race5 baseline (V11)
+V11 passed all 14 retained control checks in that evaluation. It is a
+simulation-only result—not a hardware-speed claim—and the 5 mph target remains
+the next milestone. Faster experimental policies stay unpromoted until they
+also preserve the full control battery.
 
-`ducklab-race5-v11-drag-launch-i10-s42` is the current **control-safe Race5
-baseline**. It is the benchmark donor for new race work because it beats the
-Pollen roller baseline across the registered Race5 control battery while
-remaining stable, straight, and agile enough to complete the course. Its
-verified Race5 figures are **1.65 mph top speed**, **1.42 mph sustained speed**,
-and **44.06 s over 100 ft**.
+## What you get
 
-Faster experimental checkpoints exist, but they are not promoted over V11
-unless they also retain or exceed Pollen-level stopping, cruise, both turn
-directions, heading, drift, upright stability, and A-to-B performance. The
-current speed goal is at least **3 mph verified peak** with all those gates
-still passing; **5 mph** remains the stretch goal.
+- Pollen's colorful browser arena for trying factory and custom roller policies.
+- A race scoreboard that shows the current champion, Pollen comparison, speed,
+  drift, heading, acceleration, and 100-ft result.
+- Repeatable evaluation and ONNX checks so results are shareable and auditable.
+- Separate Spark and Windows/RTX worker workflows for larger training runs.
+- A public V11 inference export with checksum and scrubbed measurement summary.
 
 ## Requirements
 
@@ -156,27 +153,7 @@ It does not change the normal skating or Race5 recipes. See
 2.5→6.7 m/s curriculum, 4,096/8,192 profiles, GPU telemetry, checkpoint
 selection, and evaluation metrics.
 
-## Train the rolling front flip
-
-The front-flip task uses the accepted arena capture as a reverse-curriculum reset
-distribution. It does not clone the mouse-assisted policy actions or reward
-time-indexed waypoints. Assistance decays to zero, while hard gates require
-two-skate takeoff, at least 300° of airborne forward rotation, no trunk/head
-floor contact, and an upright skate landing.
-
-```bash
-make backflip-smoke
-make train-backflip
-```
-
-The full run defaults to 4,096 environments and 2,500 PPO iterations. Its
-unassisted viewer mode starts with forward roller momentum and no injected
-vertical or angular velocity. The `backflip` command and directory names are
-temporarily retained as legacy checkpoint identifiers; the product UI correctly
-labels the motion **Front flip**. The unsuccessful Hop experiment is archived
-and is not offered as a product skill.
-
-### Compare and promote policies
+## Compare and promote policies
 
 MicroDuck Policy Bench provides an entirely open-source, offline workflow for
 immutable checkpoint snapshots, evaluation history, candidate comparisons,
@@ -195,9 +172,8 @@ The dashboard's **Open simulator** action opens Pollen's colorful browser arena
 with native gamepad support for both factory and custom models. For a custom
 saved model, Policy Bench verifies its immutable ONNX snapshot, loads that
 exact artifact into the correct policy slot, and selects feet or rollers
-automatically. A finished Front Flip model uses Xbox **A**, keyboard **R**, or
-the visible **Do Front Flip** button. The older white Viser surface is retained only as an
-advanced engineering debugger and is never the dashboard's normal Play path.
+automatically. The older white Viser surface is retained only as an advanced
+engineering debugger and is never the dashboard's normal Play path.
 While a run is active, its separate **Watch training live** action opens a
 six-robot gray-tile mjlab view of the newest immutable checkpoint. The trainer
 still runs thousands of environments headlessly; this lightweight sample is
@@ -209,13 +185,6 @@ policy actions. After any useful manual maneuver, immediately click
 **Replay → Save clip**. The universal button uploads the previous six seconds
 to `reports/demonstrations/`; failed attempts can simply be left unsaved. The
 observation-only live-training viewer intentionally has no recorder.
-
-Accepted captures can be normalized with `tools/curate_demonstration.py`. The
-first validated reference is
-`datasets/demonstrations/backflip/rolling-backflip-v1.json` (legacy path); its curation block
-records rotation, inversion, apex, landing stability, displacement, source
-hash, and the important constraint that externally assisted actions are motion
-references rather than behavior-cloning labels.
 **Evaluate** runs the exported ONNX policy
 through Pollen's CPU MuJoCo runtime and adds a scored forward/reverse/coast/
 heading evaluation to the run. Its local DuckLab Assistant
@@ -248,7 +217,7 @@ with the left stick. This is Pollen's controller implementation and is the
 default test path. No Viser or controller port forwarding is required. Custom
 policy previews start with a clean floor; use the in-arena **Ball on / Ball
 off** control when a ball is useful. That choice persists when the robot is
-reset, so repeated flip attempts keep a clean floor.
+reset.
 
 ### Debug an exact custom checkpoint
 
