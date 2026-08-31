@@ -126,6 +126,29 @@ Then train the skating baseline:
 make train-skate
 ```
 
+## Race5: reproducible straight-line skate racing
+
+Race5 is the separate 100-foot, centreline-controlled skate-racing task behind
+the public V11 result. Its public integration gate needs no private artifact:
+
+```bash
+make race5-smoke
+```
+
+For an exact continuation from the V11 champion, copy the raw trainer donor
+privately and point the recipe at it; raw `.pt` state is deliberately not
+published. A clean clone can still use every source configuration, test, smoke
+gate, simulator speed test, and the public V11 ONNX evaluation export.
+
+```bash
+DUCKLAB_RACE5_WARMSTART_CHECKPOINT=/absolute/path/to/v11-model_10.pt \
+DUCKLAB_ENVS=4096 DUCKLAB_ITERATIONS=4000 \
+make train-race5
+```
+
+See [docs/RACE5.md](docs/RACE5.md) for the task map, evaluation procedure, and
+what is intentionally excluded from Git.
+
 For symmetric forward/reverse propulsion with both blades grounded, use the
 dedicated swizzle workflow:
 
