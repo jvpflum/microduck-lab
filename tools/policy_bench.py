@@ -2355,7 +2355,7 @@ class Bench:
             + "<script>"
             + "const TOKEN='__CONTROL_TOKEN__';"
             + "let rewardScope='recent',rewardSeries={recent:[],full:[],count:0};"
-            + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
+            + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(r.status===403){location.reload();throw new Error('Dashboard reconnected. Click the button once more.');}if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
             + "function say(who,text){const p=document.createElement('p');const b=document.createElement('strong');b.textContent=who+': ';p.appendChild(b);p.appendChild(document.createTextNode(text));document.querySelector('#chat-log').appendChild(p);p.scrollIntoView();}"
             + "function shortRun(id){return id.length>54?id.slice(0,51)+'…':id;}"
             + "function taskName(task){return task==='backflip'?'Front flip':String(task||'training').replaceAll('_',' ').replace(/\\b\\w/g,c=>c.toUpperCase())}"
