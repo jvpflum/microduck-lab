@@ -149,6 +149,15 @@ make train-race5
 See [docs/RACE5.md](docs/RACE5.md) for the task map, evaluation procedure, and
 what is intentionally excluded from Git.
 
+The next-generation V11-preserving experiment is separate from the general
+Race5 recipe. It rewards usable world-forward speed only while centred and
+aligned with the measured race line, then requires the normal V11 evaluation
+battery before promotion:
+
+```bash
+make train-race5-v16-constrained
+```
+
 For symmetric forward/reverse propulsion with both blades grounded, use the
 dedicated swizzle workflow:
 
