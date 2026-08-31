@@ -2310,7 +2310,7 @@ class Bench:
                 "<span>5.05 mph best 1 second · 4.18 mph mean over 20 seconds · 0 falls</span></div>"
                 "<div class='fastest-speed-actions'>"
                 f"<button class='play primary-action' data-run-id='{scout_id}' data-label='Try 5.41 mph speed scout'>Try it in matching arena</button>"
-                f"<a class='text-action' href='runs/{scout_id}/report.html'>View evidence</a></div>"
+                "</div>"
                 "<p>Uses wheel frictionloss 0.000 exactly as evaluated. This is a research replay, not an official Race5 or V11 replacement.</p></div>"
             )
         content = (
