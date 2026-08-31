@@ -195,22 +195,21 @@ mjlab/Viser only for sampled live-training visualization and advanced debugging.
 
 ## Resource modes
 
-New jobs default to **Shared**, which leaves vLLM and Hermes inference online.
-Choose **Training priority** for an overnight/max-throughput run. Policy Bench
-then pauses the `qwen38-hermes-vllm` container before the trainer starts,
-disables its Docker auto-restart for the training window, and restores it after
-the trainer exits. The Hermes watchdog honors the live training marker instead
-of treating the intentional pause as a failure.
+New jobs default to **Shared**. This portable mode does not manage any other
+service on the host. Choose **Training priority** only on a multi-use GPU
+machine whose operator has supplied optional stop/restore hooks through
+`DUCKLAB_RESOURCE_STOP_CMD` and `DUCKLAB_RESOURCE_RESTORE_CMD`. DuckLab does
+not assume Docker, vLLM, Hermes, or any specific local inference service.
 
-The active mode and vLLM state are visible in the dashboard status. If the host
-hard-resets during a priority run, recover explicitly with:
+The active mode is visible in the dashboard status. If the host hard-resets
+during a priority run, re-export the same restore hook and recover explicitly:
 
 ```bash
 ./scripts/resource-profile.sh restore
 ```
 
-Do not remove the marker by hand: it records whether vLLM was online before the
-run and therefore whether Policy Bench should restart it.
+Do not remove the marker by hand: it records whether DuckLab ran the configured
+stop hook and therefore whether the restore hook is still required.
 
 ## Upstream provenance
 

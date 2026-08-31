@@ -90,8 +90,8 @@ VIEWER_PORT_PAIRS = (
 )
 
 RESOURCE_PROFILES = {
-    "shared": "Shared · keep vLLM and Hermes online",
-    "training-priority": "Training priority · pause vLLM until training exits",
+    "shared": "Shared · do not manage other services",
+    "training-priority": "Training priority · run configured resource hooks",
 }
 RESOURCE_MARKER = LAB_ROOT / "policy-bench" / "training-priority.json"
 DEMONSTRATIONS_DIR = LAB_ROOT / "reports" / "demonstrations"
@@ -150,15 +150,10 @@ def running_training_processes() -> list[dict[str, Any]]:
 def resource_status() -> dict[str, Any]:
     """Return cheap, local resource-mode status for the polled dashboard."""
     priority = RESOURCE_MARKER.is_file()
-    try:
-        with socket.create_connection(("127.0.0.1", 8000), timeout=0.08):
-            vllm_online = True
-    except OSError:
-        vllm_online = False
     return {
         "profile": "training-priority" if priority else "shared",
         "label": RESOURCE_PROFILES["training-priority" if priority else "shared"],
-        "vllm_online": vllm_online,
+        "managed_services": "configured hooks" if priority else "none",
     }
 
 

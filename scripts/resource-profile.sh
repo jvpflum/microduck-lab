@@ -1,34 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Coordinates long GPU training with the local Docker-backed vLLM service.
-# The marker is also understood by the Hermes vLLM watchdog, preventing it
-# from undoing an intentional training-priority pause.
+# Optional resource coordination for a machine that runs other GPU services.
+# DuckLab never assumes a particular inference server, container runtime, or
+# service manager. The default "shared" profile does not change anything.
+#
+# To let a dedicated training run pause local services, the operator explicitly
+# supplies commands, for example:
+#   export DUCKLAB_RESOURCE_STOP_CMD='systemctl --user stop my-service'
+#   export DUCKLAB_RESOURCE_RESTORE_CMD='systemctl --user start my-service'
+# The commands are intentionally not stored in Git or the marker.
 
 LAB_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MARKER="${DUCKLAB_RESOURCE_MARKER:-${LAB_ROOT}/policy-bench/training-priority.json}"
-CONTAINER="${DUCKLAB_VLLM_CONTAINER:-qwen38-hermes-vllm}"
-VLLM_URL="${DUCKLAB_VLLM_URL:-http://127.0.0.1:8000/v1/models}"
-VLLM_LOCK="${DUCKLAB_VLLM_LOCK:-${HOME}/.hermes/run/vllm-launch.lock}"
-
-docker_cmd() {
-  sudo -n docker "$@"
-}
+HOOK_LOCK="${DUCKLAB_RESOURCE_LOCK:-${LAB_ROOT}/policy-bench/training-priority.lock}"
+STOP_CMD="${DUCKLAB_RESOURCE_STOP_CMD:-}"
+RESTORE_CMD="${DUCKLAB_RESOURCE_RESTORE_CMD:-}"
+HEALTH_CMD="${DUCKLAB_RESOURCE_HEALTH_CMD:-}"
 
 marker_pid() {
   sed -n 's/.*"owner_pid": *\([0-9][0-9]*\).*/\1/p' "${MARKER}" 2>/dev/null | head -n 1
 }
 
-marker_was_running() {
-  sed -n 's/.*"vllm_was_running": *\(true\|false\).*/\1/p' "${MARKER}" 2>/dev/null | head -n 1
+marker_stopped_service() {
+  sed -n 's/.*"stop_hook_ran": *\(true\|false\).*/\1/p' "${MARKER}" 2>/dev/null | head -n 1
+}
+
+run_hook() {
+  local label="$1"
+  local command="$2"
+  [[ -n "${command}" ]] || return 0
+  echo "Resource profile: ${label}."
+  bash -lc "${command}"
 }
 
 enter_priority() {
   local owner_pid="$1"
   local existing_pid=""
-  local was_running=false
+  local stop_hook_ran=false
 
-  mkdir -p "$(dirname "${MARKER}")" "$(dirname "${VLLM_LOCK}")"
+  mkdir -p "$(dirname "${MARKER}")"
   if [[ -f "${MARKER}" ]]; then
     existing_pid="$(marker_pid)"
     if [[ -n "${existing_pid}" ]] && kill -0 "${existing_pid}" 2>/dev/null; then
@@ -39,37 +50,23 @@ enter_priority() {
     rm -f "${MARKER}"
   fi
 
-  # Validate non-interactive Docker access before recording or changing state.
-  docker_cmd info >/dev/null
-  if docker_cmd inspect "${CONTAINER}" >/dev/null 2>&1; then
-    if [[ "$(docker_cmd inspect --format '{{.State.Running}}' "${CONTAINER}")" == "true" ]]; then
-      was_running=true
-    fi
-  fi
-
-  printf '{"owner_pid": %s, "vllm_container": "%s", "vllm_was_running": %s, "started_at": "%s"}\n' \
-    "${owner_pid}" "${CONTAINER}" "${was_running}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >"${MARKER}"
-
-  if [[ "${was_running}" == "true" ]]; then
-    exec 9>"${VLLM_LOCK}"
+  if [[ -n "${STOP_CMD}" ]]; then
+    exec 9>"${HOOK_LOCK}"
     flock -w 30 9
-    echo "Training priority: pausing ${CONTAINER}; local Hermes inference will be unavailable."
-    if ! docker_cmd update --restart=no "${CONTAINER}" >/dev/null \
-      || ! docker_cmd stop --time 45 "${CONTAINER}" >/dev/null; then
-      docker_cmd update --restart=unless-stopped "${CONTAINER}" >/dev/null 2>&1 || true
-      rm -f "${MARKER}"
-      echo "Could not pause vLLM safely; training was not started." >&2
-      exit 1
-    fi
+    run_hook "running configured stop hook" "${STOP_CMD}"
+    stop_hook_ran=true
   else
-    echo "Training priority: vLLM was already offline; leaving it offline."
+    echo "Training priority: no resource hooks configured; leaving other services unchanged."
   fi
+
+  printf '{"owner_pid": %s, "stop_hook_ran": %s, "started_at": "%s"}\n' \
+    "${owner_pid}" "${stop_hook_ran}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >"${MARKER}"
 }
 
 restore_priority() {
   local owner_pid="${1:-}"
   local recorded_pid=""
-  local was_running=false
+  local stop_hook_ran=false
 
   [[ -f "${MARKER}" ]] || return 0
   recorded_pid="$(marker_pid)"
@@ -82,26 +79,17 @@ restore_priority() {
     echo "Refusing to restore a training-priority profile owned by process ${recorded_pid}." >&2
     exit 1
   fi
-  was_running="$(marker_was_running)"
+  stop_hook_ran="$(marker_stopped_service)"
 
-  if [[ "${was_running}" == "true" ]]; then
-    exec 9>"${VLLM_LOCK}"
+  if [[ "${stop_hook_ran}" == "true" ]]; then
+    exec 9>"${HOOK_LOCK}"
     flock -w 30 9
-    echo "Training finished: restoring ${CONTAINER}."
-    docker_cmd update --restart=unless-stopped "${CONTAINER}" >/dev/null
-    docker_cmd start "${CONTAINER}" >/dev/null
-    for _attempt in $(seq 1 48); do
-      if curl -fsS --connect-timeout 3 "${VLLM_URL}" >/dev/null 2>&1; then
-        echo "vLLM is healthy again."
-        rm -f "${MARKER}"
-        "${HOME}/.hermes/scripts/hermes-health-verify.sh" || \
-          echo "WARNING: Hermes final health verification reported an issue." >&2
-        return 0
-      fi
-      sleep 10
-    done
-    echo "WARNING: vLLM did not become ready within eight minutes; marker retained at ${MARKER}." >&2
-    return 1
+    if [[ -z "${RESTORE_CMD}" ]]; then
+      echo "Configured stop hook ran, but DUCKLAB_RESOURCE_RESTORE_CMD is not set; marker retained at ${MARKER}." >&2
+      return 1
+    fi
+    run_hook "running configured restore hook" "${RESTORE_CMD}"
+    run_hook "running configured health hook" "${HEALTH_CMD}"
   fi
 
   rm -f "${MARKER}"
@@ -117,7 +105,7 @@ case "${1:-}" in
     ;;
   status)
     if [[ -f "${MARKER}" ]]; then
-      printf 'training-priority owner=%s vllm_was_running=%s\n' "$(marker_pid)" "$(marker_was_running)"
+      printf 'training-priority owner=%s stop_hook_ran=%s\n' "$(marker_pid)" "$(marker_stopped_service)"
     else
       echo "shared"
     fi

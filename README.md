@@ -101,16 +101,15 @@ Do not run a full training job concurrently with memory-heavy inference
 services. This system uses unified memory; the preflight blocks when less than
 20 GiB is available or swap usage exceeds 50%.
 
-The dashboard offers two explicit resource modes for new runs:
+The dashboard offers two resource modes for new runs:
 
-- **Shared** keeps vLLM and Hermes inference online. It is the safe daytime
-  default, but inference traffic may reduce or vary training throughput.
-- **Training priority** temporarily stops the local Docker-backed vLLM service,
-  trains with the GPU reserved for RL, and restores vLLM plus the Hermes health
-  gate when training exits. Telegram/local model responses are unavailable
-  during that window. A hard-crash recovery marker is stored under
-  `policy-bench/training-priority.json`; run
-  `./scripts/resource-profile.sh restore` if manual recovery is ever required.
+- **Shared** is the portable default. DuckLab does not start, stop, or assume
+  any other service on the host.
+- **Training priority** is for a multi-use GPU machine. It runs only the
+  optional stop/restore hooks supplied by that machine's operator, then restores
+  them when training exits. It is safe to select with no hooks configured; no
+  service is changed. See `scripts/resource-profile.sh` for the three optional
+  `DUCKLAB_RESOURCE_*_CMD` variables.
 
 ## Train a custom roller-skating policy
 

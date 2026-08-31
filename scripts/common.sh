@@ -37,7 +37,7 @@ activate_resource_profile() {
     local profile="${DUCKLAB_RESOURCE_PROFILE:-shared}"
     case "${profile}" in
         shared)
-            echo "Resource profile: shared (vLLM stays online)."
+            echo "Resource profile: shared (DuckLab will not manage other services)."
             ;;
         training-priority)
             "${LAB_ROOT}/scripts/resource-profile.sh" enter "$$"
