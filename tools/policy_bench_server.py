@@ -759,7 +759,17 @@ class ProcessManager:
                 str(LAB_ROOT / ".tools" / "uv" / "bin" / "uv"),
                 "run",
                 str(LAB_ROOT / "tools" / "play_viser_compat.py"),
-                TASKS[task]["play_task"],
+                # The scoreboard classifies this as Race5 so it compares with
+                # the correct benchmark, but its live preview must preserve
+                # the donor-transfer command source (automatic line hold).
+                # Otherwise the policy is shown without the correction signal
+                # it was trained to consume and falsely appears to drift.
+                (
+                    "Mjlab-SpeedScoutTransfer-Flat-MicroDuck-Rollers"
+                    if Path(manifest.get("source_run_dir", "")).parent.name
+                    == "microduck_speed_scout_transfer"
+                    else TASKS[task]["play_task"]
+                ),
                 "--checkpoint-file",
                 str(checkpoint_path),
                 "--num-envs",
