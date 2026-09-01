@@ -1,0 +1,7 @@
+run=2026-09-01_02-01-12_ducklab-speed-friction-tether-e4096-i12000-s707
+trainer=idle-log-age-5595s
+checkpoint=100
+stage=0.0000
+friction=0.0000
+world_x_mps=1.1248
+survival=1.0000

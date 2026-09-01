@@ -83,6 +83,15 @@ def main() -> None:
     parser.add_argument("--current-limit", type=float, default=1.75)
     parser.add_argument("--wheel-friction", type=float, default=0.0)
     parser.add_argument(
+        "--frontier-frequency-hz",
+        type=float,
+        help=(
+            "Drive the frontier policy's body-command slot with oscillator "
+            "sin/cos/frequency features at this cadence."
+        ),
+    )
+    parser.add_argument("--frontier-phase-offset-rad", type=float, default=0.0)
+    parser.add_argument(
         "--race-line-control",
         action="store_true",
         help="Feed closed-loop heading/lateral correction through command yaw.",
@@ -155,6 +164,7 @@ def main() -> None:
             data.qpos[joint_qpos] = controller.default_pose[index] + noise[index]
         data.ctrl[:] = controller.default_pose
         controller.last_action.fill(0.0)
+        controller.body_cmd.fill(0.0)
         controller.set_vel_cmd(args.command_mps, 0.0, 0.0)
         mujoco.mj_forward(model, data)
 
@@ -167,7 +177,29 @@ def main() -> None:
         headings: list[float] = []
         fell = False
         steps = int(round(args.duration / CONTROL_DT))
-        for _ in range(steps):
+        for step in range(steps):
+            if args.frontier_frequency_hz is not None:
+                frequency = args.frontier_frequency_hz
+                frequency_lo, frequency_hi = 1.75, 5.50
+                if not frequency_lo <= frequency <= frequency_hi:
+                    raise SystemExit(
+                        "--frontier-frequency-hz must be in [1.75, 5.50]"
+                    )
+                phase = (
+                    args.frontier_phase_offset_rad
+                    + 2.0 * math.pi * frequency * step * CONTROL_DT
+                )
+                normalized_frequency = (
+                    2.0 * (frequency - frequency_lo)
+                    / (frequency_hi - frequency_lo)
+                    - 1.0
+                )
+                controller.body_cmd[:3] = (
+                    math.sin(phase),
+                    math.cos(phase),
+                    normalized_frequency,
+                )
+                controller._update_command()
             if args.race_line_control:
                 quat_now = data.qpos[qpos_adr + 3 : qpos_adr + 7]
                 w, x, y, z = quat_now
@@ -304,6 +336,8 @@ def main() -> None:
         "physics_hz": int(round(1.0 / model.opt.timestep)),
         "current_limit_a": args.current_limit,
         "wheel_frictionloss": args.wheel_friction,
+        "frontier_frequency_hz": args.frontier_frequency_hz,
+        "frontier_phase_offset_rad": args.frontier_phase_offset_rad,
         "race_line_control": args.race_line_control,
         "line_hold": {
             "yaw_kp": args.yaw_kp,
