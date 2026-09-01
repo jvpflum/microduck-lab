@@ -36,9 +36,19 @@ def build_hybrid(
     speed_command_threshold: float = 0.5,
     turn_command_threshold: float = 0.25,
     speed_blend: float = 1.0,
+    smooth_turn_start: float | None = None,
+    smooth_turn_end: float | None = None,
 ) -> onnx.ModelProto:
     if not 0.0 <= speed_blend <= 1.0:
         raise ValueError("speed_blend must be between 0 and 1")
+    if (smooth_turn_start is None) != (smooth_turn_end is None):
+        raise ValueError("smooth turn start and end must be provided together")
+    if (
+        smooth_turn_start is not None
+        and smooth_turn_end is not None
+        and not 0.0 <= smooth_turn_start < smooth_turn_end
+    ):
+        raise ValueError("smooth turn band must satisfy 0 <= start < end")
     control = onnx.load(control_path)
     speed = onnx.load(speed_path)
     _validate_actor(control, "control policy")
@@ -69,43 +79,108 @@ def build_hybrid(
             helper.make_node("Gather", ["obs", "command_x_index"], ["hybrid_command_x"], axis=1),
             helper.make_node("Gather", ["obs", "command_yaw_index"], ["hybrid_command_yaw"], axis=1),
             helper.make_node("Abs", ["hybrid_command_yaw"], ["hybrid_abs_command_yaw"]),
-            helper.make_node(
-                "Greater",
-                ["hybrid_command_x", "speed_command_threshold"],
-                ["hybrid_is_speed_command"],
-            ),
-            helper.make_node(
-                "Less",
-                ["hybrid_abs_command_yaw", "turn_command_threshold"],
-                ["hybrid_is_straight_command"],
-            ),
-            helper.make_node(
-                "And",
-                ["hybrid_is_speed_command", "hybrid_is_straight_command"],
-                ["hybrid_use_speed_policy"],
-            ),
-            helper.make_node(
-                "Mul",
-                [speed_prefixed_output, "speed_blend"],
-                ["hybrid_speed_actions"],
-            ),
-            helper.make_node(
-                "Mul",
-                [control_prefixed_output, "control_blend"],
-                ["hybrid_control_actions"],
-            ),
-            helper.make_node(
-                "Add",
-                ["hybrid_speed_actions", "hybrid_control_actions"],
-                ["hybrid_blended_actions"],
-            ),
-            helper.make_node(
-                "Where",
-                ["hybrid_use_speed_policy", "hybrid_blended_actions", control_prefixed_output],
-                ["actions"],
-            ),
         ]
     )
+    if smooth_turn_start is not None and smooth_turn_end is not None:
+        nodes.extend(
+            [
+                helper.make_node(
+                    "Greater",
+                    ["hybrid_command_x", "speed_command_threshold"],
+                    ["hybrid_is_speed_command"],
+                ),
+                helper.make_node(
+                    "Cast",
+                    ["hybrid_is_speed_command"],
+                    ["hybrid_speed_command_gate"],
+                    to=TensorProto.FLOAT,
+                ),
+                helper.make_node(
+                    "Sub",
+                    ["smooth_turn_end", "hybrid_abs_command_yaw"],
+                    ["hybrid_turn_headroom"],
+                ),
+                helper.make_node(
+                    "Div",
+                    ["hybrid_turn_headroom", "smooth_turn_span"],
+                    ["hybrid_turn_gate_unclipped"],
+                ),
+                helper.make_node(
+                    "Clip",
+                    ["hybrid_turn_gate_unclipped", "router_zero", "router_one"],
+                    ["hybrid_turn_gate"],
+                ),
+                helper.make_node(
+                    "Mul",
+                    ["hybrid_speed_command_gate", "hybrid_turn_gate"],
+                    ["hybrid_route_gate"],
+                ),
+                helper.make_node(
+                    "Mul",
+                    ["hybrid_route_gate", "speed_blend"],
+                    ["hybrid_speed_weight"],
+                ),
+                helper.make_node(
+                    "Sub",
+                    [speed_prefixed_output, control_prefixed_output],
+                    ["hybrid_action_delta"],
+                ),
+                helper.make_node(
+                    "Mul",
+                    ["hybrid_action_delta", "hybrid_speed_weight"],
+                    ["hybrid_weighted_delta"],
+                ),
+                helper.make_node(
+                    "Add",
+                    [control_prefixed_output, "hybrid_weighted_delta"],
+                    ["actions"],
+                ),
+            ]
+        )
+    else:
+        nodes.extend(
+            [
+                helper.make_node(
+                    "Greater",
+                    ["hybrid_command_x", "speed_command_threshold"],
+                    ["hybrid_is_speed_command"],
+                ),
+                helper.make_node(
+                    "Less",
+                    ["hybrid_abs_command_yaw", "turn_command_threshold"],
+                    ["hybrid_is_straight_command"],
+                ),
+                helper.make_node(
+                    "And",
+                    ["hybrid_is_speed_command", "hybrid_is_straight_command"],
+                    ["hybrid_use_speed_policy"],
+                ),
+                helper.make_node(
+                    "Mul",
+                    [speed_prefixed_output, "speed_blend"],
+                    ["hybrid_speed_actions"],
+                ),
+                helper.make_node(
+                    "Mul",
+                    [control_prefixed_output, "control_blend"],
+                    ["hybrid_control_actions"],
+                ),
+                helper.make_node(
+                    "Add",
+                    ["hybrid_speed_actions", "hybrid_control_actions"],
+                    ["hybrid_blended_actions"],
+                ),
+                helper.make_node(
+                    "Where",
+                    [
+                        "hybrid_use_speed_policy",
+                        "hybrid_blended_actions",
+                        control_prefixed_output,
+                    ],
+                    ["actions"],
+                ),
+            ]
+        )
 
     initializers = list(control.graph.initializer) + list(speed.graph.initializer)
     initializers.extend(
@@ -116,16 +191,35 @@ def build_hybrid(
                 np.asarray([speed_command_threshold], dtype=np.float32),
                 "speed_command_threshold",
             ),
-            numpy_helper.from_array(
-                np.asarray([turn_command_threshold], dtype=np.float32),
-                "turn_command_threshold",
-            ),
             numpy_helper.from_array(np.asarray([speed_blend], dtype=np.float32), "speed_blend"),
-            numpy_helper.from_array(
-                np.asarray([1.0 - speed_blend], dtype=np.float32), "control_blend"
-            ),
         ]
     )
+    if smooth_turn_start is not None and smooth_turn_end is not None:
+        initializers.extend(
+            [
+                numpy_helper.from_array(
+                    np.asarray([smooth_turn_end], dtype=np.float32), "smooth_turn_end"
+                ),
+                numpy_helper.from_array(
+                    np.asarray([smooth_turn_end - smooth_turn_start], dtype=np.float32),
+                    "smooth_turn_span",
+                ),
+                numpy_helper.from_array(np.asarray([0.0], dtype=np.float32), "router_zero"),
+                numpy_helper.from_array(np.asarray([1.0], dtype=np.float32), "router_one"),
+            ]
+        )
+    else:
+        initializers.extend(
+            [
+                numpy_helper.from_array(
+                    np.asarray([turn_command_threshold], dtype=np.float32),
+                    "turn_command_threshold",
+                ),
+                numpy_helper.from_array(
+                    np.asarray([1.0 - speed_blend], dtype=np.float32), "control_blend"
+                ),
+            ]
+        )
     graph = helper.make_graph(
         nodes,
         "microduck_command_routed_hybrid",
@@ -151,7 +245,11 @@ def build_hybrid(
             "hybrid_control_policy": str(control_path.resolve()),
             "hybrid_speed_policy": str(speed_path.resolve()),
             "hybrid_route": (
-                f"speed when command_x>{speed_command_threshold:g} and "
+                f"speed authority tapers from abs(command_yaw)<={smooth_turn_start:g} "
+                f"to control at abs(command_yaw)>={smooth_turn_end:g}; "
+                f"command_x>{speed_command_threshold:g}; speed blend {speed_blend:g}"
+                if smooth_turn_start is not None and smooth_turn_end is not None
+                else f"speed when command_x>{speed_command_threshold:g} and "
                 f"abs(command_yaw)<{turn_command_threshold:g}; control otherwise; "
                 f"speed blend {speed_blend:g}"
             ),
@@ -171,6 +269,8 @@ def main() -> None:
     parser.add_argument("--speed-command-threshold", type=float, default=0.5)
     parser.add_argument("--turn-command-threshold", type=float, default=0.25)
     parser.add_argument("--speed-blend", type=float, default=1.0)
+    parser.add_argument("--smooth-turn-start", type=float)
+    parser.add_argument("--smooth-turn-end", type=float)
     args = parser.parse_args()
     build_hybrid(
         args.control_policy,
@@ -179,6 +279,8 @@ def main() -> None:
         speed_command_threshold=args.speed_command_threshold,
         turn_command_threshold=args.turn_command_threshold,
         speed_blend=args.speed_blend,
+        smooth_turn_start=args.smooth_turn_start,
+        smooth_turn_end=args.smooth_turn_end,
     )
     print(args.output.resolve())
 

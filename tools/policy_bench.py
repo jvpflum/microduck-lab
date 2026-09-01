@@ -2414,75 +2414,242 @@ class Bench:
                 "</div>"
                 "<p>Uses wheel frictionloss 0.000 exactly as evaluated. This is a research replay, not an official Race5 or V11 replacement.</p></div>"
             )
-        test_roster_html = render_test_roster(registry, all_manifests, focus_task)
+        # Results are grouped by decision role. A speed experiment, a stable
+        # controller, and a deployable all-around policy are useful for
+        # different reasons and should never masquerade as one flat ranking.
+        metric_specs = (
+            ("Top speed", "top_speed_mph", "mph", 2, True),
+            ("Sustained speed", "sustained_speed_mph", "mph", 2, True),
+            ("100 ft time", "elapsed_time_100ft_s", "s", 2, False),
+            ("Trap speed", "trap_speed_100ft_mph", "mph", 2, True),
+            ("Launch acceleration", "acceleration_first_second_mps2", "mph/s", 2, True),
+            ("Straight-line drift", "long_run_max_drift_ft", "ft", 2, False),
+            ("Heading error", "long_run_max_heading_error_deg", "°", 2, False),
+            ("Agility", "agility_score", "/100", 1, True),
+            ("Automatic steering", "auto_steering_percent", "%", 1, False),
+        )
+        pollen_performance = baseline_entry["score"].get("performance", {}) if baseline_entry else {}
+
+        def shown_value(performance: dict[str, Any], key: str) -> float | None:
+            value = performance.get(key)
+            if value is None:
+                return None
+            value = float(value)
+            return value * MPS_TO_MPH if key == "acceleration_first_second_mps2" else value
+
+        def numeric(performance: dict[str, Any], key: str, default: float = 0.0) -> float:
+            value = performance.get(key)
+            return default if value is None else float(value)
+
+        def cell(performance: dict[str, Any], key: str, digits: int = 2, suffix: str = "") -> str:
+            value = performance.get(key)
+            return "—" if value is None else f"{float(value):.{digits}f}{suffix}"
+
+        def pollen_record(entry: dict[str, Any]) -> tuple[int, int]:
+            performance = entry["score"].get("performance", {})
+            wins = total = 0
+            for _, key, _, _, higher_is_better in metric_specs:
+                candidate = shown_value(performance, key)
+                pollen = shown_value(pollen_performance, key)
+                if candidate is None or pollen is None:
+                    continue
+                total += 1
+                wins += int(candidate > pollen if higher_is_better else candidate < pollen)
+            return wins, total
+
+        def decision_label(entry: dict[str, Any]) -> str:
+            run_id = entry["manifest"]["run_id"]
+            aliases = (
+                ("microduck_hybrid_controlaware", "Control-aware V11 × Speed"),
+                ("race5-microduck_hybrid-export", "Speed-first Race5 Hybrid"),
+                ("speed-retention-pilot2-brake-line", "Speed Retention Pilot 2"),
+                ("v14-lean-glide", "V14 Lean Glide"),
+                ("v11-drag-launch", "V11 Drag Launch"),
+                ("v8-centerline", "V8 Centerline"),
+                ("v13-100m", "V13 100 m"),
+                ("v15-v11-hybrid-speedline", "V15 Speedline"),
+                ("speed-retention-v3", "Speed Retention V3"),
+                ("friction-transfer-pilot2", "Friction Transfer Pilot 2"),
+            )
+            for token, label in aliases:
+                if token in run_id:
+                    return label
+            return entry["label"]
+
+        result_entries = [
+            item for item in scored_entries
+            if item["manifest"]["task"] == focus_task
+            and item["manifest"].get("experiment_kind") not in {"smoke", "factory"}
+        ]
+        result_entries.sort(
+            key=lambda item: (
+                bool(item["score"].get("qualified")),
+                pollen_record(item)[0],
+                -numeric(item["score"].get("performance", {}), "elapsed_time_100ft_s", float("inf")),
+                numeric(item["score"].get("performance", {}), "top_speed_mph"),
+            ),
+            reverse=True,
+        )
+        overall_best = result_entries[0] if result_entries else None
+
+        def play_button(entry: dict[str, Any], label: str = "Try simulation") -> str:
+            run_id = html.escape(entry["manifest"]["run_id"])
+            return f"<button class='play' data-run-id='{run_id}' data-label='{html.escape(label)}'>{html.escape(label)}</button>"
+
+        comparison_html = ""
+        if overall_best and baseline_entry:
+            best_performance = overall_best["score"].get("performance", {})
+            rows = []
+            for label, key, unit, digits, higher_is_better in metric_specs:
+                candidate = shown_value(best_performance, key)
+                pollen = shown_value(pollen_performance, key)
+                if candidate is None or pollen is None:
+                    continue
+                improved = candidate > pollen if higher_is_better else candidate < pollen
+                index = (
+                    candidate / pollen if higher_is_better and abs(pollen) > 1.0e-9
+                    else pollen / candidate if not higher_is_better and abs(candidate) > 1.0e-9
+                    else 1.0
+                ) * 100.0
+                delta = (
+                    (candidate - pollen) / abs(pollen) if higher_is_better and abs(pollen) > 1.0e-9
+                    else (pollen - candidate) / abs(pollen) if not higher_is_better and abs(pollen) > 1.0e-9
+                    else 0.0
+                ) * 100.0
+                rows.append(
+                    "<article class='comparison-row'>"
+                    f"<div class='comparison-name'><strong>{html.escape(label)}</strong><span>{'Higher' if higher_is_better else 'Lower'} is better</span></div>"
+                    "<div class='comparison-bars'>"
+                    f"<div><small>Leader</small><span class='bar-track'><i class='leader-bar' style='width:{min(100.0, index / 2.0):.1f}%'></i></span><b>{candidate:.{digits}f} {html.escape(unit)}</b></div>"
+                    f"<div><small>Pollen</small><span class='bar-track'><i class='pollen-bar' style='width:50%'></i></span><b>{pollen:.{digits}f} {html.escape(unit)}</b></div></div>"
+                    f"<span class='win-chip {'win' if improved else 'loss'}'>{'WIN' if improved else 'LOSS'} · {delta:+.1f}%</span></article>"
+                )
+            comparison_html = "".join(rows)
+
+        leaderboard_rows = []
+        for rank, entry in enumerate(result_entries, 1):
+            performance = entry["score"].get("performance", {})
+            gates = entry["score"].get("qualification_gates", {})
+            passed = sum(bool(gate.get("passed")) for gate in gates.values())
+            wins, total = pollen_record(entry)
+            acceleration = shown_value(performance, "acceleration_first_second_mps2")
+            acceleration_cell = "—" if acceleration is None else f"{acceleration:.2f}"
+            run_id = html.escape(entry["manifest"]["run_id"])
+            role = "Best overall" if entry is overall_best else "Speed specialist" if entry is fastest_speed_entry else "Candidate"
+            leaderboard_rows.append(
+                f"<tr class='{'best-row' if entry is overall_best else ''}'><td class='rank-cell'>#{rank}</td>"
+                f"<td><div class='model-cell'><strong>{html.escape(decision_label(entry))}</strong><span>{role}</span></div></td>"
+                f"<td><strong class='record'>{wins}/{total}</strong></td><td>{passed}/{len(gates)}</td>"
+                f"<td>{cell(performance, 'elapsed_time_100ft_s', 2, 's')}</td>"
+                f"<td>{cell(performance, 'top_speed_mph')}</td>"
+                f"<td>{acceleration_cell}</td>"
+                f"<td>{cell(performance, 'long_run_max_drift_ft')}</td>"
+                f"<td>{cell(performance, 'long_run_max_heading_error_deg', 2, '°')}</td>"
+                f"<td>{cell(performance, 'auto_steering_percent', 1, '%')}</td>"
+                f"<td><button class='play table-play' data-run-id='{run_id}' data-label='Try'>Try</button> <a href='runs/{run_id}/report.html'>Proof</a></td></tr>"
+            )
+        if baseline_entry:
+            p = pollen_performance
+            pollen_acceleration = shown_value(p, "acceleration_first_second_mps2")
+            pollen_acceleration_cell = "—" if pollen_acceleration is None else f"{pollen_acceleration:.2f}"
+            reference_total = pollen_record(overall_best)[1] if overall_best else 0
+            leaderboard_rows.append(
+                "<tr class='reference-row'><td>—</td><td><div class='model-cell'><strong>Pollen official roller</strong><span>Immutable baseline</span></div></td>"
+                f"<td>0/{reference_total}</td><td>Reference</td>"
+                f"<td>{cell(p, 'elapsed_time_100ft_s', 2, 's')}</td><td>{cell(p, 'top_speed_mph')}</td>"
+                f"<td>{pollen_acceleration_cell}</td>"
+                f"<td>{cell(p, 'long_run_max_drift_ft')}</td><td>{cell(p, 'long_run_max_heading_error_deg', 2, '°')}</td>"
+                f"<td>{cell(p, 'auto_steering_percent', 1, '%')}</td><td>Baseline</td></tr>"
+            )
+
+        role_cards = []
+        if overall_best:
+            best_wins_for_copy, best_total_for_copy = pollen_record(overall_best)
+            overall_copy = (
+                "Only candidate that wins the complete measured head-to-head while passing every control gate."
+                if best_total_for_copy and best_wins_for_copy == best_total_for_copy
+                else "Highest-ranked qualified candidate across the comparable evidence available for this task."
+            )
+            role_cards.append(("DEPLOY / TEST NOW", "Best overall", overall_best, overall_copy))
+        if fastest_speed_entry and fastest_speed_entry is not overall_best:
+            role_cards.append(("OFFICIAL SPEED SPECIALIST", "Pure speed", fastest_speed_entry, "Fastest official-friction top speed; useful as a speed donor, but weaker all-around control."))
+        qualified_entries = [item for item in result_entries if item["score"].get("qualified") and item is not overall_best]
+        if qualified_entries:
+            control_anchor = min(
+                qualified_entries,
+                key=lambda item: (
+                    numeric(item["score"].get("performance", {}), "long_run_max_drift_ft", float("inf"))
+                    + numeric(item["score"].get("performance", {}), "long_run_max_heading_error_deg", float("inf")) / 10.0
+                ),
+            )
+            if control_anchor is not fastest_speed_entry:
+                role_cards.append(("CONTROL REFERENCE", "Stable anchor", control_anchor, "Best qualified control reference to protect steering, heading, and recovery behavior during future training."))
+        role_cards_html = "".join(
+            "<article class='role-card'>"
+            f"<small>{eyebrow}</small><h3>{title}</h3><strong>{html.escape(decision_label(entry))}</strong><p>{copy}</p>"
+            f"<div>{play_button(entry, 'Try model')} <a href='runs/{html.escape(entry['manifest']['run_id'])}/report.html'>View evidence</a></div></article>"
+            for eyebrow, title, entry, copy in role_cards
+        )
+        if speed_scout_entry:
+            scout_id = html.escape(speed_scout_entry["run_id"])
+            role_cards_html += (
+                "<article class='role-card seed-card'><small>NEXT TRAINING DONOR</small><h3>High-upside seed</h3>"
+                "<strong>5.41 mph frictionless speed scout</strong><p>Preserve as a teacher or transfer seed. It proves the gait has speed headroom, but it is not deployable under official 0.003 friction.</p>"
+                f"<div><button class='play' data-run-id='{scout_id}' data-label='Try matching replay'>Try matching replay</button></div></article>"
+            )
+
+        if overall_best:
+            best_performance = overall_best["score"].get("performance", {})
+            best_wins, best_total = pollen_record(overall_best)
+            best_id = html.escape(overall_best["manifest"]["run_id"])
+            best_time = cell(best_performance, "elapsed_time_100ft_s", 2, "s")
+            baseline_time = cell(pollen_performance, "elapsed_time_100ft_s", 2, "s")
+            benchmark_name = "Official Race5" if focus_task == "race5" else display_task_name(focus_task)
+            hero_html = (
+                f"<section class='leader-hero'><div class='hero-copy'><span class='winner-label'>BEST OVERALL · {html.escape(benchmark_name.upper())}</span>"
+                f"<h1>{html.escape(decision_label(overall_best))}</h1>"
+                f"<p>The clear default: <strong>{best_wins}/{best_total} comparable wins versus Pollen</strong> and {sum(bool(g.get('passed')) for g in overall_best['score'].get('qualification_gates', {}).values())}/{len(overall_best['score'].get('qualification_gates', {}))} qualification gates pass. Use this unless you are deliberately studying one specialist.</p>"
+                f"<div class='hero-actions'>{play_button(overall_best, 'Try best model')} <a class='proof-link' href='runs/{best_id}/report.html'>View full evidence</a></div></div>"
+                "<div class='hero-kpis'>"
+                f"<div><small>Pollen record</small><strong>{best_wins}/{best_total}</strong><span>measured wins</span></div>"
+                f"<div><small>100 ft</small><strong>{best_time}</strong><span>vs {baseline_time}</span></div>"
+                f"<div><small>Top speed</small><strong>{cell(best_performance, 'top_speed_mph')}</strong><span>mph verified</span></div>"
+                f"<div><small>Control gates</small><strong>{sum(bool(g.get('passed')) for g in overall_best['score'].get('qualification_gates', {}).values())}/{len(overall_best['score'].get('qualification_gates', {}))}</strong><span>passed</span></div></div></section>"
+            )
+        else:
+            hero_html = "<section class='leader-hero'><div class='hero-copy'><span class='winner-label'>NO EVALUATED MODEL</span><h1>Run an official evaluation</h1></div></section>"
+
+        next_move_html = (
+            "<section class='next-move'><span>RECOMMENDED NEXT MOVE</span><div><strong>Start from the control-aware champion at official 0.003 friction.</strong> Optimize acceleration and top speed, but reject any checkpoint that loses one of its 9 Pollen wins or 14 control gates. Use the 5.41 mph scout as a teacher—not as the deployment baseline.</div></section>"
+            if focus_task == "race5"
+            else "<section class='next-move'><span>RECOMMENDED NEXT MOVE</span><div><strong>Start from the qualified overall leader.</strong> Preserve its passing gates while optimizing the weakest Pollen-relative metric.</div></section>"
+        )
+        leaderboard_context = (
+            "Official Race5 · friction 0.003 · 1.75 A · same replay and controller"
+            if focus_task == "race5"
+            else f"{display_task_name(focus_task)} · same evaluation suite and baseline"
+        )
+
         content = (
-            "<header class='product-header'><div class='brand-lockup'>"
-            "<div class='duck-mark' aria-hidden='true'><span>DW</span></div><div><p class='eyebrow'>ROBOT LEARNING COMMAND</p>"
-            "<h1>Dark Wing Duck <em>Enterprise</em></h1><p class='tagline'>Train. Test. Promote. Deploy.</p></div></div>"
-            "<div class='header-side'>"
-            "<div class='header-status'><span id='system-status'>Checking system status…</span></div></div></header>"
-            "<nav class='quick-nav' aria-label='Dashboard sections'><a href='#training'>Training</a><a href='#runs'>Leaderboard</a><a href='#simulations'>Debug</a><a href='#assistant'>Copilot</a></nav>"
-            + physics_notice_html
-            + "<section id='training'><div class='section-title'><div><p class='eyebrow'>NOW</p><h2>Active training</h2></div></div><div class='panel' id='active-training'>"
-            + "<div id='active-run-list'>"
-            + ("".join(active_rows) or "<p id='active-empty'>No active training jobs.</p>")
-            + "</div>"
-            + "<div class='resource-control'><div><strong>Resource mode</strong><p id='resource-copy' class='muted'>Shared does not manage other services.</p></div><select id='resource-profile' aria-label='Training resource mode'><option value='shared'>Shared · no service changes</option><option value='training-priority'>Training priority · configured hooks</option></select></div>"
-            + "<div class='progress' aria-label='Training progress'><span id='training-progress-bar'></span></div>"
-            "<p id='training-progress' class='progress-copy'>Checking progress…</p>"
-            "<div id='training-intelligence' class='training-intelligence' hidden><div id='training-verdict' class='training-verdict'><span id='verdict-label'>ANALYSIS</span><strong id='verdict-copy'></strong></div>"
-            "<div class='metric-grid'><div><small>Current reward</small><strong id='metric-current'>—</strong></div><div><small>Best reward</small><strong id='metric-best'>—</strong></div><div><small>20-iter trend</small><strong id='metric-trend'>—</strong></div><div><small>Stability</small><strong id='metric-stability'>—</strong></div><div><small>Throughput</small><strong id='metric-throughput'>—</strong></div><div><small>Latest saved model</small><strong id='metric-checkpoint'>—</strong></div></div>"
-            "<div id='skill-signals' class='skill-signals'></div><p class='metric-help'>Reward shows whether PPO is optimizing its objective—not whether the robot can perform the skill. Open the latest simulator checkpoint, then Evaluate the exported policy for proof.</p></div>"
-            "<div id='live-reward' class='live-curve' hidden><div class='curve-heading'><div><strong id='reward-title'>Recent mean reward</strong><span id='reward-range' class='muted'></span></div><button id='reward-scope' class='secondary curve-scope' type='button'>Entire run</button></div>"
-            "<svg viewBox='0 0 720 170' role='img' aria-label='Recent training mean reward'><line x1='28' y1='145' x2='700' y2='145'></line><polyline id='reward-line' points=''></polyline></svg></div></div></section>"
-            "<section id='simulations'><div class='section-title'><div><p class='eyebrow'>SIMULATORS</p><h2>Open simulator sessions</h2></div></div><div class='panel'>"
-            "<div class='section-heading'><div><p class='muted'>In-progress checkpoints open in Pollen’s Mjlab/Viser training viewer. Exported factory policies open in Pollen’s browser arena.</p><p class='muted'><strong>Remote SSH:</strong> forward 8080-8085 and 8090,8092-8096 in addition to dashboard port 8091, then reload this page.</p></div>"
-            "<button id='stop-all-viewers' class='secondary' type='button' disabled>Stop all</button></div>"
-            "<div id='viewer-sessions' class='session-grid'><p>No simulations open.</p></div></div></section>"
-            f"<section id='runs'><div class='section-title'><div><p class='eyebrow'>SPEED SCOREBOARD</p><h2>{'Top 3 comparison models' if focus_task == 'race5' and test_roster_html else ('Top 3 verified-speed checkpoints' if focus_task == 'race5' else html.escape(display_task_name(focus_task)) + ' podium')}</h2></div>"
-            "<p class='section-note'>The pinned comparison roster is for direct testing. The verified ranking below remains official-friction-only and controls automatic promotion.</p></div>"
-            f"{current_king_html}"
-            f"{baseline_reference_html}"
-            f"<div class='scoreboard-verdict {verdict_tone}'><strong>{html.escape(scoreboard_verdict)}</strong><span>{html.escape(scoreboard_detail)}</span></div>"
-            + fastest_speed_html
-            + speed_scout_html
-            + test_roster_html
-            + ("<details class='all-experiments verified-ranking'><summary>Official-friction verified speed ranking <span>3</span></summary>" if test_roster_html else "")
-            + "<div class='podium-grid'>" + "".join(podium_cards) + "</div>"
-            + ("</details>" if test_roster_html else "")
-            + f"<details class='all-experiments'><summary>All experiments and unscored runs <span>{archive_count}</span></summary>"
-            "<p class='muted'>Duplicates, raw snapshots, smoke checks, and unscored history are kept here for audit—not mixed into the leaderboard.</p>"
-            "<div class='finished-grid'>" + "".join(finished_rows) + "</div></details></section>"
-            + "<section id='assistant'><div class='section-title'><div><p class='eyebrow'>COPILOT</p><h2>Dark Wing Copilot</h2></div></div><div class='panel assistant-panel'><div id='chat-log' class='chat-log'>"
-            + "<p><strong>Dark Wing:</strong> Tell me what you want MicroDuck to do. I’ll check shipped Pollen skills before proposing training.</p>"
-            + "</div><form id='chat-form'><input id='chat-input' autocomplete='off' placeholder='Example: train MicroDuck to skate backwards'>"
-            + "<button type='submit'>Send</button></form><div id='chat-action'></div></div></section>"
-            + "<script>"
-            + "const TOKEN='__CONTROL_TOKEN__';"
-            + "let rewardScope='recent',rewardSeries={recent:[],full:[],count:0};"
-            + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(r.status===403){location.reload();throw new Error('Dashboard reconnected. Click the button once more.');}if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
-            + "function say(who,text){const p=document.createElement('p');const b=document.createElement('strong');b.textContent=who+': ';p.appendChild(b);p.appendChild(document.createTextNode(text));document.querySelector('#chat-log').appendChild(p);p.scrollIntoView();}"
-            + "function shortRun(id){return id.length>54?id.slice(0,51)+'…':id;}"
-            + "function taskName(task){return task==='backflip'?'Front flip':String(task||'training').replaceAll('_',' ').replace(/\\b\\w/g,c=>c.toUpperCase())}"
-            + "function renderActiveRun(status){const box=document.querySelector('#active-run-list');const detected=status.training.detected||[];const candidates=status.training.candidates||[];const latest=candidates.reduce((best,item)=>!best||(item.iteration??-1)>(best.iteration??-1)?item:best,null);box.replaceChildren();if(!detected.length){const p=document.createElement('p');p.id='active-empty';p.textContent='No active training jobs.';box.appendChild(p);return;}const card=document.createElement('article');card.className='run-card';const info=document.createElement('div');const title=document.createElement('strong');title.textContent=(latest&&latest.label)||(status.training.config&&taskName(status.training.config.task))||'Training run';const pill=document.createElement('span');pill.className='pill';pill.textContent=taskName((latest&&latest.task)||(status.training.config&&status.training.config.task));const copy=document.createElement('p');copy.className='muted active-checkpoint-copy';const envs=status.training.config&&status.training.config.environments;copy.textContent=(envs?Number(envs).toLocaleString():'Thousands of')+' environments train headless. '+(latest?'Watch 6 evaluation robots using saved checkpoint '+latest.iteration+'.':'The viewer unlocks as soon as the first checkpoint is saved.');info.append(title,document.createTextNode(' '),pill,copy);const button=document.createElement('button');button.className='watch-training';button.dataset.label=latest?'Watch checkpoint '+latest.iteration:'Waiting for checkpoint…';button.textContent=button.dataset.label;button.disabled=!latest;if(latest){button.dataset.runId=latest.run_id;button.onclick=()=>watchTraining(button);}card.append(info,button);box.appendChild(card);}"
-            + "function sessionCard(v){const card=document.createElement('article');card.className='session-card';const info=document.createElement('div');const title=document.createElement('strong');title.textContent=v.label||shortRun(v.run_id);title.title=v.run_id;const ports=document.createElement('p');ports.className='muted';ports.textContent=(v.kind==='training-preview'?'Live training snapshot · '+v.num_envs+' robots':'Engineering debugger')+(v.iteration!==null?' · checkpoint '+v.iteration:'')+' · port '+v.viser_port;info.append(title,ports);const actions=document.createElement('div');actions.className='session-actions';const open=document.createElement('a');open.href=v.open_url||v.viser_url;open.target='_blank';open.textContent=v.kind==='training-preview'?'Open live view':'Open debugger';const stop=document.createElement('button');stop.className='danger';stop.textContent='Stop';stop.onclick=async()=>{stop.disabled=true;try{await api('/api/stop-viewer',{run_id:v.run_id});await refreshStatus();}catch(e){alert(e.message);stop.disabled=false;}};actions.append(open,stop);card.append(info,actions);return card;}"
-            + "function renderSessions(viewers){const box=document.querySelector('#viewer-sessions');box.replaceChildren();if(!viewers.length){const p=document.createElement('p');p.textContent='No simulations open.';box.appendChild(p);}else{viewers.forEach(v=>box.appendChild(sessionCard(v)));}const stopAll=document.querySelector('#stop-all-viewers');stopAll.disabled=!viewers.length;}"
-            + "function drawReward(){const history=rewardScope==='full'?rewardSeries.full:rewardSeries.recent;const box=document.querySelector('#live-reward');if(!history||history.length<2){box.hidden=true;return;}box.hidden=false;document.querySelector('#reward-title').textContent=rewardScope==='full'?'Entire run · mean reward':'Recent mean reward';document.querySelector('#reward-scope').textContent=rewardScope==='full'?'Recent':'Entire run';const values=history.map(p=>p.reward),ordered=[...values].sort((a,b)=>a-b);const low=ordered[Math.floor((ordered.length-1)*.05)],high=ordered[Math.ceil((ordered.length-1)*.95)],span=high-low||1,clipped=values.filter(value=>value<low||value>high).length;const points=history.map((p,i)=>{const shown=Math.max(low,Math.min(high,p.reward));return(28+i*672/(history.length-1)).toFixed(1)+','+(145-(shown-low)*120/span).toFixed(1)}).join(' ');document.querySelector('#reward-line').setAttribute('points',points);const latest=history[history.length-1],sample=rewardScope==='full'&&rewardSeries.count>history.length?' · '+history.length+' plotted from '+rewardSeries.count+' points':'';document.querySelector('#reward-range').textContent=' · iteration '+history[0].iteration+' → '+latest.iteration+' · latest '+latest.reward.toFixed(2)+' · plotted range '+low.toFixed(2)+' to '+high.toFixed(2)+' · '+clipped+' outliers clipped'+sample;}function renderReward(progress){rewardSeries={recent:progress&&progress.reward_history||[],full:progress&&progress.reward_history_full||[],count:progress&&progress.reward_history_count||0};drawReward();}"
-            + "function fmt(value,digits=2){return value===null||value===undefined?'—':Number(value).toFixed(digits)}function renderIntelligence(progress){const box=document.querySelector('#training-intelligence'),i=progress&&progress.intelligence;if(!i){box.hidden=true;return;}box.hidden=false;const verdict=document.querySelector('#training-verdict');verdict.className='training-verdict '+(i.verdict_tone||'neutral');document.querySelector('#verdict-copy').textContent=i.verdict;document.querySelector('#metric-current').textContent=fmt(i.current_reward);document.querySelector('#metric-best').textContent=fmt(i.best_reward);const trend=i.trend_delta===null||i.trend_delta===undefined?i.trend:(i.trend+' '+(i.trend_delta>=0?'+':'')+fmt(i.trend_delta));document.querySelector('#metric-trend').textContent=trend;const stable=i.volatility===null||i.volatility===undefined?'—':(i.volatility<.25?'calm · ':i.volatility<1?'moderate · ':'noisy · ')+fmt(i.volatility);document.querySelector('#metric-stability').textContent=stable;document.querySelector('#metric-throughput').textContent=i.steps_per_second?Math.round(i.steps_per_second).toLocaleString()+' steps/s':'—';document.querySelector('#metric-checkpoint').textContent=i.latest_checkpoint_iteration===null||i.latest_checkpoint_iteration===undefined?'not saved yet':'iteration '+i.latest_checkpoint_iteration;const signals=document.querySelector('#skill-signals');signals.replaceChildren();const names={hop_takeoff_velocity:'Takeoff',hop_clearance_progress:'Clearance',hop_landing:'Landing',hop_landing_stillness:'Landing control',backflip_takeoff_velocity:'Takeoff',backflip_clearance_progress:'Air clearance',backflip_rotation_progress:'Rotation',backflip_landing:'Clean landing'};Object.entries(names).forEach(([key,label])=>{if(i.episode_rewards&&key in i.episode_rewards){const item=document.createElement('span');item.innerHTML='<small>'+label+' signal</small><strong>'+fmt(i.episode_rewards[key],4)+'</strong>';signals.appendChild(item);}});}"
+            "<header class='analysis-header'><div><span class='wordmark'>DUCKLAB</span><span class='header-subtitle'>MicroDuck model results</span></div>"
+            "<div class='header-status'><span id='system-status'>Checking training status…</span></div></header>"
+            + hero_html
+            + "<main id='results'><div class='results-heading'><div><p class='eyebrow'>DECISION VIEW</p><h2>What each checkpoint is for</h2></div>"
+            f"<p>{len(result_entries)} evaluated candidates · {archive_count} historical experiment groups preserved off the main view</p></div>"
+            + "<div class='role-grid'>" + role_cards_html + "</div>"
+            + next_move_html
+            + "<section class='comparison-panel'><div class='panel-heading'><div><p class='eyebrow'>HEAD-TO-HEAD</p><h2>Best overall vs Pollen</h2></div><p>Performance index bars normalize Pollen to 100. Longer is always better; exact values remain visible.</p></div>"
+            + comparison_html + "</section>"
+            + f"<section class='leaderboard-panel'><div class='panel-heading'><div><p class='eyebrow'>DEFINITIVE RANKING</p><h2>All comparable results</h2></div><p>{html.escape(leaderboard_context)}</p></div>"
+            + "<div class='table-wrap'><table class='definitive-table'><thead><tr><th>Rank</th><th>Model</th><th>vs Pollen</th><th>Gates</th><th>100 ft ↓</th><th>Top mph ↑</th><th>Accel ↑</th><th>Drift ft ↓</th><th>Heading ↓</th><th>Steering ↓</th><th>Action</th></tr></thead><tbody>"
+            + "".join(leaderboard_rows) + "</tbody></table></div></section></main>"
+            + "<footer>Every artifact, raw run, and evaluation remains immutable in the benchmark registry. This view only removes decision noise.</footer>"
+            + "<script>const TOKEN='__CONTROL_TOKEN__';"
+            + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(r.status===403){location.reload();throw new Error('Dashboard reconnected. Click once more.');}if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
             + "async function openWhenReady(win,url){for(let i=0;i<16;i++){try{await fetch(url,{mode:'no-cors',cache:'no-store'});if(win&&!win.closed)win.location=url;return true;}catch(e){await new Promise(r=>setTimeout(r,500));}}return false;}"
-            + "async function playRun(button){const label=button.dataset.label||'Open simulator';const windowName='microduck-drive-'+button.dataset.runId.replace(/[^a-zA-Z0-9]/g,'-');const drive=window.open('about:blank',windowName);button.disabled=true;button.textContent='Starting simulator…';try{const result=await api('/api/play',{run_id:button.dataset.runId});await refreshStatus();const ready=await openWhenReady(drive,result.open_url||result.viser_url);if(!ready){if(drive&&!drive.closed)drive.close();alert('The simulator started on the Spark, but its viewer port is not forwarded to this browser. Reconnect SSH with the viewer ports listed under Simulator sessions, then click again.');}}catch(error){if(drive&&!drive.closed)drive.close();alert(error.message);}finally{button.disabled=false;button.textContent=label;}}"
-            + "async function watchTraining(button){const label=button.dataset.label||'Watch training live';const windowName='microduck-training-'+button.dataset.runId.replace(/[^a-zA-Z0-9]/g,'-');const view=window.open('about:blank',windowName);button.disabled=true;button.textContent='Starting 6-robot view…';try{const result=await api('/api/watch-training',{run_id:button.dataset.runId});await refreshStatus();const ready=await openWhenReady(view,result.open_url||result.viser_url);if(!ready){if(view&&!view.closed)view.close();alert('The six-robot training view started on the Spark, but its Viser port is not forwarded. Forward ports 8080-8085 with your dashboard SSH connection, then click again.');}}catch(error){if(view&&!view.closed)view.close();alert(error.message);}finally{button.disabled=false;button.textContent=label;}}"
-            + "async function deploymentCheck(button){const label=button.textContent;button.disabled=true;button.textContent='Checking ONNX…';try{const result=await api('/api/deployment-check',{run_id:button.dataset.runId});window.location.href=result.report_url;}catch(error){alert(error.message);button.disabled=false;button.textContent=label;}}"
+            + "async function playRun(button){const label=button.dataset.label||'Try';const view=window.open('about:blank','microduck-'+button.dataset.runId.replace(/[^a-zA-Z0-9]/g,'-'));button.disabled=true;button.textContent='Starting…';try{const result=await api('/api/play',{run_id:button.dataset.runId});const ready=await openWhenReady(view,result.open_url||result.viser_url);if(!ready)throw new Error('Simulator started, but its viewer port is not forwarded.');}catch(error){if(view&&!view.closed)view.close();alert(error.message);}finally{button.disabled=false;button.textContent=label;}}"
             + "document.querySelectorAll('.play').forEach(button=>button.addEventListener('click',()=>playRun(button)));"
-            + "document.querySelectorAll('.watch-training').forEach(button=>button.addEventListener('click',()=>watchTraining(button)));"
-            + "document.querySelectorAll('.deployment').forEach(button=>button.addEventListener('click',()=>deploymentCheck(button)));"
-            + "document.querySelectorAll('.champion-select').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{await api('/api/select-champion',{run_id:button.dataset.runId});location.reload();}catch(error){alert(error.message);button.disabled=false;}}));"
-            + "document.querySelectorAll('.star').forEach(button=>button.addEventListener('click',async()=>{try{const starred=button.textContent.includes('Star');await api('/api/star',{run_id:button.dataset.runId,star:starred});location.reload();}catch(error){alert(error.message);}}));"
-            + "document.querySelector('#stop-all-viewers').addEventListener('click',async()=>{try{await api('/api/stop-viewer',{});await refreshStatus();}catch(error){alert(error.message);}});"
-            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const detected=s.training.detected.length;const p=s.training.progress;const pct=p&&p.total?Math.min(100,100*p.iteration/p.total):0;const t=detected?'Training running'+(p?' · iteration '+p.iteration+(p.total?' / '+p.total:'')+(p.eta?' · ETA '+p.eta:''):''):'No training running';const resource=s.resources||{profile:'shared',managed_services:'none'};document.querySelector('#system-status').textContent=t+' · '+s.viewers.length+' live view'+(s.viewers.length===1?'':'s');document.querySelector('#resource-copy').textContent=resource.profile==='training-priority'?'Training priority active; configured resource hooks will restore when training exits.':'Shared does not manage other services.';document.querySelector('#resource-profile').value=resource.profile;renderActiveRun(s);document.querySelector('#training-progress').textContent=t+(p&&p.total?' · '+pct.toFixed(1)+'% complete':'');document.querySelector('#training-progress-bar').style.width=pct+'%';renderReward(p);renderIntelligence(p);renderSessions(s.viewers||[]);}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}"
-            + "document.querySelector('#chat-form').addEventListener('submit',async event=>{event.preventDefault();const input=document.querySelector('#chat-input');const message=input.value.trim();if(!message)return;say('You',message);input.value='';document.querySelector('#chat-action').replaceChildren();try{const response=await api('/api/chat',{message});say('Dark Wing',response.reply);if(response.kind==='factory-play'){const link=document.createElement('a');link.className='button-link';link.href=response.url;link.target='_blank';link.textContent='Open simulator';document.querySelector('#chat-action').appendChild(link);}if(response.kind==='confirm-training'){const profile=document.querySelector('#resource-profile');if(response.action.resource_profile)profile.value=response.action.resource_profile;const button=document.createElement('button');button.textContent='Confirm training launch';button.onclick=async()=>{button.disabled=true;try{const action={...response.action,resource_profile:profile.value};const result=await api('/api/train',action);say('Dark Wing','Training started in '+result.resource_profile+' mode.');refreshStatus();}catch(error){say('Dark Wing',error.message);button.disabled=false;}};document.querySelector('#chat-action').appendChild(button);}if(response.kind==='play'&&response.result){await refreshStatus();}}catch(error){say('Dark Wing',error.message);}});"
-            + "document.querySelector('#reward-scope').addEventListener('click',()=>{rewardScope=rewardScope==='recent'?'full':'recent';drawReward();});refreshStatus();setInterval(refreshStatus,5000);"
-            + "</script>"
+            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const p=s.training.progress;document.querySelector('#system-status').textContent=s.training.detected.length?('Training · iteration '+(p?p.iteration:'starting')+(p&&p.total?' / '+p.total:'')):'No training running';}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}refreshStatus();setInterval(refreshStatus,5000);</script>"
         )
         output = self.state_dir / "index.html"
         output.write_text(page("Dark Wing Duck Enterprise", content, show_title=False))
@@ -2545,9 +2712,16 @@ button,.session-actions a{{border:1px solid transparent;font-weight:700;transiti
 .saved-dropdown{{margin:0;min-width:0;padding:0;border:0;border-top:1px solid var(--line);border-radius:0;background:#0d141b}}.saved-dropdown>summary{{display:flex;align-items:center;gap:9px;padding:13px 21px;cursor:pointer;color:#cfdae3;font-weight:700;list-style:none;user-select:none}}.saved-dropdown>summary::-webkit-details-marker{{display:none}}.saved-dropdown>summary:hover{{background:#111b24}}.summary-count{{display:grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#243441;color:#b9d3e5;font-size:.72rem}}.chevron{{margin-left:auto;font-size:1.2rem;transition:transform .18s ease}}.saved-dropdown[open] .chevron{{transform:rotate(180deg)}}.saved-list{{display:grid;gap:8px;padding:0 12px 12px}}.saved-model{{display:grid;grid-template-columns:minmax(150px,1fr) minmax(250px,1.6fr) auto;align-items:center;gap:18px;padding:13px 14px;border:1px solid #263744;border-radius:10px;background:#131d25}}.saved-model-title{{display:flex;align-items:center;gap:8px;flex-wrap:wrap}}.stage-badge{{background:#203545;color:#bfe2fa}}.saved-model-stats{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}}.saved-model-stats span{{font-weight:750}}.saved-model-actions{{display:flex;align-items:center;justify-content:flex-end;gap:10px}}.text-action{{font-weight:700;white-space:nowrap}}
 .assistant-panel{{background:linear-gradient(145deg,#121b24,#101820)}}
 .resource-control{{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:14px 0;padding:13px 14px;border:1px solid #2b4050;border-radius:11px;background:#101a22}}.resource-control select{{min-width:300px}}
+.analysis-header{{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:4px 2px 22px;border-bottom:1px solid #29233a}}.wordmark{{font-size:1.15rem;font-weight:950;letter-spacing:.12em}}.header-subtitle{{margin-left:15px;color:var(--muted)}}.analysis-header .header-status{{padding:7px 11px;border-color:#343044;background:#11101a;font-size:.78rem}}
+.leader-hero{{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(420px,1fr);gap:26px;margin:28px 0 34px;padding:34px;border:1px solid #3a655b;border-radius:20px;background:radial-gradient(circle at 90% 8%,rgba(45,212,197,.16),transparent 38%),linear-gradient(135deg,#151326,#0d1918);box-shadow:0 24px 65px rgba(0,0,0,.25)}}.winner-label{{display:inline-block;padding:5px 9px;border-radius:7px;background:#17463e;color:#8cf0d6;font-size:.7rem;font-weight:900;letter-spacing:.09em}}.leader-hero h1{{max-width:720px;margin:15px 0 8px;font-size:clamp(2rem,4vw,3.4rem);line-height:1.02;overflow-wrap:anywhere}}.hero-copy>p{{max-width:720px;color:#c8c2d2;font-size:1rem}}.hero-actions{{display:flex;align-items:center;gap:16px;margin-top:21px}}.hero-actions button{{padding:12px 18px;background:linear-gradient(135deg,#7653f1,#5b36cb)}}.proof-link{{font-weight:750}}.hero-kpis{{display:grid;grid-template-columns:1fr 1fr;gap:9px}}.hero-kpis>div{{display:flex;flex-direction:column;justify-content:center;min-height:112px;padding:16px;border:1px solid #31544d;border-radius:13px;background:rgba(7,20,18,.65)}}.hero-kpis strong{{margin:2px 0;font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}}.hero-kpis span{{color:#9facaa;font-size:.78rem}}
+#results{{display:grid;gap:24px}}.results-heading,.panel-heading{{display:flex;align-items:flex-end;justify-content:space-between;gap:26px}}.results-heading h2,.panel-heading h2{{margin:2px 0 0;font-size:1.45rem}}.results-heading>p,.panel-heading>p{{max-width:520px;margin:0;color:var(--muted);font-size:.83rem;text-align:right}}.role-grid{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}}.role-card{{display:flex;flex-direction:column;min-height:230px;padding:18px;border:1px solid #332d45;border-radius:14px;background:linear-gradient(150deg,#171421,#100e18)}}.role-card>small{{color:#8fe6d5}}.role-card h3{{margin:5px 0 13px;font-size:1rem;color:#bbb2c9}}.role-card>strong{{font-size:1.05rem}}.role-card p{{color:#aaa1b6;font-size:.83rem}}.role-card>div{{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:13px}}.role-card button{{padding:8px 10px}}.seed-card{{border-color:#63512e;background:linear-gradient(150deg,#211c12,#111016)}}.seed-card>small{{color:#f3c969}}
+.next-move{{display:grid;grid-template-columns:210px 1fr;gap:22px;padding:19px 21px;border:1px solid #514177;border-radius:14px;background:#181326}}.next-move>span{{color:#bba7f7;font-size:.72rem;font-weight:900;letter-spacing:.09em}}.next-move strong{{color:#f6f1ff}}
+.comparison-panel,.leaderboard-panel{{padding:23px;border:1px solid #302a41;border-radius:18px;background:rgba(17,14,26,.82)}}.comparison-panel{{display:grid;gap:10px}}.panel-heading{{margin-bottom:10px}}.comparison-row{{display:grid;grid-template-columns:175px minmax(0,1fr) 110px;align-items:center;gap:18px;padding:13px 0;border-top:1px solid #292338}}.comparison-name span{{display:block;color:var(--muted);font-size:.72rem}}.comparison-bars{{display:grid;gap:6px}}.comparison-bars>div{{display:grid;grid-template-columns:48px minmax(120px,1fr) 105px;align-items:center;gap:8px}}.comparison-bars small{{font-size:.62rem}}.comparison-bars b{{font-size:.75rem;font-variant-numeric:tabular-nums;text-align:right}}.bar-track{{display:block;height:8px;border-radius:999px;background:#252033;overflow:hidden}}.bar-track i{{display:block;height:100%;border-radius:999px}}.leader-bar{{background:linear-gradient(90deg,#7251ef,#2dd4c5)}}.pollen-bar{{background:#746b80}}.win-chip{{justify-self:end;padding:4px 7px;border-radius:6px;font-size:.68rem;font-weight:900;font-variant-numeric:tabular-nums}}.win-chip.win{{background:#153e37;color:#8becd4}}.win-chip.loss{{background:#4b2029;color:#ffadb8}}
+.leaderboard-panel{{padding:23px 0 0;overflow:hidden}}.leaderboard-panel .panel-heading{{padding:0 23px 12px}}.leaderboard-panel .table-wrap{{border:0;border-top:1px solid #302a41;border-radius:0}}.definitive-table{{min-width:1160px;font-size:.83rem}}.definitive-table th{{padding:11px 10px;background:#12101b;color:#8f879d}}.definitive-table td{{padding:14px 10px;vertical-align:middle;font-variant-numeric:tabular-nums}}.rank-cell{{color:#8f879d;font-weight:800}}.model-cell strong,.model-cell span{{display:block}}.model-cell strong{{max-width:245px}}.model-cell span{{margin-top:3px;color:#938aa0;font-size:.7rem}}.record{{color:#8cebd3}}.best-row td{{background:rgba(23,70,62,.24)}}.best-row td:first-child{{box-shadow:inset 3px 0 #2dd4c5}}.reference-row{{color:#9991a5}}.reference-row td{{background:#0e0d14}}.table-play{{padding:6px 9px;font-size:.76rem}}footer{{padding:28px 2px 0;color:#777080;font-size:.76rem;text-align:center}}
 @media(max-width:1000px){{.metric-grid{{grid-template-columns:repeat(3,1fr)}}.metric-grid>div:nth-child(3){{border-right:0}}.metric-grid>div:nth-child(-n+3){{border-bottom:1px solid var(--line)}}.podium-grid{{grid-template-columns:1fr}}.podium-card{{min-height:0}}}}
-@media(max-width:900px){{.product-header{{align-items:flex-start;flex-direction:column;min-height:0}}.header-side{{align-items:flex-start;max-width:none}}.header-status{{text-align:left}}.saved-model{{grid-template-columns:1fr}}.saved-model-actions{{justify-content:flex-start}}}}
-@media(max-width:720px){{body{{padding:14px 13px 60px}}.product-header{{padding:21px 18px;border-radius:18px}}.brand-lockup{{align-items:flex-start;gap:14px}}.duck-mark{{flex-basis:52px;height:52px;border-radius:14px;font-size:.95rem}}.quick-nav{{justify-content:flex-start;margin-top:10px}}.section-title,.section-heading,.run-card,.session-card,.finished-card-top,.resource-control,.training-verdict,.result-banner,.scoreboard-verdict,.baseline-reference,.baseline-duel-head{{align-items:flex-start;flex-direction:column}}.baseline-numbers,.baseline-improvement{{text-align:left}}.baseline-comparison-grid{{grid-template-columns:1fr}}.section-note{{text-align:left}}.session-actions,.launch-cluster{{width:100%;flex-wrap:wrap}}.session-actions a,.session-actions button,.run-card>button,.launch-cluster button,.launch-cluster a{{width:100%;text-align:center}}.resource-control select{{width:100%;min-width:0}}.run-stats,.metric-grid,.result-kpis{{grid-template-columns:1fr}}.run-stats>div,.metric-grid>div{{border-right:0;border-bottom:1px solid var(--line)}}.skill-signals{{grid-template-columns:repeat(2,1fr)}}.saved-model-stats{{grid-template-columns:repeat(3,1fr)}}.saved-model-actions{{flex-wrap:wrap}}form{{flex-direction:column}}}}
+@media(max-width:1050px){{.leader-hero{{grid-template-columns:1fr}}.role-grid{{grid-template-columns:1fr 1fr}}}}
+@media(max-width:900px){{.product-header{{align-items:flex-start;flex-direction:column;min-height:0}}.header-side{{align-items:flex-start;max-width:none}}.header-status{{text-align:left}}.saved-model{{grid-template-columns:1fr}}.saved-model-actions{{justify-content:flex-start}}.comparison-row{{grid-template-columns:145px minmax(0,1fr)}}.win-chip{{grid-column:2;justify-self:start}}}}
+@media(max-width:720px){{body{{padding:14px 13px 60px}}.analysis-header,.results-heading,.panel-heading{{align-items:flex-start;flex-direction:column}}.analysis-header .header-status{{text-align:left}}.leader-hero{{padding:22px 18px}}.hero-kpis,.role-grid{{grid-template-columns:1fr}}.hero-actions{{align-items:flex-start;flex-direction:column}}.results-heading>p,.panel-heading>p{{text-align:left}}.next-move{{grid-template-columns:1fr;gap:7px}}.comparison-row{{grid-template-columns:1fr}}.comparison-bars>div{{grid-template-columns:44px minmax(90px,1fr) 92px}}.win-chip{{grid-column:1}}.product-header{{padding:21px 18px;border-radius:18px}}.brand-lockup{{align-items:flex-start;gap:14px}}.duck-mark{{flex-basis:52px;height:52px;border-radius:14px;font-size:.95rem}}.quick-nav{{justify-content:flex-start;margin-top:10px}}.section-title,.section-heading,.run-card,.session-card,.finished-card-top,.resource-control,.training-verdict,.result-banner,.scoreboard-verdict,.baseline-reference,.baseline-duel-head{{align-items:flex-start;flex-direction:column}}.baseline-numbers,.baseline-improvement{{text-align:left}}.baseline-comparison-grid{{grid-template-columns:1fr}}.section-note{{text-align:left}}.session-actions,.launch-cluster{{width:100%;flex-wrap:wrap}}.session-actions a,.session-actions button,.run-card>button,.launch-cluster button,.launch-cluster a{{width:100%;text-align:center}}.resource-control select{{width:100%;min-width:0}}.run-stats,.metric-grid,.result-kpis{{grid-template-columns:1fr}}.run-stats>div,.metric-grid>div{{border-right:0;border-bottom:1px solid var(--line)}}.skill-signals{{grid-template-columns:repeat(2,1fr)}}.saved-model-stats{{grid-template-columns:repeat(3,1fr)}}.saved-model-actions{{flex-wrap:wrap}}form{{flex-direction:column}}}}
 </style></head>
 <body>{heading}{body}</body></html>"""
 
