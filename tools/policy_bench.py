@@ -2205,7 +2205,7 @@ class Bench:
                 "<div class='baseline-improvement good'><small>CONTROL-SAFE RACE5</small>"
                 f"<strong>{float(king_performance.get('top_speed_mph', 0.0)):.2f} mph</strong>"
                 f"<span>{float(king_performance.get('sustained_speed_mph', 0.0)):.2f} mph sustained · {float(king_performance.get('elapsed_time_100ft_s', 0.0)):.2f} s / 100 ft</span></div></div>"
-                f"<p class='baseline-method'><button class='play primary-action' data-run-id='{king_run_id}' data-label='Try V11 king'>Try V11 king in arena</button> "
+                f"<p class='baseline-method'><button class='play primary-action' data-run-id='{king_run_id}' data-label='Try all-around king'>Try all-around king in arena</button> "
                 f"<a class='text-action' href='runs/{king_run_id}/report.html'>View full proof</a></p></div>"
             )
         baseline_reference_html = ""
