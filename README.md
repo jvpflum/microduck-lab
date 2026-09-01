@@ -1,9 +1,10 @@
-# DuckLab — MicroDuck Skate Racing
+# DuckWing — MicroDuck Skate Racing
 
-An open, reproducible reinforcement-learning lab for making Pollen Robotics'
-MicroDuck skate faster, straighter, and more controllably in simulation.
+DuckWing (the `microduck-lab` repository) is an open, reproducible
+reinforcement-learning lab for making Pollen Robotics' MicroDuck skate faster,
+straighter, and more controllably in simulation.
 
-DuckLab uses Pollen's official robot runtime, browser arena, physics, and
+DuckWing uses Pollen's official robot runtime, browser arena, physics, and
 roller baseline as the reference point. It adds the practical layer around
 training: repeatable race measurements, saved ONNX policies, a simple dashboard
 to test them, and promotion only when a candidate actually improves.
@@ -15,24 +16,27 @@ policy, open it in the browser simulator, and see whether it truly beat Pollen
 on speed **without giving up straight-line control, braking, turning, or
 stability**.
 
-The current public all-around champion is
-[`Race5 V11`](releases/v11/README.md). In the same deterministic CPU MuJoCo
-race battery, with the same measured line-hold controller applied to both
-policies, V11 beats Pollen's roller baseline:
+The current all-around champion is
+[`DuckWing V66`](releases/v66/README.md). It is a command-routed fusion of the
+control-aware V11 policy and the transferred RTX 5090 V65 speed policy. In the
+same deterministic CPU MuJoCo race battery, with the exact measured line-hold
+controller and wheel friction applied to both policies, V66 beats Pollen's
+roller baseline on every tracked comparison dimension:
 
-| Verified race metric | Race5 V11 | Pollen roller | Improvement |
+| Verified race metric | DuckWing V66 | Pollen roller | Improvement |
 | --- | ---: | ---: | ---: |
-| Sustained forward speed | 1.42 mph | 1.07 mph | **33.1% faster** |
-| Verified top speed (0.5 s) | 1.65 mph | 1.28 mph | **28.5% higher** |
-| 100-ft elapsed time | 44.06 s | 57.59 s | **23.5% sooner** |
-| First-second acceleration | 1.12 mph/s | 0.72 mph/s | **55.0% higher** |
-| Maximum lateral drift | 1.06 ft | 1.25 ft | **14.9% less** |
-| Maximum heading error | 7.30° | 11.06° | **34.0% less** |
+| Sustained forward speed | **2.20 mph** | 1.07 mph | **106.9% faster** |
+| Verified top speed (0.5 s) | **3.02 mph** | 1.28 mph | **135.6% higher** |
+| 100-ft elapsed time | **26.32 s** | 57.59 s | **54.3% sooner** |
+| First-second acceleration | **0.99 mph/s** | 0.72 mph/s | **37.1% higher** |
+| Maximum lateral drift | **0.83 ft** | 1.25 ft | **33.6% less** |
+| Maximum heading error | **10.66°** | 11.06° | **3.7% less** |
 
-V11 passed all 14 retained control checks in that evaluation. It is a
-simulation-only result—not a hardware-speed claim—and the 5 mph target remains
-the next milestone. Faster experimental policies stay unpromoted until they
-also preserve the full control battery.
+V66 passed all **15** retained control checks, including idle hold, cruise,
+braking, both turns, line drift, long-run heading, and long-run upright
+stability. It is a simulation-only result—not a hardware-speed claim—and the
+5 mph target remains the next milestone. Faster experimental policies stay
+unpromoted until they also preserve the full control battery.
 
 ## What you get
 
@@ -41,7 +45,8 @@ also preserve the full control battery.
   drift, heading, acceleration, and 100-ft result.
 - Repeatable evaluation and ONNX checks so results are shareable and auditable.
 - Separate Spark and Windows/RTX worker workflows for larger training runs.
-- A public V11 inference export with checksum and scrubbed measurement summary.
+- Public V61 and V66 inference exports with checksums and scrubbed measurement
+  summaries.
 
 ## Requirements
 
@@ -129,7 +134,7 @@ make train-skate
 ## Race5: reproducible straight-line skate racing
 
 Race5 is the separate 100-foot, centreline-controlled skate-racing task behind
-the public V11 result. Its public integration gate needs no private artifact:
+the public V66 result. Its public integration gate needs no private artifact:
 
 ```bash
 make race5-smoke
@@ -138,7 +143,7 @@ make race5-smoke
 For an exact continuation from the V11 champion, copy the raw trainer donor
 privately and point the recipe at it; raw `.pt` state is deliberately not
 published. A clean clone can still use every source configuration, test, smoke
-gate, simulator speed test, and the public V11 ONNX evaluation export.
+gate, simulator speed test, and the public V61/V66 ONNX evaluation exports.
 
 ```bash
 DUCKLAB_RACE5_WARMSTART_CHECKPOINT=/absolute/path/to/v11-model_10.pt \
@@ -151,12 +156,25 @@ what is intentionally excluded from Git.
 
 The next-generation V11-preserving experiment is separate from the general
 Race5 recipe. It rewards usable world-forward speed only while centred and
-aligned with the measured race line, then requires the normal V11 evaluation
+aligned with the measured race line, then requires the normal V66 evaluation
 battery before promotion:
 
 ```bash
 make train-race5-v16-constrained
 ```
+
+To train the current frontier fusion experiment, use the exact-friction V18
+launcher. It keeps the qualified control-aware shell fixed while PPO improves
+the straight-speed branch, which avoids repeating the control regressions seen
+in raw speed-specialist checkpoints:
+
+```bash
+./scripts/train-race5-v18-fusion.sh
+```
+
+The default is 4,096 environments, 3,000 iterations, and seed 1801. Private
+warm-start and teacher artifacts are required; set
+`DUCKWING_V18_WARMSTART_CHECKPOINT` when using a different local checkpoint.
 
 For symmetric forward/reverse propulsion with both blades grounded, use the
 dedicated swizzle workflow:
@@ -203,6 +221,37 @@ contains the Pareto front. A candidate must be good on sustained world-forward
 mph, survival, maximum lateral drift, and heading error; PPO reward alone does
 not promote a model. Extend only Pareto candidates to 2,000–4,000 iterations,
 then certify the finalists with the normal 5-episode, 20-second Race5 battery.
+
+## What the experiments taught us
+
+The benchmark is deliberately multi-objective. A policy that is fast in a
+single open-loop sprint can still be unusable if it creeps at zero command,
+cannot brake, loses turning, or falls during the long run. Policy Bench now
+requires 15 control gates and ranks nine comparable Pollen dimensions: idle
+creep, top speed, sustained speed, 100-ft time, trap speed, launch
+acceleration, long-run drift, heading error, and agility.
+
+The RTX 5090 transfer made the useful distinction clear:
+
+- **V57b/V59** are valuable speed teachers, but their raw policies trade away
+  idle hold, braking, or retention.
+- **V63** is a strong mid-speed branch (about 2.05 mph sustained on Spark),
+  but it creeps and becomes unstable when used alone.
+- **V65** is a three-way command-gated policy: a low-speed control branch, V63
+  in the middle, and V59 at high speed. The transferred 5090 report used a
+  newer line-controller/evaluator revision, so its metrics are retained as
+  provenance but are not mixed into Spark's canonical leaderboard.
+- **V66** routes V65 through the proven control-aware shell and uses a 96.5%
+  high-speed contribution. This preserves the control skills while allowing
+  the speed branch to improve the 100-ft result. Its line-hold settings are
+  `yaw_kp=0.70`, `lateral_kp=0.14`, `yaw_kd=0.07`, and `max_wz=0.15`.
+
+The practical training lesson is to separate capabilities structurally rather
+than forcing one actor to remember incompatible behaviors. The active V18 run
+therefore trains a V57b-guided straight-speed branch at exact `0.003`
+wheel friction and wraps exported checkpoints with the immutable control-aware
+shell. Reward curves diagnose progress, but only the full deployment replay
+decides promotion.
 
 ## Compare and promote policies
 
