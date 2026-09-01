@@ -428,9 +428,20 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
         yaw = abs(float(race.get("yaw_change_deg", 360.0)))
         tilt = float(race.get("tilt_max_deg", 90.0))
         lateral = float(race.get("steady_mean_abs_lateral_speed_mps", 1.0))
+        # Side-to-side body-frame velocity is gait sway, not trajectory drift.
+        # A swizzle can have substantial oscillatory lateral speed while its
+        # world-space path remains straight.  Prefer measured cross-track
+        # excursion; retain a conservative legacy fallback for old reports.
+        race_drift_ft = float(
+            race.get(
+                "max_lateral_drift_ft",
+                lateral * max(float(race.get("duration_s", 0.0)), 1.0) / 0.3048,
+            )
+        )
         height = float(race.get("trunk_height_mean_m", 0.0))
         if task == "race5":
             phases = evaluation.get("phases", {})
+            settle = phases.get("settle", {})
             cruise = phases.get("cruise", {})
             stop_cruise = phases.get("stop_cruise", {})
             turn_left = phases.get("turn_left", {})
@@ -449,7 +460,7 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
                 "acceleration": min(1.0, acceleration / 1.5),
                 "heading": max(0.0, 1.0 - yaw / 60.0),
                 "stability": max(0.0, 1.0 - tilt / 30.0),
-                "low_lateral_drift": max(0.0, 1.0 - lateral / 0.05),
+                "low_lateral_drift": max(0.0, 1.0 - race_drift_ft / 0.75),
             }
             weights = {
                 "five_mph_speed": 0.50,
@@ -458,6 +469,13 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
                 "stability": 0.10,
                 "low_lateral_drift": 0.10,
             }
+            idle_end_speed = float(settle.get("end_abs_forward_speed_mps", 99.0))
+            idle_distance = abs(float(settle.get("forward_distance_m", 99.0)))
+            idle_tilt = float(settle.get("tilt_max_deg", 90.0))
+            idle_height = float(settle.get("trunk_height_mean_m", 0.0))
+            idle_score = 0.5 * max(0.0, 1.0 - idle_end_speed / 0.05) + 0.5 * max(
+                0.0, 1.0 - idle_distance / 0.15
+            )
             cruise_speed = float(cruise.get("steady_mean_forward_speed_mps", 0.0))
             cruise_yaw = abs(float(cruise.get("yaw_change_deg", 360.0)))
             stop_time = stop_cruise.get("stop_time_below_0_05_mps_s")
@@ -480,8 +498,20 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
             long_run_height = float(max_speed_run.get("trunk_height_mean_m", 0.0))
             finished_100ft = bool(max_speed_run.get("finished_100ft"))
             gates = {
+                "idle_hold": {
+                    "passed": idle_end_speed <= 0.05 and idle_distance <= 0.15
+                    and idle_tilt <= 18.0 and idle_height >= 0.09,
+                    "value": round(idle_end_speed * MPS_TO_MPH, 3),
+                    "maximum": round(0.05 * MPS_TO_MPH, 3),
+                    "unit": "mph end speed",
+                },
                 "race_heading": {"passed": yaw <= 25.0, "value": round(yaw, 2), "maximum": 25.0, "unit": "deg"},
-                "lateral_drift": {"passed": lateral <= 0.05, "value": round(lateral * MPS_TO_MPH, 3), "maximum": round(0.05 * MPS_TO_MPH, 3), "unit": "mph"},
+                "lateral_drift": {
+                    "passed": race_drift_ft <= 0.75,
+                    "value": round(race_drift_ft, 2),
+                    "maximum": 0.75,
+                    "unit": "ft cross-track",
+                },
                 "race_tilt": {"passed": tilt <= 18.0, "value": round(tilt, 2), "maximum": 18.0, "unit": "deg"},
                 "race_upright": {"passed": height >= 0.09, "value": "upright" if height >= 0.09 else "fell", "required": "upright"},
                 "cruise_speed": {"passed": cruise_speed >= 0.25, "value": round(cruise_speed * MPS_TO_MPH, 3), "minimum": round(0.25 * MPS_TO_MPH, 3), "unit": "mph"},
@@ -504,18 +534,23 @@ def score_evaluation(evaluation: dict[str, Any], task: str) -> dict[str, Any]:
                 + min(1.0, max(0.0, -right_yaw / 90.0))
             )
             retention_agility = 100.0 * (
-                0.20 * min(1.0, max(0.0, cruise_speed / 0.30))
-                + 0.20 * max(0.0, 1.0 - cruise_yaw / 60.0)
-                + 0.20 * max(0.0, 1.0 - stop_time_value / 2.0)
-                + 0.20 * turn_agility
-                + 0.20 * max(0.0, 1.0 - retention_tilt / 18.0)
+                0.15 * idle_score
+                + 0.17 * min(1.0, max(0.0, cruise_speed / 0.30))
+                + 0.17 * max(0.0, 1.0 - cruise_yaw / 60.0)
+                + 0.17 * max(0.0, 1.0 - stop_time_value / 2.0)
+                + 0.17 * turn_agility
+                + 0.17 * max(0.0, 1.0 - retention_tilt / 18.0)
             )
             performance["agility_score"] = round(retention_agility, 2)
+            performance["idle_hold_passed"] = gates["idle_hold"]["passed"]
+            performance["idle_end_speed_mph"] = round(idle_end_speed * MPS_TO_MPH, 3)
+            performance["idle_drift_ft"] = round(idle_distance / 0.3048, 3)
+            performance["race_max_drift_ft"] = round(race_drift_ft, 2)
             performance["skill_retention_passed"] = all(
                 gates[name]["passed"]
                 for name in (
-                    "cruise_speed", "cruise_heading", "braking", "turn_left",
-                    "turn_right", "retention_stability",
+                    "idle_hold", "cruise_speed", "cruise_heading", "braking",
+                    "turn_left", "turn_right", "retention_stability",
                 )
             )
             performance["long_run_max_drift_ft"] = round(long_run_drift_ft, 2)
@@ -2418,6 +2453,7 @@ class Bench:
         # controller, and a deployable all-around policy are useful for
         # different reasons and should never masquerade as one flat ranking.
         metric_specs = (
+            ("Idle creep", "idle_end_speed_mph", "mph", 3, False),
             ("Top speed", "top_speed_mph", "mph", 2, True),
             ("Sustained speed", "sustained_speed_mph", "mph", 2, True),
             ("100 ft time", "elapsed_time_100ft_s", "s", 2, False),
@@ -2426,7 +2462,10 @@ class Bench:
             ("Straight-line drift", "long_run_max_drift_ft", "ft", 2, False),
             ("Heading error", "long_run_max_heading_error_deg", "°", 2, False),
             ("Agility", "agility_score", "/100", 1, True),
-            ("Automatic steering", "auto_steering_percent", "%", 1, False),
+            # Controller effort is diagnostic, not ordinal: zero can mean a
+            # naturally straight policy or a disabled controller.  Rank the
+            # resulting heading/drift, while still showing steering effort.
+            ("Automatic steering", "auto_steering_percent", "%", 1, None),
         )
         pollen_performance = baseline_entry["score"].get("performance", {}) if baseline_entry else {}
 
@@ -2449,6 +2488,8 @@ class Bench:
             performance = entry["score"].get("performance", {})
             wins = total = 0
             for _, key, _, _, higher_is_better in metric_specs:
+                if higher_is_better is None:
+                    continue
                 candidate = shown_value(performance, key)
                 pollen = shown_value(pollen_performance, key)
                 if candidate is None or pollen is None:
@@ -2460,7 +2501,18 @@ class Bench:
         def decision_label(entry: dict[str, Any]) -> str:
             run_id = entry["manifest"]["run_id"]
             aliases = (
+                ("duckwing-v66-v65-control-fusion", "V66 · V65 Control Fusion"),
+                ("rtx5090-v65-v63-immediate-switch", "RTX 5090 V65 · V63/V59 Switch"),
+                ("rtx5090-v63-embedded-mid", "RTX 5090 V63 · Embedded Mid"),
+                ("duckwing-v62-v59-launch-fusion", "V62 · V59 Launch Fusion"),
+                ("duckwing-v61-v57b-control-fusion", "V61 · V57b Control Fusion"),
+                ("rtx5090-v59-i99", "RTX 5090 V59 · Speed Leader"),
+                ("rtx5090-v60-i20", "RTX 5090 V60 · Balanced"),
+                ("rtx5090-v58-i20", "RTX 5090 V58 · Peak Line"),
+                ("rtx5090-v57b-i50", "RTX 5090 V57b · Frontier Speed"),
+                ("rtx5090-v56-i10", "RTX 5090 V56 · Line Speed"),
                 ("microduck_hybrid_controlaware", "Control-aware V11 × Speed"),
+                ("ducklab-race5-v17-frontier-i250", "V17 · Frontier i250"),
                 ("race5-microduck_hybrid-export", "Speed-first Race5 Hybrid"),
                 ("speed-retention-pilot2-brake-line", "Speed Retention Pilot 2"),
                 ("v14-lean-glide", "V14 Lean Glide"),
@@ -2501,6 +2553,8 @@ class Bench:
             best_performance = overall_best["score"].get("performance", {})
             rows = []
             for label, key, unit, digits, higher_is_better in metric_specs:
+                if higher_is_better is None:
+                    continue
                 candidate = shown_value(best_performance, key)
                 pollen = shown_value(pollen_performance, key)
                 if candidate is None or pollen is None:
@@ -2620,7 +2674,7 @@ class Bench:
             hero_html = "<section class='leader-hero'><div class='hero-copy'><span class='winner-label'>NO EVALUATED MODEL</span><h1>Run an official evaluation</h1></div></section>"
 
         next_move_html = (
-            "<section class='next-move'><span>RECOMMENDED NEXT MOVE</span><div><strong>Start from the control-aware champion at official 0.003 friction.</strong> Optimize acceleration and top speed, but reject any checkpoint that loses one of its 9 Pollen wins or 14 control gates. Use the 5.41 mph scout as a teacher—not as the deployment baseline.</div></section>"
+            "<section class='next-move'><span>RECOMMENDED NEXT MOVE</span><div><strong>Start from the control-aware champion at official 0.003 friction.</strong> Optimize acceleration and top speed, but reject any checkpoint that loses one of its 9 Pollen wins or 15 control gates. Use the 5.41 mph scout as a teacher—not as the deployment baseline.</div></section>"
             if focus_task == "race5"
             else "<section class='next-move'><span>RECOMMENDED NEXT MOVE</span><div><strong>Start from the qualified overall leader.</strong> Preserve its passing gates while optimizing the weakest Pollen-relative metric.</div></section>"
         )

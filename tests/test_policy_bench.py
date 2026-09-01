@@ -329,6 +329,12 @@ class PolicyBenchTests(unittest.TestCase):
         evaluation = {
             "profile": "race-5mph",
             "phases": {
+                "settle": {
+                    "end_abs_forward_speed_mps": 0.002,
+                    "forward_distance_m": 0.01,
+                    "tilt_max_deg": 6.0,
+                    "trunk_height_mean_m": 0.12,
+                },
                 "cruise": {
                     "steady_mean_forward_speed_mps": 0.34,
                     "yaw_change_deg": 12.0,
@@ -375,12 +381,14 @@ class PolicyBenchTests(unittest.TestCase):
                     "yaw_change_deg": 8.0,
                     "tilt_max_deg": 12.0,
                     "steady_mean_abs_lateral_speed_mps": 0.01,
+                    "max_lateral_drift_ft": 0.25,
                     "trunk_height_mean_m": 0.11,
                 },
             },
         }
         score = policy_bench.score_evaluation(evaluation, "race5")
         self.assertTrue(score["qualified"])
+        self.assertTrue(score["qualification_gates"]["idle_hold"]["passed"])
         self.assertTrue(score["five_mph_goal_reached"])
         self.assertGreater(score["overall"], 80.0)
         self.assertGreaterEqual(score["performance"]["top_speed_mph"], 5.0)
@@ -448,6 +456,33 @@ class PolicyBenchTests(unittest.TestCase):
         self.assertFalse(score["qualification_gates"]["turn_left"]["passed"])
         self.assertFalse(score["qualification_gates"]["turn_right"]["passed"])
 
+    def test_race5_rejects_policy_that_creeps_at_zero_command(self) -> None:
+        evaluation = {
+            "profile": "race-5mph",
+            "phases": {
+                "settle": {
+                    "end_abs_forward_speed_mps": 0.2,
+                    "forward_distance_m": 0.4,
+                    "tilt_max_deg": 10.0,
+                    "trunk_height_mean_m": 0.115,
+                },
+                "race": {
+                    "duration_s": 8.0,
+                    "steady_mean_world_forward_speed_mps": 1.2,
+                    "peak_world_forward_speed_mps": 1.4,
+                    "acceleration_first_second_mps2": 0.5,
+                    "yaw_change_deg": 5.0,
+                    "tilt_max_deg": 10.0,
+                    "steady_mean_abs_lateral_speed_mps": 0.01,
+                    "trunk_height_mean_m": 0.115,
+                },
+            },
+        }
+        score = policy_bench.score_evaluation(evaluation, "race5")
+        self.assertFalse(score["qualification_gates"]["idle_hold"]["passed"])
+        self.assertFalse(score["simulation_champion_eligible"])
+        self.assertFalse(score["performance"]["idle_hold_passed"])
+
     def test_race5_rejects_sideways_speed_on_long_course(self) -> None:
         evaluation = {
             "profile": "race-5mph",
@@ -485,6 +520,29 @@ class PolicyBenchTests(unittest.TestCase):
         self.assertFalse(score["qualification_gates"]["long_run_heading"]["passed"])
         self.assertFalse(score["qualification_gates"]["long_run_drift"]["passed"])
         self.assertFalse(score["qualification_gates"]["a_to_b_100ft"]["passed"])
+
+    def test_race5_straightness_uses_cross_track_not_swizzle_sway(self) -> None:
+        evaluation = {
+            "profile": "race-5mph",
+            "phases": {
+                "race": {
+                    "duration_s": 8.0,
+                    "steady_mean_world_forward_speed_mps": 1.0,
+                    "peak_world_forward_speed_mps": 1.2,
+                    "acceleration_first_second_mps2": 0.5,
+                    "yaw_change_deg": 10.0,
+                    "tilt_max_deg": 12.0,
+                    "steady_mean_abs_lateral_speed_mps": 0.20,
+                    "max_lateral_drift_ft": 0.4,
+                    "trunk_height_mean_m": 0.11,
+                }
+            },
+        }
+        score = policy_bench.score_evaluation(evaluation, "race5")
+        self.assertTrue(score["qualification_gates"]["lateral_drift"]["passed"])
+        evaluation["phases"]["race"]["max_lateral_drift_ft"] = 0.8
+        failed = policy_bench.score_evaluation(evaluation, "race5")
+        self.assertFalse(failed["qualification_gates"]["lateral_drift"]["passed"])
 
     def test_race5_reports_a_to_b_win_separately_from_control_qualification(self) -> None:
         candidate = {
