@@ -240,6 +240,33 @@ class PolicyBenchServerTests(unittest.TestCase):
         )
         self.assertEqual(result["policy_sha256"], self.manifest["artifacts"]["policy"]["sha256"])
 
+    def test_product_play_passes_bounded_launch_assist_profile(self) -> None:
+        manifest_path = (
+            self.state / "runs" / self.manifest["run_id"] / "manifest.json"
+        )
+        manifest = json.loads(manifest_path.read_text())
+        manifest["arena_preview"] = {
+            "launch_assist": {
+                "yaw_command": -0.3,
+                "start_s": 0.18,
+                "duration_s": 0.08,
+                "count": 3,
+                "gap_s": 0.10,
+            }
+        }
+        manifest_path.write_text(json.dumps(manifest))
+
+        result = server.ProcessManager(self.bench).launch_simulator(
+            self.manifest["run_id"]
+        )
+        params = parse_qs(urlsplit(result["open_url"]).query)
+
+        self.assertEqual(params["line_launch_tap_wz"], ["-0.3"])
+        self.assertEqual(params["line_launch_tap_start_s"], ["0.18"])
+        self.assertEqual(params["line_launch_tap_duration_s"], ["0.08"])
+        self.assertEqual(params["line_launch_tap_count"], ["3"])
+        self.assertEqual(params["line_launch_tap_gap_s"], ["0.1"])
+
     def test_compatible_roller_policy_uses_universal_product_simulator(self) -> None:
         hop_dir = self.root / "logs" / "roller_hop" / "hop-a"
         hop_dir.mkdir(parents=True)

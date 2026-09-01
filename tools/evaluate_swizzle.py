@@ -111,6 +111,12 @@ RACE_SCREEN_PHASES = (
     Phase("max_speed", 20.0, 0.80, reset_before=True),
 )
 
+# Reproduces opening the browser arena and touching only steering. This probes
+# policies such as V47 that move despite a zero forward command.
+IDLE_LAUNCH_PHASES = (
+    Phase("idle_launch", 20.0, 0.0, reset_before=True),
+)
+
 
 def quat_to_yaw(q: np.ndarray) -> float:
     w, x, y, z = q
@@ -121,6 +127,28 @@ def quat_tilt(q: np.ndarray) -> float:
     w, x, y, z = q
     up_z = 1.0 - 2.0 * (x * x + y * y)
     return math.acos(float(np.clip(up_z, -1.0, 1.0)))
+
+
+def launch_yaw_pulse(
+    phase_time_s: float,
+    start_time_s: float,
+    yaw_command: float,
+    pulse_duration_s: float,
+    pulse_count: int,
+    pulse_gap_s: float,
+) -> float:
+    """Return a launch-only yaw command that mimics discrete arrow-key taps."""
+    if yaw_command == 0.0 or pulse_duration_s <= 0.0 or pulse_count <= 0:
+        return 0.0
+    elapsed_s = phase_time_s - max(0.0, start_time_s)
+    if elapsed_s < 0.0:
+        return 0.0
+    pulse_period_s = pulse_duration_s + max(0.0, pulse_gap_s)
+    pulse_index = int(elapsed_s / pulse_period_s)
+    if pulse_index >= pulse_count:
+        return 0.0
+    pulse_time_s = elapsed_s - pulse_index * pulse_period_s
+    return yaw_command if pulse_time_s < pulse_duration_s else 0.0
 
 
 def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
@@ -316,9 +344,25 @@ def main() -> None:
     parser.add_argument("--line-lateral-kp", type=float, default=0.10)
     parser.add_argument("--line-yaw-kd", type=float, default=0.08)
     parser.add_argument("--line-max-wz", type=float, default=0.18)
+    parser.add_argument("--line-launch-bias-wz", type=float, default=0.0)
+    parser.add_argument("--line-launch-bias-distance", type=float, default=1.5)
+    parser.add_argument("--command-max-wz", type=float, default=0.30)
+    parser.add_argument(
+        "--launch-yaw-command",
+        type=float,
+        default=0.0,
+        help="Launch-only yaw command; negative mimics tapping right",
+    )
+    parser.add_argument("--launch-yaw-start", type=float, default=0.0)
+    parser.add_argument("--launch-yaw-pulse-duration", type=float, default=0.10)
+    parser.add_argument("--launch-yaw-pulse-count", type=int, default=0)
+    parser.add_argument("--launch-yaw-pulse-gap", type=float, default=0.10)
     parser.add_argument(
         "--profile",
-        choices=("swizzle", "sprint", "sprint-extended", "race", "race-5mph", "race-screen"),
+        choices=(
+            "swizzle", "sprint", "sprint-extended", "race", "race-5mph",
+            "race-screen", "idle-launch",
+        ),
         default="swizzle",
     )
     args = parser.parse_args()
@@ -401,6 +445,7 @@ def main() -> None:
         "race": RACE_PHASES,
         "race-5mph": RACE5_PHASES,
         "race-screen": RACE_SCREEN_PHASES,
+        "idle-launch": IDLE_LAUNCH_PHASES,
     }[args.profile]
     for phase in phases:
         if phase.reset_before:
@@ -422,14 +467,40 @@ def main() -> None:
                 )
                 lateral_error = float(data.qpos[qpos_adr + 1]) - phase_start_y
                 yaw_rate = float(data.qvel[qvel_adr + 5])
+                launch_distance = max(
+                    0.0, float(data.qpos[qpos_adr]) - phase_start_x
+                )
+                launch_bias_scale = max(
+                    0.0,
+                    1.0 - launch_distance / max(1e-6, args.line_launch_bias_distance),
+                )
                 auto_steering = float(np.clip(
-                    -args.line_yaw_kp * yaw_error
+                    args.line_launch_bias_wz * launch_bias_scale
+                    - args.line_yaw_kp * yaw_error
                     - args.line_lateral_kp * lateral_error
                     - args.line_yaw_kd * yaw_rate,
                     -args.line_max_wz,
                     args.line_max_wz,
                 ))
-                controller.set_vel_cmd(phase.command_x, 0.0, auto_steering)
+            launch_steering = 0.0
+            if phase.name in {"race", "max_speed", "idle_launch"}:
+                launch_steering = launch_yaw_pulse(
+                    step * control_dt,
+                    args.launch_yaw_start,
+                    args.launch_yaw_command,
+                    args.launch_yaw_pulse_duration,
+                    args.launch_yaw_pulse_count,
+                    args.launch_yaw_pulse_gap,
+                )
+            controller.set_vel_cmd(
+                phase.command_x,
+                0.0,
+                float(np.clip(
+                    phase.heading_error + auto_steering + launch_steering,
+                    -args.command_max_wz,
+                    args.command_max_wz,
+                )),
+            )
             action = controller.infer()
             controller.apply_action(action)
             for _ in range(decimation):
@@ -524,6 +595,15 @@ def main() -> None:
             "lateral_kp": args.line_lateral_kp,
             "yaw_kd": args.line_yaw_kd,
             "max_wz": args.line_max_wz,
+            "launch_bias_wz": args.line_launch_bias_wz,
+            "launch_bias_distance_m": args.line_launch_bias_distance,
+        },
+        "launch_yaw_pulses": {
+            "command": args.launch_yaw_command,
+            "start_s": args.launch_yaw_start,
+            "duration_s": args.launch_yaw_pulse_duration,
+            "count": args.launch_yaw_pulse_count,
+            "gap_s": args.launch_yaw_pulse_gap,
         },
         "phases": all_results,
     }

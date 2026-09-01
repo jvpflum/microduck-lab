@@ -681,6 +681,25 @@ class ProcessManager:
                     continue
                 if low <= value <= high:
                     params[query_key] = f"{value:g}"
+        launch_assist = (
+            arena_preview.get("launch_assist", {})
+            if isinstance(arena_preview, dict)
+            else {}
+        )
+        if isinstance(launch_assist, dict):
+            for key, query_key, low, high in (
+                ("yaw_command", "line_launch_tap_wz", -0.30, 0.30),
+                ("start_s", "line_launch_tap_start_s", 0.0, 3.0),
+                ("duration_s", "line_launch_tap_duration_s", 0.02, 1.0),
+                ("count", "line_launch_tap_count", 0.0, 10.0),
+                ("gap_s", "line_launch_tap_gap_s", 0.0, 1.0),
+            ):
+                try:
+                    value = float(launch_assist[key])
+                except (KeyError, TypeError, ValueError):
+                    continue
+                if low <= value <= high:
+                    params[query_key] = f"{value:g}"
         if "period" in preview:
             params["preview_period"] = preview["period"]
             params["preview_end"] = preview["end"]
