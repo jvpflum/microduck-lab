@@ -213,6 +213,49 @@ class PolicyBenchTests(unittest.TestCase):
         self.assertIn("__CONTROL_TOKEN__", content)
         self.assertNotIn("https://", content)
 
+    def test_test_roster_requires_hash_verified_policy_snapshots(self) -> None:
+        manifests = []
+        configured = []
+        for index in range(3):
+            run_id = f"race5-comparison-{index}"
+            policy_path = self.state / "runs" / run_id / "artifacts" / "policy.onnx"
+            policy_path.parent.mkdir(parents=True)
+            policy_path.write_bytes(f"policy-{index}".encode())
+            manifests.append(
+                {
+                    "run_id": run_id,
+                    "task": "race5",
+                    "experiment_label": f"comparison-{index}",
+                    "source_run_dir": str(self.run_dir),
+                    "artifacts": {
+                        "policy": {
+                            "path": str(policy_path),
+                            "sha256": policy_bench.sha256(policy_path),
+                        }
+                    },
+                }
+            )
+            configured.append(
+                {
+                    "run_id": run_id,
+                    "role": f"role-{index}",
+                    "physics": "wheel friction 0.003",
+                    "sustained_mph": 2.0 + index,
+                    "top_mph": 2.5 + index,
+                }
+            )
+        registry = {"tasks": {"race5": {"test-roster": configured}}}
+        rendered = policy_bench.render_test_roster(registry, manifests, "race5")
+        self.assertEqual(rendered.count("Try in arena"), 3)
+        self.assertIn("TEST #1", rendered)
+        self.assertIn("TEST #3", rendered)
+        self.assertIn("wheel friction 0.003", rendered)
+
+        Path(manifests[1]["artifacts"]["policy"]["path"]).write_bytes(b"tampered")
+        rendered = policy_bench.render_test_roster(registry, manifests, "race5")
+        self.assertEqual(rendered.count("Try in arena"), 2)
+        self.assertIn("Policy hash unavailable", rendered)
+
     def test_legacy_internal_flip_id_is_presented_as_front_flip(self) -> None:
         self.assertEqual(policy_bench.display_task_name("backflip"), "Front flip")
         self.assertEqual(

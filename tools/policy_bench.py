@@ -97,6 +97,94 @@ def race5_advances_incumbent(
     )
 
 
+def render_test_roster(
+    registry: dict[str, Any],
+    manifests: list[dict[str, Any]],
+    task: str,
+) -> str:
+    """Render an operator-selected three-model comparison roster.
+
+    The roster is deliberately separate from the verified-physics ranking: it
+    may include a research replay with different physics, but every card must
+    point at an immutable, hash-verified ONNX snapshot before Play is enabled.
+    """
+    configured = registry.get("tasks", {}).get(task, {}).get("test-roster", [])
+    if not isinstance(configured, list):
+        return ""
+    by_id = {manifest.get("run_id"): manifest for manifest in manifests}
+    cards = []
+    medals = ("🥇", "🥈", "🥉")
+    for index, configured_entry in enumerate(configured[:3]):
+        entry = (
+            {"run_id": configured_entry}
+            if isinstance(configured_entry, str)
+            else configured_entry
+        )
+        if not isinstance(entry, dict):
+            continue
+        run_id = str(entry.get("run_id", ""))
+        manifest = by_id.get(run_id)
+        if manifest is None or manifest.get("task") != task:
+            continue
+        policy = manifest.get("artifacts", {}).get("policy")
+        policy_path = Path(policy.get("path", "")) if isinstance(policy, dict) else None
+        playable = bool(
+            policy_path
+            and policy_path.is_file()
+            and policy.get("sha256")
+            and sha256(policy_path) == policy["sha256"]
+        )
+        label = str(
+            entry.get("label")
+            or display_experiment_label(
+                task,
+                str(manifest.get("experiment_label") or Path(manifest["source_run_dir"]).name),
+            )
+        )
+        role = str(entry.get("role") or f"Comparison model {index + 1}")
+        physics = str(entry.get("physics") or "Physics profile not recorded")
+        sustained = entry.get("sustained_mph")
+        top = entry.get("top_mph")
+        speed_metric = str(entry.get("speed_metric") or "sustained")
+        speed_copy = "Recorded speed unavailable"
+        try:
+            if sustained is not None and top is not None:
+                speed_copy = (
+                    f"{float(sustained):.2f} mph {speed_metric} · {float(top):.2f} mph peak"
+                )
+        except (TypeError, ValueError):
+            pass
+        note = str(entry.get("note") or "Immutable Policy Bench snapshot")
+        actions = (
+            f"<button class='play primary-action' data-run-id='{html.escape(run_id)}' "
+            f"data-label='Try {html.escape(label)}'>Try in arena</button>"
+            if playable
+            else "<button class='secondary' disabled>Policy hash unavailable</button>"
+        )
+        actions += (
+            f"<a class='text-action' href='runs/{html.escape(run_id)}/report.html'>View details</a>"
+        )
+        cards.append(
+            f"<article class='podium-card {'winner' if index == 0 else ''}'>"
+            f"<div class='podium-rank'>{medals[index]} TEST #{index + 1}</div>"
+            f"<span class='podium-status {'good' if playable else 'bad'}'>{html.escape(role)}</span>"
+            f"<h3>{html.escape(label)}</h3>"
+            f"<div class='podium-score'><strong>{html.escape(str(entry.get('headline', 'READY' if playable else 'BLOCKED')))}</strong>"
+            "<span>comparison slot</span></div>"
+            f"<p class='podium-delta'>{html.escape(physics)}</p>"
+            f"<p class='podium-outcome'>{html.escape(speed_copy)} · {html.escape(note)}</p>"
+            f"<div class='podium-actions'>{actions}</div></article>"
+        )
+    if not cards:
+        return ""
+    return (
+        "<div class='test-roster-heading'><p class='eyebrow'>PINNED TEST ROSTER</p>"
+        "<p class='section-note'>Comparison slots are operator-selected. Physics labels are authoritative; "
+        "the frictionless replay is not an official-friction record.</p></div>"
+        "<div class='podium-grid test-roster-grid'>" + "".join(cards) + "</div>"
+    )
+
+
 def sprint_baseline_comparison(
     evaluation: dict[str, Any], baseline: dict[str, Any]
 ) -> dict[str, Any]:
@@ -1760,7 +1848,13 @@ class Bench:
                                 score = calculated.get("overall")
                     except (OSError, KeyError, TypeError, json.JSONDecodeError):
                         pass
-                version_name = "Factory release" if manifest.get("experiment_kind") == "factory" else f"Iteration {manifest.get('latest_iteration')}"
+                version_name = (
+                    "Factory release"
+                    if manifest.get("experiment_kind") == "factory"
+                    else f"Iteration {manifest['latest_iteration']}"
+                    if manifest.get("latest_iteration") is not None
+                    else "Composite ONNX"
+                )
                 snapshots.append(
                     "<article class='saved-model'>"
                     "<div class='saved-model-title'>"
@@ -1787,6 +1881,9 @@ class Bench:
             if latest.get("task") in {"race", "race5"}:
                 result_banner = race_dashboard_verdict(run_evaluations.get(latest["run_id"]))
             latest_iteration = max((item.get("latest_iteration") for item in group if item.get("latest_iteration") is not None), default=None)
+            latest_iteration_label = (
+                f"{latest_iteration:,}" if latest_iteration is not None else "Composite ONNX"
+            )
             if state == "active":
                 active_rows.append(
                     "<article class='run-card'>"
@@ -1815,7 +1912,7 @@ class Bench:
                 "title='Score the exported ONNX in Pollen CPU MuJoCo'>Evaluate</button></div></div>"
                 f"{result_banner}"
                 "<div class='run-stats'>"
-                f"<div><small>{'Source' if is_factory else 'Latest iteration'}</small><strong>{'Pollen official' if is_factory else f'{latest_iteration:,}'}</strong></div>"
+                f"<div><small>{'Source' if is_factory else 'Latest iteration'}</small><strong>{'Pollen official' if is_factory else latest_iteration_label}</strong></div>"
                 f"<div><small>Saved models</small><strong>{len(distinct_versions)}</strong></div>"
                 f"<div><small>Skill</small><strong>{html.escape(display_task_name(newest['task']))}</strong></div>"
                 f"<div><small>Upstream</small><strong>{html.escape(str(latest.get('source', {}).get('upstream', {}).get('commit') or 'unknown')[:8])}</strong></div></div>"
@@ -2317,6 +2414,7 @@ class Bench:
                 "</div>"
                 "<p>Uses wheel frictionloss 0.000 exactly as evaluated. This is a research replay, not an official Race5 or V11 replacement.</p></div>"
             )
+        test_roster_html = render_test_roster(registry, all_manifests, focus_task)
         content = (
             "<header class='product-header'><div class='brand-lockup'>"
             "<div class='duck-mark' aria-hidden='true'><span>DW</span></div><div><p class='eyebrow'>ROBOT LEARNING COMMAND</p>"
@@ -2341,15 +2439,18 @@ class Bench:
             "<div class='section-heading'><div><p class='muted'>In-progress checkpoints open in Pollen’s Mjlab/Viser training viewer. Exported factory policies open in Pollen’s browser arena.</p><p class='muted'><strong>Remote SSH:</strong> forward 8080-8085 and 8090,8092-8096 in addition to dashboard port 8091, then reload this page.</p></div>"
             "<button id='stop-all-viewers' class='secondary' type='button' disabled>Stop all</button></div>"
             "<div id='viewer-sessions' class='session-grid'><p>No simulations open.</p></div></div></section>"
-            f"<section id='runs'><div class='section-title'><div><p class='eyebrow'>SPEED SCOREBOARD</p><h2>{'Top 3 verified-speed checkpoints' if focus_task == 'race5' else html.escape(display_task_name(focus_task)) + ' podium'}</h2></div>"
-            "<p class='section-note'>Ranked by official-physics verified top speed. Control status is shown on every card; only a control-qualified run can auto-promote as the all-around racer.</p></div>"
+            f"<section id='runs'><div class='section-title'><div><p class='eyebrow'>SPEED SCOREBOARD</p><h2>{'Top 3 comparison models' if focus_task == 'race5' and test_roster_html else ('Top 3 verified-speed checkpoints' if focus_task == 'race5' else html.escape(display_task_name(focus_task)) + ' podium')}</h2></div>"
+            "<p class='section-note'>The pinned comparison roster is for direct testing. The verified ranking below remains official-friction-only and controls automatic promotion.</p></div>"
             f"{current_king_html}"
             f"{baseline_reference_html}"
             f"<div class='scoreboard-verdict {verdict_tone}'><strong>{html.escape(scoreboard_verdict)}</strong><span>{html.escape(scoreboard_detail)}</span></div>"
             + fastest_speed_html
             + speed_scout_html
+            + test_roster_html
+            + ("<details class='all-experiments verified-ranking'><summary>Official-friction verified speed ranking <span>3</span></summary>" if test_roster_html else "")
             + "<div class='podium-grid'>" + "".join(podium_cards) + "</div>"
-            f"<details class='all-experiments'><summary>All experiments and unscored runs <span>{archive_count}</span></summary>"
+            + ("</details>" if test_roster_html else "")
+            + f"<details class='all-experiments'><summary>All experiments and unscored runs <span>{archive_count}</span></summary>"
             "<p class='muted'>Duplicates, raw snapshots, smoke checks, and unscored history are kept here for audit—not mixed into the leaderboard.</p>"
             "<div class='finished-grid'>" + "".join(finished_rows) + "</div></details></section>"
             + "<section id='assistant'><div class='section-title'><div><p class='eyebrow'>COPILOT</p><h2>Dark Wing Copilot</h2></div></div><div class='panel assistant-panel'><div id='chat-log' class='chat-log'>"
