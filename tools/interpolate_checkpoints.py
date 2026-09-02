@@ -40,8 +40,13 @@ def main() -> None:
     parser.add_argument("right", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--alpha", type=float, required=True)
+    parser.add_argument(
+        "--allow-extrapolation",
+        action="store_true",
+        help="Allow alpha outside [0, 1] for a controlled weight-space line search",
+    )
     args = parser.parse_args()
-    if not 0.0 <= args.alpha <= 1.0:
+    if not args.allow_extrapolation and not 0.0 <= args.alpha <= 1.0:
         raise SystemExit("--alpha must be between 0 and 1")
 
     left: dict[str, Any] = torch.load(args.left, map_location="cpu", weights_only=False)

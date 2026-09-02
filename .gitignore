@@ -1,10 +1,10 @@
 .tools/
 __pycache__/
 artifacts/
-reports/*.json
-reports/*.log
-reports/*.png
-reports/demonstrations/
+# Generated searches can contain thousands of multi-megabyte policies. Curated
+# public artifacts belong under releases/; already-tracked historical reports
+# remain tracked normally.
+reports/**
 policy-bench/
 baselines/
 checkpoints/

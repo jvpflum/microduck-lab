@@ -1,0 +1,11 @@
+82b68f49e7c2f76733f436c23415e7410418342bea259053803bb902fa0dec15  ./manifest.json
+1a6caccaa90ace413e9a2a9bfd70d85f686cf3b7bed22a4b81120da98cd77c35  ./v56-i10-line-speed/evaluation-scrubbed.json
+a39596dd05f77bff52a2b7b7d9c624ef023c75db7f8f9f704ceb02f56692f974  ./v56-i10-line-speed/policy.onnx
+f282375f7bfef9d11b2f888564a57f8252fe2e6c47014ec0f8a0fd69ab498300  ./v57b-i50-frontier-speed/evaluation-scrubbed.json
+421b3a7471038eb2e3f54cd16002bc518860bd8e02edb7b1feb836a4c8946954  ./v57b-i50-frontier-speed/policy.onnx
+02ad0c3a0afc3e21958fe19c8a04d2c3cc5102fe0e9a8adf1eeca7662b88a3d0  ./v58-i20-peak-line/evaluation-scrubbed.json
+5c56d378ec4066623bd801de65c699ea186b546393745a3fbea88fd7e3b45a7d  ./v58-i20-peak-line/policy.onnx
+48e2995e012ba8f12fc1f3500c2c58bfb2b6190bda80dc4c98359d3a45c32c50  ./v59-i99-promoted-speed-leader/evaluation-scrubbed.json
+a8ad436e1d70d070e0b55f16390a92357601b4195b06316208e9bdca55908887  ./v59-i99-promoted-speed-leader/policy.onnx
+5d9ad1026de881ba4cb8f7193cff30bd8f9134709aa7cba9befbf60592a35249  ./v60-i20-balanced/evaluation-scrubbed.json
+79b26f6166a261419b9ff976e7ce32ee5c17d486fd0a09926ecbb553be7a424d  ./v60-i20-balanced/policy.onnx

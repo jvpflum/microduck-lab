@@ -41,29 +41,60 @@ def main() -> None:
     parser.add_argument("checkpoint_scaffold", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--exploration-std", type=float, default=0.10)
+    parser.add_argument(
+        "--initializer-prefix",
+        default="",
+        help="Import a standard actor embedded under this ONNX initializer prefix",
+    )
+    parser.add_argument(
+        "--verify-command-x",
+        type=float,
+        default=None,
+        help="Set command_x in the equivalence vector (needed for a routed composite)",
+    )
+    parser.add_argument("--verify-command-yaw", type=float, default=0.0)
+    parser.add_argument(
+        "--normalizer-eps",
+        type=float,
+        default=1.0e-2,
+        help="EmpiricalNormalization epsilon added to stored _std at inference",
+    )
     args = parser.parse_args()
 
     model = onnx.load(args.factory_onnx)
     initializers = _initializers(model)
-    missing = [name for name in ("obs_normalizer._mean", "onnx::Div_24", *ACTOR_TENSORS) if name not in initializers]
+    source_name = lambda name: f"{args.initializer_prefix}{name}"
+    missing = [
+        source_name(name)
+        for name in ("obs_normalizer._mean", "onnx::Div_24", *ACTOR_TENSORS)
+        if source_name(name) not in initializers
+    ]
     if missing:
         raise SystemExit(f"Factory ONNX is missing expected tensors: {missing}")
 
     checkpoint = torch.load(args.checkpoint_scaffold, map_location="cpu", weights_only=False)
     actor = checkpoint["actor_state_dict"]
     for name in ACTOR_TENSORS:
-        value = torch.from_numpy(initializers[name]).to(dtype=actor[name].dtype)
+        value = torch.from_numpy(initializers[source_name(name)]).to(dtype=actor[name].dtype)
         if value.shape != actor[name].shape:
             raise SystemExit(f"Shape mismatch for {name}: ONNX {tuple(value.shape)}, checkpoint {tuple(actor[name].shape)}")
         actor[name] = value
 
-    mean = torch.from_numpy(initializers["obs_normalizer._mean"]).to(dtype=actor["obs_normalizer._mean"].dtype)
-    std = torch.from_numpy(initializers["onnx::Div_24"]).to(dtype=actor["obs_normalizer._std"].dtype)
-    if mean.shape != actor["obs_normalizer._mean"].shape or std.shape != actor["obs_normalizer._std"].shape:
+    mean = torch.from_numpy(initializers[source_name("obs_normalizer._mean")]).to(dtype=actor["obs_normalizer._mean"].dtype)
+    divisor = torch.from_numpy(initializers[source_name("onnx::Div_24")]).to(dtype=actor["obs_normalizer._std"].dtype)
+    if mean.shape != actor["obs_normalizer._mean"].shape or divisor.shape != actor["obs_normalizer._std"].shape:
         raise SystemExit("Factory normalizer is incompatible with the 61D Sprint actor")
+    # Torch's EmpiricalNormalization divides by (_std + eps). The constant
+    # folded into a standard RSL-RL ONNX export is therefore that complete
+    # divisor, not the raw stored _std buffer. Storing the ONNX value directly
+    # would add epsilon a second time when the imported checkpoint is run or
+    # re-exported.
+    stored_std = divisor - args.normalizer_eps
+    if torch.any(stored_std <= 0):
+        raise SystemExit("ONNX normalizer divisor is not larger than normalizer epsilon")
     actor["obs_normalizer._mean"] = mean
-    actor["obs_normalizer._std"] = std
-    actor["obs_normalizer._var"] = std.square()
+    actor["obs_normalizer._std"] = stored_std
+    actor["obs_normalizer._var"] = stored_std.square()
     # The deployed ONNX does not contain the training sample count.  A large
     # count preserves its known-good normalization during a short fine-tune;
     # Sprint-v1 accidentally retained the tiny smoke count and immediately
@@ -82,20 +113,26 @@ def main() -> None:
     checkpoint["infos"] = {
         "warmstart": "pollen-factory-roller-onnx",
         "factory_onnx": str(args.factory_onnx.resolve()),
+        "initializer_prefix": args.initializer_prefix,
         "checkpoint_scaffold": str(args.checkpoint_scaffold.resolve()),
         "optimizer_reset": True,
         "actor_normalizer_count": 1_000_000_000,
+        "normalizer_eps": args.normalizer_eps,
     }
 
     # Independent fixed-vector check of every imported deterministic actor
     # tensor before writing the checkpoint.
     rng = np.random.default_rng(20260830)
-    obs = initializers["obs_normalizer._mean"] + initializers["onnx::Div_24"] * rng.normal(
+    obs = initializers[source_name("obs_normalizer._mean")] + initializers[source_name("onnx::Div_24")] * rng.normal(
         scale=0.5, size=(1, 61)
     ).astype(np.float32)
+    if args.verify_command_x is not None:
+        obs[0, 48] = args.verify_command_x
+        obs[0, 49] = 0.0
+        obs[0, 50] = args.verify_command_yaw
     session = ort.InferenceSession(str(args.factory_onnx), providers=["CPUExecutionProvider"])
     expected = session.run(None, {"obs": obs.astype(np.float32)})[0]
-    value = (torch.from_numpy(obs) - mean) / std
+    value = (torch.from_numpy(obs) - mean) / (stored_std + args.normalizer_eps)
     for index, prefix in enumerate(("mlp.0", "mlp.2", "mlp.4", "mlp.6")):
         value = torch.nn.functional.linear(value, actor[f"{prefix}.weight"], actor[f"{prefix}.bias"])
         if index < 3:

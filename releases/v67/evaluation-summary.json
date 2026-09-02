@@ -1,0 +1,42 @@
+{
+  "profile": "race-5mph",
+  "wheel_frictionloss": 0.003,
+  "current_limit_a": 1.75,
+  "pollen_dimensions_won": 9,
+  "pollen_dimensions_total": 9,
+  "qualification_gates_passed": 15,
+  "qualification_gates_total": 15,
+  "idle_end_speed_mph": 0.0002,
+  "cruise_speed_mph": 0.762,
+  "stop_time_s": 0.88,
+  "turn_left_deg": 317.97,
+  "turn_right_deg": -556.47,
+  "sustained_speed_mph": 2.240,
+  "long_run_sustained_speed_mph": 2.727,
+  "verified_top_speed_mph": 3.060,
+  "first_second_acceleration_mps2": 0.4714,
+  "finish_time_100ft_s": 25.8153,
+  "trap_speed_100ft_mph": 2.8928,
+  "race_max_cross_track_ft": 0.26,
+  "long_run_max_drift_ft": 0.78,
+  "long_run_max_heading_error_deg": 10.22,
+  "long_run_max_tilt_deg": 17.28,
+  "long_run_grounded_fraction": 0.6519,
+  "high_speed_brake_time_s": 3.30,
+  "high_speed_brake_tilt_deg": 12.23,
+  "high_speed_brake_grounded_fraction": 1.0,
+  "agility_score": 72.81,
+  "auto_steering_percent": 19.60,
+  "five_mph_goal_reached": false,
+  "line_hold": {
+    "yaw_kp": 0.70,
+    "lateral_kp": 0.22,
+    "yaw_kd": 0.07,
+    "max_correction": 0.15
+  },
+  "joint_fusion": {
+    "steering_authority": 0.25,
+    "propulsion_authority": 1.05,
+    "head_authority": 0.0
+  }
+}

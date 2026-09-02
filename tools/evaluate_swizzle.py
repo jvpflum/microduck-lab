@@ -103,6 +103,19 @@ RACE5_PHASES = (
     Phase("max_speed", 90.0, 0.80, reset_before=True),
 )
 
+# Deployment retention battery used by the V52-V65 transition sweeps.  The
+# low- and high-speed braking phases intentionally do not reset: they measure
+# the policy's response from the velocity produced by the preceding phase.
+DRIVE_RETENTION_PHASES = (
+    Phase("settle", 2.0, 0.0),
+    Phase("low_straight", 6.0, 0.30),
+    Phase("brake_low", 5.0, 0.0),
+    Phase("turn_left", 4.0, 0.20, 0.30, reset_before=True),
+    Phase("turn_right", 4.0, 0.20, -0.30, reset_before=True),
+    Phase("launch_high", 12.0, 0.80, reset_before=True),
+    Phase("brake_high", 8.0, 0.0),
+)
+
 # Cheap checkpoint screen used before spending the full retention circuit and
 # 90-second official heat.  Twenty seconds is long enough to reject a policy
 # that begins the same looping failure as v5/v8 while preserving the exact
@@ -163,6 +176,8 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
     tilt = values("tilt")
     separation = values("skate_separation")
     actions = np.asarray([row["action_acc"] for row in rows], dtype=np.float64)
+    action_abs_mean = values("action_abs_mean")
+    action_l2_norm = values("action_l2_norm")
     grounded = values("both_grounded")
     wheel_speed = values("mean_abs_wheel_speed")
     command_x = values("command_x")
@@ -330,6 +345,10 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, float]:
         "mean_abs_wheel_speed_rad_s": float(wheel_speed.mean()),
         "mean_action_acceleration": float(actions.mean()),
         "max_action_acceleration": float(actions.max()),
+        "mean_abs_action": float(action_abs_mean.mean()),
+        "max_mean_abs_action": float(action_abs_mean.max()),
+        "mean_action_l2_norm": float(action_l2_norm.mean()),
+        "max_action_l2_norm": float(action_l2_norm.max()),
     }
 
 
@@ -337,6 +356,12 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("policy", type=Path, help="Normalizer-aware ONNX policy")
     parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument(
+        "--trace-output",
+        type=Path,
+        default=None,
+        help="Optional per-step observation/action trace for router design",
+    )
     parser.add_argument("--current-limit", type=float, default=1.75)
     parser.add_argument("--wheel-friction", type=float, default=0.003)
     parser.add_argument("--line-hold", action="store_true")
@@ -361,7 +386,7 @@ def main() -> None:
         "--profile",
         choices=(
             "swizzle", "sprint", "sprint-extended", "race", "race-5mph",
-            "race-screen", "idle-launch",
+            "race-screen", "idle-launch", "drive-retention",
         ),
         default="swizzle",
     )
@@ -435,6 +460,7 @@ def main() -> None:
     control_dt = CONTROL_DT
     decimation = int(round(control_dt / model.opt.timestep))
     all_results: dict[str, dict[str, float]] = {}
+    all_traces: dict[str, list[dict[str, object]]] = {}
     previous_action = np.zeros(model.nu, dtype=np.float32)
     previous_delta = np.zeros(model.nu, dtype=np.float32)
 
@@ -446,6 +472,7 @@ def main() -> None:
         "race-5mph": RACE5_PHASES,
         "race-screen": RACE_SCREEN_PHASES,
         "idle-launch": IDLE_LAUNCH_PHASES,
+        "drive-retention": DRIVE_RETENTION_PHASES,
     }[args.profile]
     for phase in phases:
         if phase.reset_before:
@@ -454,13 +481,14 @@ def main() -> None:
             previous_delta.fill(0.0)
         controller.set_vel_cmd(phase.command_x, 0.0, phase.heading_error)
         rows: list[dict[str, float]] = []
+        trace_rows: list[dict[str, object]] = []
         phase_start_x = float(data.qpos[qpos_adr])
         phase_start_y = float(data.qpos[qpos_adr + 1])
         phase_start_yaw = quat_to_yaw(data.qpos[qpos_adr + 3 : qpos_adr + 7])
         steps = int(round(phase.duration_s / control_dt))
         for step in range(steps):
             auto_steering = 0.0
-            if args.line_hold and phase.name in {"race", "max_speed"} and phase.command_x > 0.05:
+            if args.line_hold and phase.name in {"race", "max_speed", "launch_high"} and phase.command_x > 0.05:
                 yaw = quat_to_yaw(data.qpos[qpos_adr + 3 : qpos_adr + 7])
                 yaw_error = math.atan2(
                     math.sin(yaw - phase_start_yaw), math.cos(yaw - phase_start_yaw)
@@ -483,7 +511,7 @@ def main() -> None:
                     args.line_max_wz,
                 ))
             launch_steering = 0.0
-            if phase.name in {"race", "max_speed", "idle_launch"}:
+            if phase.name in {"race", "max_speed", "launch_high", "idle_launch"}:
                 launch_steering = launch_yaw_pulse(
                     step * control_dt,
                     args.launch_yaw_start,
@@ -500,6 +528,11 @@ def main() -> None:
                     -args.command_max_wz,
                     args.command_max_wz,
                 )),
+            )
+            trace_observation = (
+                controller.get_observations().copy()
+                if args.trace_output is not None
+                else None
             )
             action = controller.infer()
             controller.apply_action(action)
@@ -549,8 +582,21 @@ def main() -> None:
                         np.mean(np.abs(data.qvel[wheel_dofs])) if wheel_dofs else 0.0
                     ),
                     "action_acc": action_acc,
+                    "action_abs_mean": float(np.mean(np.abs(action))),
+                    "action_l2_norm": float(np.linalg.norm(action)),
                 }
             )
+            if trace_observation is not None:
+                trace_rows.append(
+                    {
+                        "phase_time": (step + 1) * control_dt,
+                        "observation": trace_observation.tolist(),
+                        "action": action.tolist(),
+                        "world_forward_speed": vx,
+                        "world_lateral_speed": vy,
+                        "tilt": quat_tilt(quat),
+                    }
+                )
             # Race-v1 terminates an episode at the finish line. Do not score
             # post-finish wandering that the training environment never sees.
             if (
@@ -569,6 +615,8 @@ def main() -> None:
         # Keep transition data for response/stopping metrics.  Steady-state
         # fields remain available separately for unbiased speed comparison.
         all_results[phase.name] = summarize(rows)
+        if args.trace_output is not None:
+            all_traces[phase.name] = trace_rows
         steady_rows = rows[min(50, max(0, len(rows) - 1)) :]
         steady = summarize(steady_rows or rows)
         for name in (
@@ -612,6 +660,11 @@ def main() -> None:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(output + "\n")
+    if args.trace_output is not None:
+        args.trace_output.parent.mkdir(parents=True, exist_ok=True)
+        args.trace_output.write_text(
+            json.dumps({"policy": str(policy_path), "phases": all_traces}) + "\n"
+        )
 
 
 if __name__ == "__main__":

@@ -17,22 +17,22 @@ on speed **without giving up straight-line control, braking, turning, or
 stability**.
 
 The current all-around champion is
-[`DuckWing V66`](releases/v66/README.md). It is a command-routed fusion of the
-control-aware V11 policy and the transferred RTX 5090 V65 speed policy. In the
-same deterministic CPU MuJoCo race battery, with the exact measured line-hold
-controller and wheel friction applied to both policies, V66 beats Pollen's
-roller baseline on every tracked comparison dimension:
+[`DuckWing V67`](releases/v67/README.md). It keeps V66's command-aware control
+shell, imports straight-line propulsion from the official-friction V47 speed
+specialist, and uses V65's moving brake branch. In deterministic CPU MuJoCo at
+exactly `0.003` wheel frictionloss and `1.75 A`, V67 beats Pollen's roller
+baseline on all nine tracked comparison dimensions:
 
-| Verified race metric | DuckWing V66 | Pollen roller | Improvement |
+| Verified race metric | DuckWing V67 | Pollen roller | Improvement |
 | --- | ---: | ---: | ---: |
-| Sustained forward speed | **2.20 mph** | 1.07 mph | **106.9% faster** |
-| Verified top speed (0.5 s) | **3.02 mph** | 1.28 mph | **135.6% higher** |
-| 100-ft elapsed time | **26.32 s** | 57.59 s | **54.3% sooner** |
-| First-second acceleration | **0.99 mph/s** | 0.72 mph/s | **37.1% higher** |
-| Maximum lateral drift | **0.83 ft** | 1.25 ft | **33.6% less** |
-| Maximum heading error | **10.66°** | 11.06° | **3.7% less** |
+| Sustained forward speed | **2.24 mph** | 1.07 mph | **109.4% faster** |
+| Verified top speed (0.5 s) | **3.06 mph** | 1.28 mph | **139.0% higher** |
+| 100-ft elapsed time | **25.82 s** | 57.59 s | **55.2% sooner** |
+| First-second acceleration | **1.05 mph/s** | 0.72 mph/s | **46.4% higher** |
+| Maximum lateral drift | **0.78 ft** | 1.25 ft | **38.0% less** |
+| Maximum heading error | **10.22°** | 11.06° | **7.6% less** |
 
-V66 passed all **15** retained control checks, including idle hold, cruise,
+V67 passed all **15** retained control checks, including idle hold, cruise,
 braking, both turns, line drift, long-run heading, and long-run upright
 stability. It is a simulation-only result—not a hardware-speed claim—and the
 5 mph target remains the next milestone. Faster experimental policies stay
@@ -45,7 +45,7 @@ unpromoted until they also preserve the full control battery.
   drift, heading, acceleration, and 100-ft result.
 - Repeatable evaluation and ONNX checks so results are shareable and auditable.
 - Separate Spark and Windows/RTX worker workflows for larger training runs.
-- Public V61 and V66 inference exports with checksums and scrubbed measurement
+- Public V61, V66, and V67 inference exports with checksums and scrubbed measurement
   summaries.
 
 ## Requirements
@@ -143,7 +143,7 @@ make race5-smoke
 For an exact continuation from the V11 champion, copy the raw trainer donor
 privately and point the recipe at it; raw `.pt` state is deliberately not
 published. A clean clone can still use every source configuration, test, smoke
-gate, simulator speed test, and the public V61/V66 ONNX evaluation exports.
+gate, simulator speed test, and the public V61/V66/V67 ONNX evaluation exports.
 
 ```bash
 DUCKLAB_RACE5_WARMSTART_CHECKPOINT=/absolute/path/to/v11-model_10.pt \
@@ -156,7 +156,7 @@ what is intentionally excluded from Git.
 
 The next-generation V11-preserving experiment is separate from the general
 Race5 recipe. It rewards usable world-forward speed only while centred and
-aligned with the measured race line, then requires the normal V66 evaluation
+aligned with the measured race line, then requires the normal V67 evaluation
 battery before promotion:
 
 ```bash
@@ -245,13 +245,23 @@ The RTX 5090 transfer made the useful distinction clear:
   high-speed contribution. This preserves the control skills while allowing
   the speed branch to improve the 100-ft result. Its line-hold settings are
   `yaw_kp=0.70`, `lateral_kp=0.14`, `yaw_kd=0.07`, and `max_wz=0.15`.
+- **V67** retains that control shell, uses 25% V47 authority on hip yaw/roll,
+  105% on hip pitch/knee/ankle, and V65 for moving zero-command braking. With
+  line hold `0.70/0.22/0.07/0.15`, it improves every primary V66 race metric,
+  passes all 15 gates, and is the definitive simulation-qualified leader.
+- **V68 research** scored 586 per-joint and controller configurations around
+  V67. The best challenger improved speed, acceleration, drift, tilt, and
+  contact, but its 13.26° heading error exceeded V67's 10.22°; zero candidates
+  passed the no-regression gate. The full result is documented in
+  [the V68 search report](releases/v67/V68-SEARCH.md).
 
 The practical training lesson is to separate capabilities structurally rather
-than forcing one actor to remember incompatible behaviors. The active V18 run
-therefore trains a V57b-guided straight-speed branch at exact `0.003`
-wheel friction and wraps exported checkpoints with the immutable control-aware
-shell. Reward curves diagnose progress, but only the full deployment replay
-decides promotion.
+than forcing one actor to remember incompatible behaviors. V68 also shows that
+post-hoc action fusion has reached a sharp contact-dynamics boundary: the next
+run should train a phase-aware propulsion residual with heading and tilt in the
+optimization objective, while keeping V67's control and brake routes immutable.
+Reward curves diagnose progress, but only the full deployment replay decides
+promotion.
 
 ## Compare and promote policies
 

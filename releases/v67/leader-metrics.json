@@ -1,0 +1,15 @@
+{
+  "wheel_frictionloss": 0.003,
+  "current_limit_a": 1.75,
+  "finished_100ft": true,
+  "finish_time_100ft_s": 25.815320030719594,
+  "sustained_speed_mph": 2.726813210737725,
+  "race_phase_sustained_speed_mph": 2.2402874549,
+  "verified_top_speed_mph": 3.059788255927769,
+  "acceleration_mps2": 0.47135489402527786,
+  "max_drift_ft": 0.7752004153377063,
+  "max_heading_error_deg": 10.22336004175905,
+  "max_tilt_deg": 17.282613320077218,
+  "grounded_fraction": 0.6518936341659952,
+  "stop_time_s": 0.88
+}
