@@ -14,6 +14,7 @@ import secrets
 import signal
 import socket
 import subprocess
+import sys
 import threading
 import shutil
 import time
@@ -24,6 +25,12 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import quote, unquote, urlsplit
 
+TOOLS_ROOT = Path(__file__).resolve().parent
+if str(TOOLS_ROOT) not in sys.path:
+    sys.path.insert(0, str(TOOLS_ROOT))
+
+from agent_runs import load_agent_runs
+from capability_catalog import task_spec, training_tasks
 from policy_bench import (
     Bench,
     DEFAULT_STATE,
@@ -39,43 +46,7 @@ from policy_bench import (
 FACTORY_ARENA_DIST = LAB_ROOT / "upstream" / "microduck-simulator" / "app" / "dist"
 
 
-TASKS = {
-    "race5": {
-        "play_task": "Mjlab-Velocity-Race5-MicroDuck",
-        "train_script": LAB_ROOT / "scripts" / "train-race5-v2.sh",
-        "default_iterations": 150,
-    },
-    "race": {
-        "play_task": "Mjlab-Velocity-Race-MicroDuck",
-        "train_script": LAB_ROOT / "scripts" / "train-race-v1.sh",
-        "default_iterations": 100,
-    },
-    "sprint": {
-        "play_task": "Mjlab-Velocity-Sprint-MicroDuck",
-        "train_script": LAB_ROOT / "scripts" / "train-sprint-probe.sh",
-        "default_iterations": 50,
-    },
-    "swizzle": {
-        "play_task": "Mjlab-Velocity-Swizzle-MicroDuck",
-        "train_script": LAB_ROOT / "scripts" / "train-swizzle.sh",
-        "default_iterations": 8000,
-    },
-    "roller": {
-        "play_task": "Mjlab-Velocity-Flat-MicroDuck-Rollers",
-        "train_script": LAB_ROOT / "scripts" / "train-skate.sh",
-        "default_iterations": 5000,
-    },
-    "walking": {
-        "play_task": "Mjlab-Velocity-Flat-MicroDuck",
-        "train_script": LAB_ROOT / "scripts" / "train-baseline.sh",
-        "default_iterations": 4000,
-    },
-    "backflip": {
-        "play_task": "Mjlab-RollerBackflip-Flat-MicroDuck",
-        "train_script": LAB_ROOT / "scripts" / "train-backflip.sh",
-        "default_iterations": 2500,
-    },
-}
+TASKS = training_tasks()
 
 # The dashboard itself owns 8091. Each simulation gets an isolated Viser and
 # controller pair so selecting one policy can never redirect an existing tab
@@ -562,11 +533,13 @@ class ProcessManager:
                     "candidates": self._training_candidates if detected_training else [],
                 },
                 "resources": resource_status(),
+                "agent_runs": load_agent_runs(),
             }
 
     def run_deployment_check(self, run_id: str) -> dict[str, Any]:
         manifest = self.bench.load_manifest(run_id)
-        if manifest.get("task") not in {"roller", "swizzle", "sprint", "race", "race5", "hop", "backflip"}:
+        spec = task_spec(str(manifest.get("task")))
+        if not spec or not spec.get("evaluator"):
             raise ValueError("Deployment Check is not configured for this policy type")
         if not manifest.get("artifacts", {}).get("policy"):
             raise ValueError("This saved model has no exported ONNX policy yet")
@@ -575,13 +548,7 @@ class ProcessManager:
                 raise ValueError("A Deployment Check is already running for this model")
             self.deployment_checks.add(run_id)
         try:
-            suite = {
-                "hop": "hop-v1",
-                "backflip": "frontflip-v1",
-                "sprint": "sprint-v1",
-                "race": "race-v1",
-                "race5": "race5-v3",
-            }.get(manifest.get("task"), "skating-v1")
+            suite = str(spec["evaluator"]["suite"])
             record = self.bench.evaluate(run_id, suite)
         finally:
             with self.lock:
@@ -605,31 +572,8 @@ class ProcessManager:
         # The browser arena loads an immutable ONNX policy directly. Velocity
         # policies share the same 13-value command/observation contract, so a
         # new skating task must not require its own viewer implementation.
-        if task == "walking":
-            preview = {"slot": "walk", "loco": "legs", "label": "Run"}
-        elif task == "backflip":
-            preview = {
-                "slot": "crouch",
-                "loco": "rollers",
-                "label": "Front Flip",
-                "period": "4.0",
-                "end": "1.0",
-            }
-        elif task in {"roller", "swizzle", "sprint", "race", "race5", "hop"}:
-            preview = {
-                "slot": "drive",
-                "loco": "rollers",
-                "label": {
-                    "roller": "Drive",
-                    "swizzle": "Swizzle",
-                    "sprint": "Sprint",
-                    "race": "Race",
-                    "race5": "Race 5 MPH",
-                    "hop": "Hop",
-                }[task],
-            }
-        else:
-            preview = None
+        spec = task_spec(str(task))
+        preview = dict(spec.get("viewer", {})) if spec else None
         if preview is None:
             raise ValueError(f"Interactive arena preview is not configured for task {task!r}")
         policy = manifest.get("artifacts", {}).get("policy")

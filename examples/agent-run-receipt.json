@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "frontflip-5090-candidate-001",
+  "project": "MicroDuck front flip",
+  "title": "Contact-aware forward rotation candidate",
+  "goal": "Complete an unassisted 360-degree front flip and settle upright without body contact.",
+  "hypothesis": "Separating takeoff, rotation, and landing rewards will improve clean landing rate.",
+  "status": "evaluating",
+  "progress": {"current": 192, "total": 256, "unit": "evaluation episodes"},
+  "metrics": [
+    {"name": "Success rate", "value": 0.82, "unit": "fraction", "direction": "higher"},
+    {"name": "Median rotation", "value": 358.4, "unit": "deg", "direction": "target", "target": 360},
+    {"name": "Body contact", "value": 0.0, "unit": "fraction", "direction": "lower"}
+  ],
+  "artifacts": [],
+  "actions": [
+    {"label": "Open simulation", "url": "http://localhost:8080", "kind": "simulation"}
+  ],
+  "notes": "Example only. A coding agent updates this same run_id as the job progresses."
+}

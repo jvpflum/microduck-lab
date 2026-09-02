@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 .PHONY: bootstrap build-pollen-arena preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke sprint-smoke race5-smoke swizzle-smoke hop-smoke backflip-smoke \
 	verify-artifact verify-skate-artifact evaluate-swizzle evaluate-sprint train-baseline train-skate \
-	train-sprint-probe train-race5 train-race5-v16-constrained train-swizzle train-hop train-backflip evaluate-race5 import-pollen-baselines bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
+	train-sprint-probe train-race5 train-race5-v16-constrained train-swizzle train-hop train-backflip evaluate-race5 import-pollen-baselines v69-search publish-agent-run research-paper bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -15,6 +15,7 @@ preflight:
 
 test:
 	./scripts/test.sh
+	./scripts/test-policy-bench.sh
 
 test-gamepad:
 	./scripts/test-gamepad.sh
@@ -89,6 +90,16 @@ train-backflip:
 
 import-pollen-baselines:
 	./scripts/import-pollen-baselines.sh
+
+v69-search:
+	./scripts/sweep-v69-state-guard.sh
+
+publish-agent-run:
+	@test -n "$(RECEIPT)" || (echo 'Usage: make publish-agent-run RECEIPT=/path/to/receipt.json' >&2; exit 2)
+	./scripts/publish-agent-run.sh "$(RECEIPT)"
+
+research-paper:
+	./scripts/build-research-paper.sh
 
 bench-discover:
 	./scripts/policy-bench.sh discover

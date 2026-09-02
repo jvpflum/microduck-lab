@@ -17,6 +17,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+TOOLS_ROOT = Path(__file__).resolve().parent
+if str(TOOLS_ROOT) not in sys.path:
+    sys.path.insert(0, str(TOOLS_ROOT))
+
+from capability_catalog import task_has_evaluator, task_spec
+from agent_runs import load_agent_runs
+
 
 LAB_ROOT = Path(__file__).resolve().parents[1]
 UPSTREAM = LAB_ROOT / "upstream" / "microduck_rl"
@@ -911,7 +918,8 @@ def infer_task(run_dir: Path) -> str:
 
 def display_task_name(task: str) -> str:
     """Return the operator-facing name for legacy internal task IDs."""
-    return "Front flip" if task == "backflip" else task.replace("_", " ").title()
+    spec = task_spec(task)
+    return str(spec["display_name"]) if spec else task.replace("_", " ").title()
 
 
 def display_experiment_label(task: str, label: str) -> str:
@@ -1634,25 +1642,21 @@ class Bench:
         policy = manifest["artifacts"].get("policy")
         if not policy:
             raise SystemExit(f"Run {run_id} has no exported ONNX policy")
-        if manifest["task"] not in {"swizzle", "roller", "sprint", "race", "race5", "hop", "backflip"}:
+        spec = task_spec(str(manifest["task"]))
+        if not spec or not spec.get("evaluator"):
             raise SystemExit(f"No evaluator is registered for task {manifest['task']!r}")
         policy_path = Path(policy["path"])
         if not policy_path.is_file() or sha256(policy_path) != policy["sha256"]:
             raise SystemExit(f"Policy snapshot is missing or corrupt: {policy_path}")
         output = self.runs_dir / run_id / "evaluations" / f"{suite}.json"
-        evaluator = LAB_ROOT / {
-            "hop": "tools/evaluate_hop.py",
-            "backflip": "tools/evaluate_frontflip.py",
-        }.get(manifest["task"], "tools/evaluate_swizzle.py")
+        evaluator_config = spec["evaluator"]
+        evaluator = LAB_ROOT / evaluator_config["script"]
         uv = LAB_ROOT / ".tools" / "uv" / "bin" / "uv"
         if not uv.is_file():
             raise SystemExit("DuckLab uv environment is missing; run ./scripts/bootstrap.sh")
-        command = [str(uv), "run", str(evaluator), str(policy_path), "--output", str(output)]
-        if manifest["task"] in {"sprint", "race", "race5"}:
-            profile = "race-5mph" if manifest["task"] == "race5" else manifest["task"]
-            command.extend(["--profile", profile])
-        if manifest["task"] == "race5":
-            command.append("--line-hold")
+        command = [str(uv), "run", str(evaluator), str(policy_path)]
+        command.extend(str(value) for value in evaluator_config.get("arguments", []))
+        command.extend(["--output", str(output)])
         subprocess.run(
             command,
             cwd=UPSTREAM,
@@ -1820,6 +1824,53 @@ class Bench:
 
     def render_dashboard(self, active_experiments: set[str] | None = None) -> Path:
         registry = read_json(self.registry_path)
+        agent_receipts = load_agent_runs(self.state_dir / "agent-runs")
+        agent_cards = []
+        for receipt in agent_receipts[:12]:
+            status = str(receipt.get("status", "unknown"))
+            metrics = receipt.get("metrics", [])[:4]
+            metric_html = "".join(
+                "<span><small>" + html.escape(str(metric.get("name", "Metric"))) + "</small><strong>"
+                + html.escape(str(metric.get("value", "—"))) + " "
+                + html.escape(str(metric.get("unit", ""))) + "</strong></span>"
+                for metric in metrics if isinstance(metric, dict)
+            )
+            actions = "".join(
+                f"<a class='button-link {'primary-action' if action.get('kind') == 'simulation' else ''}' "
+                f"href='{html.escape(str(action.get('url', '')))}' target='_blank' rel='noopener'>"
+                f"{html.escape(str(action.get('label', 'Open')))}</a>"
+                for action in receipt.get("actions", []) if isinstance(action, dict)
+            )
+            progress = receipt.get("progress") or {}
+            progress_copy = ""
+            if progress.get("current") is not None:
+                progress_copy = (
+                    f" · {html.escape(str(progress['current']))}"
+                    + (f" / {html.escape(str(progress['total']))}" if progress.get("total") is not None else "")
+                    + f" {html.escape(str(progress.get('unit', '')))}"
+                )
+            agent_cards.append(
+                "<article class='finished-card'><div class='finished-card-top'><div>"
+                f"<h3>{html.escape(str(receipt['title']))}</h3><div class='run-tags'>"
+                f"<span class='pill'>{html.escape(str(receipt['project']))}</span>"
+                f"<span class='complete-tag'>{html.escape(status.title())}{progress_copy}</span></div></div>"
+                f"<div class='launch-cluster'>{actions}</div></div>"
+                f"<p>{html.escape(str(receipt['goal']))}</p>"
+                f"<div class='run-stats'>{metric_html}</div></article>"
+            )
+        agent_runs_html = (
+            "<section id='agent-runs' class='experiment-library' data-revision='"
+            + html.escape("|".join(
+                f"{receipt.get('run_id', '')}:{receipt.get('updated_at', '')}"
+                for receipt in agent_receipts
+            ))
+            + "'><div class='section-heading'><div>"
+            "<p class='eyebrow'>AGENTIC RL WORKSPACE</p><h2>Agent-planned experiments</h2></div>"
+            "<p>Codex owns the changing research code; the dashboard consumes a generic run receipt.</p></div>"
+            + ("<div class='finished-grid'>" + "".join(agent_cards) + "</div>" if agent_cards else
+               "<div class='empty-state'>No agent receipt published yet. Run scripts/publish-agent-run.sh with the example receipt.</div>")
+            + "</section>"
+        )
         # Archiving is presentation-only: immutable artifacts, evaluations,
         # and provenance stay available by run ID for recovery.
         all_manifests = sorted(
@@ -1943,7 +1994,7 @@ class Bench:
                 "<div class='launch-cluster'>"
                 f"{primary_action}"
                 f"<button class='deployment secondary' data-run-id='{html.escape(latest['run_id'])}' "
-                f"{'disabled ' if not latest.get('has_exported_policy') or latest.get('task') not in {'roller', 'swizzle', 'sprint', 'race', 'race5', 'hop'} else ''}"
+                f"{'disabled ' if not latest.get('has_exported_policy') or not task_has_evaluator(latest.get('task')) else ''}"
                 "title='Score the exported ONNX in Pollen CPU MuJoCo'>Evaluate</button></div></div>"
                 f"{result_banner}"
                 "<div class='run-stats'>"
@@ -2002,13 +2053,12 @@ class Bench:
             if previous is None or rank > previous_rank:
                 best_by_experiment[key] = entry
         scored_entries.extend(best_by_experiment.values())
-        focus_task = (
-            max(
-                scored_entries,
-                # Maintenance rescoring must not unexpectedly switch the
-                # operator to an older task. Follow the newest actual run.
-                key=lambda item: item["manifest"].get("created_at", ""),
-            )["manifest"]["task"]
+        # Skating remains the flagship decision view. Other projects are
+        # visible in agent receipts and the experiment library without forcing
+        # their unlike metrics into a speed table.
+        race5_entries = [item for item in scored_entries if item["manifest"]["task"] == "race5"]
+        focus_task = "race5" if race5_entries else (
+            max(scored_entries, key=lambda item: item["manifest"].get("created_at", ""))["manifest"]["task"]
             if scored_entries else "sprint"
         )
         leaderboard = [
@@ -2685,12 +2735,13 @@ class Bench:
         )
 
         content = (
-            "<header class='analysis-header'><div><span class='wordmark'>DUCKWING</span><span class='header-subtitle'>MicroDuck model results</span></div>"
+            "<header class='analysis-header'><div><span class='wordmark'>DUCKLAB</span><span class='header-subtitle'>Agentic robotics RL · DuckWing flagship · MicroDuck model results</span></div>"
             "<div class='header-status'><span id='system-status'>Checking training status…</span></div></header>"
             "<section id='live-training' class='live-training-panel' hidden><div class='live-training-head'><div><p class='eyebrow'>LIVE TRAINING</p><h2 id='training-title'>Active MicroDuck run</h2><p id='training-verdict' class='live-training-verdict'>Waiting for the first update…</p></div><div class='live-training-count'><strong id='training-iteration'>—</strong><span id='training-percent'>starting</span></div></div>"
             "<div class='live-training-progress'><span id='training-progress-bar'></span></div>"
             "<div class='live-training-grid'><div><small>Current reward</small><strong id='training-current-reward'>—</strong></div><div><small>Best reward</small><strong id='training-best-reward'>—</strong></div><div><small>Throughput</small><strong id='training-throughput'>—</strong></div><div><small>ETA</small><strong id='training-eta'>—</strong></div><div><small>Latest checkpoint</small><strong id='training-checkpoint'>—</strong></div></div>"
             "<div id='training-chart-wrap' class='live-training-chart' hidden><div><span>Reward history</span><small id='training-chart-range'>—</small></div><svg viewBox='0 0 720 180' role='img' aria-label='Live training reward history'><line x1='32' y1='150' x2='704' y2='150'></line><line x1='32' y1='18' x2='32' y2='150'></line><polyline id='training-reward-line' points=''></polyline></svg></div></section>"
+            + agent_runs_html
             + hero_html
             + "<main id='results'><div class='results-heading'><div><p class='eyebrow'>DECISION VIEW</p><h2>What each checkpoint is for</h2></div>"
             f"<p>{len(result_entries)} evaluated candidates · {archive_count} historical experiment groups preserved off the main view</p></div>"
@@ -2701,7 +2752,7 @@ class Bench:
             + f"<section class='leaderboard-panel'><div class='panel-heading'><div><p class='eyebrow'>DEFINITIVE RANKING</p><h2>All comparable results</h2></div><p>{html.escape(leaderboard_context)}</p></div>"
             + "<div class='table-wrap'><table class='definitive-table'><thead><tr><th>Rank</th><th>Model</th><th>vs Pollen</th><th>Gates</th><th>100 ft ↓</th><th>Top mph ↑</th><th>Accel ↑</th><th>Drift ft ↓</th><th>Heading ↓</th><th>Steering ↓</th><th>Action</th></tr></thead><tbody>"
             + "".join(leaderboard_rows) + "</tbody></table></div></section></main>"
-            + "<footer>Every artifact, raw run, and evaluation remains immutable in the benchmark registry. This view only removes decision noise.</footer>"
+            + "<footer>Every artifact, raw run, and evaluation remains immutable. DuckLab keeps the agent flexible and the evidence structured.</footer>"
             + "<script>const TOKEN='__CONTROL_TOKEN__';"
             + "async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Policy-Bench-Token':TOKEN},body:JSON.stringify(body)});const j=await r.json();if(r.status===403){location.reload();throw new Error('Dashboard reconnected. Click once more.');}if(!r.ok)throw new Error(j.error||'Request failed');return j;}"
             + "async function openWhenReady(win,url){for(let i=0;i<16;i++){try{await fetch(url,{mode:'no-cors',cache:'no-store'});if(win&&!win.closed)win.location=url;return true;}catch(e){await new Promise(r=>setTimeout(r,500));}}return false;}"
@@ -2709,10 +2760,10 @@ class Bench:
             + "document.querySelectorAll('.play').forEach(button=>button.addEventListener('click',()=>playRun(button)));"
             + "function metric(value,digits=2){return Number.isFinite(Number(value))?Number(value).toLocaleString(undefined,{maximumFractionDigits:digits}):'—';}"
             + "function rewardPoints(history){const rows=(history||[]).slice(-120).filter(row=>Number.isFinite(Number(row.reward)));if(rows.length<2)return null;const values=rows.map(row=>Number(row.reward));const low=Math.min(...values),high=Math.max(...values),span=high-low||1;return {points:rows.map((row,index)=>{const x=32+(672*index/(rows.length-1));const y=150-(132*(Number(row.reward)-low)/span);return x.toFixed(1)+','+y.toFixed(1);}).join(' '),low,high,count:rows.length};}"
-            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const active=s.training.detected.length>0;const p=s.training.progress;const card=document.querySelector('#live-training');document.querySelector('#system-status').textContent=active?('Training · iteration '+(p?p.iteration:'starting')+(p&&p.total?' / '+p.total:'')):'No training running';card.hidden=!active;if(!active)return;if(!p){document.querySelector('#training-title').textContent='Training process starting';return;}const intel=p.intelligence||{};const pct=p.total?Math.max(0,Math.min(100,100*Number(p.iteration)/Number(p.total))):0;document.querySelector('#training-title').textContent=(s.training.config&&s.training.config.run_name)||'Active MicroDuck frontier run';document.querySelector('#training-iteration').textContent='Iteration '+metric(p.iteration,0)+' / '+metric(p.total,0);document.querySelector('#training-percent').textContent=pct.toFixed(1)+'% complete';document.querySelector('#training-progress-bar').style.width=pct+'%';document.querySelector('#training-current-reward').textContent=metric(intel.current_reward);document.querySelector('#training-best-reward').textContent=metric(intel.best_reward);document.querySelector('#training-throughput').textContent=metric(intel.steps_per_second,0)+' steps/s';document.querySelector('#training-eta').textContent=p.eta||'—';document.querySelector('#training-checkpoint').textContent=intel.latest_checkpoint_iteration===null||intel.latest_checkpoint_iteration===undefined?'Pending':'Iteration '+metric(intel.latest_checkpoint_iteration,0);const verdict=document.querySelector('#training-verdict');verdict.textContent=intel.verdict||'Collecting enough history to judge the run.';verdict.dataset.tone=intel.verdict_tone||'neutral';const curve=rewardPoints(p.reward_history);const wrap=document.querySelector('#training-chart-wrap');wrap.hidden=!curve;if(curve){document.querySelector('#training-reward-line').setAttribute('points',curve.points);document.querySelector('#training-chart-range').textContent=metric(curve.low)+' → '+metric(curve.high)+' · last '+curve.count+' updates';}}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}refreshStatus();setInterval(refreshStatus,5000);</script>"
+            + "async function refreshStatus(){try{const r=await fetch('/api/status',{cache:'no-store'});const s=await r.json();const agentSection=document.querySelector('#agent-runs');const agentRevision=(s.agent_runs||[]).map(x=>(x.run_id||'')+':'+(x.updated_at||'')).join('|');if(agentSection&&agentSection.dataset.revision!==agentRevision){location.reload();return;}const active=s.training.detected.length>0;const p=s.training.progress;const card=document.querySelector('#live-training');document.querySelector('#system-status').textContent=active?('Training · iteration '+(p?p.iteration:'starting')+(p&&p.total?' / '+p.total:'')):'No training running';card.hidden=!active;if(!active)return;if(!p){document.querySelector('#training-title').textContent='Training process starting';return;}const intel=p.intelligence||{};const pct=p.total?Math.max(0,Math.min(100,100*Number(p.iteration)/Number(p.total))):0;document.querySelector('#training-title').textContent=(s.training.config&&s.training.config.run_name)||'Active MicroDuck frontier run';document.querySelector('#training-iteration').textContent='Iteration '+metric(p.iteration,0)+' / '+metric(p.total,0);document.querySelector('#training-percent').textContent=pct.toFixed(1)+'% complete';document.querySelector('#training-progress-bar').style.width=pct+'%';document.querySelector('#training-current-reward').textContent=metric(intel.current_reward);document.querySelector('#training-best-reward').textContent=metric(intel.best_reward);document.querySelector('#training-throughput').textContent=metric(intel.steps_per_second,0)+' steps/s';document.querySelector('#training-eta').textContent=p.eta||'—';document.querySelector('#training-checkpoint').textContent=intel.latest_checkpoint_iteration===null||intel.latest_checkpoint_iteration===undefined?'Pending':'Iteration '+metric(intel.latest_checkpoint_iteration,0);const verdict=document.querySelector('#training-verdict');verdict.textContent=intel.verdict||'Collecting enough history to judge the run.';verdict.dataset.tone=intel.verdict_tone||'neutral';const curve=rewardPoints(p.reward_history);const wrap=document.querySelector('#training-chart-wrap');wrap.hidden=!curve;if(curve){document.querySelector('#training-reward-line').setAttribute('points',curve.points);document.querySelector('#training-chart-range').textContent=metric(curve.low)+' → '+metric(curve.high)+' · last '+curve.count+' updates';}}catch(e){document.querySelector('#system-status').textContent='Status unavailable';}}refreshStatus();setInterval(refreshStatus,5000);</script>"
         )
         output = self.state_dir / "index.html"
-        output.write_text(page("DuckWing", content, show_title=False))
+        output.write_text(page("DuckLab Robotics RL", content, show_title=False))
         return output
 
 

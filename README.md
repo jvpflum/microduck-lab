@@ -1,13 +1,39 @@
-# DuckWing — MicroDuck Skate Racing
+# DuckLab Robotics RL — featuring DuckWing skate racing
 
-DuckWing (the `microduck-lab` repository) is an open, reproducible
-reinforcement-learning lab for making Pollen Robotics' MicroDuck skate faster,
-straighter, and more controllably in simulation.
+DuckLab is a lightweight, agent-first robotics reinforcement-learning platform.
+A coding agent can design and launch novel experiments; the app displays live
+progress, immutable results, and the right simulator for human evaluation.
+DuckWing, its flagship case study, makes Pollen Robotics' MicroDuck skate faster,
+straighter, and more controllably in simulation. A separate MicroDuck front-flip
+program is the first additional capability.
 
 DuckWing uses Pollen's official robot runtime, browser arena, physics, and
 roller baseline as the reference point. It adds the practical layer around
 training: repeatable race measurements, saved ONNX policies, a simple dashboard
 to test them, and promotion only when a candidate actually improves.
+
+## Agentic robotics RL, without a workflow tax
+
+New research does not need a custom dashboard wizard. Codex can create the
+task, reward, evaluator, training code, and viewer that fit the problem, then
+publish one generic run receipt containing progress, metrics, artifact hashes,
+and simulation/report links:
+
+```bash
+make publish-agent-run RECEIPT=/path/to/agent-run-receipt.json
+make bench-dashboard
+```
+
+Stable programs can later opt into catalogued one-click launchers and strict
+promotion gates. See [the platform design](docs/AGENTIC_RL_PLATFORM.md) and the
+[example agent receipt](examples/agent-run-receipt.json). Skating remains the
+main benchmark; front flip has its own evaluator and never gets forced into a
+speed leaderboard.
+
+A request can begin as simply as: “Read `AGENTS.md`; make this robot perform a
+stable front flip, choose the best RL approach, run it, and publish the evidence
+and simulator to DuckLab.” The repository instructions define the rest of the
+agent's lifecycle, while the experiment remains free to be structurally novel.
 
 ## Why use DuckLab?
 
@@ -85,6 +111,33 @@ contract, metadata, finite CPU inference, and a 100-step CPU MuJoCo rehearsal.
 Successful skating runs are then automatically verified, registered, scored in
 the CPU deployment battery, and given training-curve metrics. They are never
 automatically starred or promoted.
+
+## Reproduce the current leader
+
+V67 and every input needed for its public follow-up experiment are committed as
+inference-only ONNX artifacts. After the fresh-clone setup above:
+
+```bash
+(cd releases/v67 && sha256sum -c SHA256SUMS)
+./scripts/verify-artifact.sh \
+  "$(pwd)/releases/v67/duckwing-v67-joint-specialist-fusion.onnx"
+make v69-search
+```
+
+The first two commands verify V67's exact bytes and 61-observation/14-action
+deployment contract. The V69 search then reconstructs the best rejected V68
+challenger and tests a body-yaw state guard at the official `0.003` friction and
+`1.75 A` limit. It never changes the leader unless every promotion metric is
+preserved and both 100-ft time and sustained speed improve.
+
+For an agent-ready handoff, give Codex or another coding agent the copy/paste
+prompt in [the coding-agent workflow](docs/CODING_AGENT_WORKFLOW.md). Repository
+rules are also encoded in [`AGENTS.md`](AGENTS.md), so a compatible agent can
+discover the benchmark, safety constraints, and definition of done directly.
+
+The complete methods-and-results narrative is available as the
+[DuckWing research paper](docs/DUCKWING_RESEARCH_PAPER.md), with a
+[shareable Word version](docs/DUCKWING_RESEARCH_PAPER.docx).
 
 ## Train a custom walking baseline
 
@@ -254,6 +307,10 @@ The RTX 5090 transfer made the useful distinction clear:
   contact, but its 13.26° heading error exceeded V67's 10.22°; zero candidates
   passed the no-regression gate. The full result is documented in
   [the V68 search report](releases/v67/V68-SEARCH.md).
+- **V69 research** scored 150 measured body-yaw state guards around the V68
+  challenger. Nine improved speed, but every one regressed heading or another
+  retained measurement; V67 remains definitive. See the
+  [V69 search report](releases/v67/V69-SEARCH.md).
 
 The practical training lesson is to separate capabilities structurally rather
 than forcing one actor to remember incompatible behaviors. V68 also shows that

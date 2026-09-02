@@ -36,3 +36,11 @@ scored joint-authority and line-controller configurations, no challenger
 improved speed while preserving every V67 stability, tracking, acceleration,
 contact, and braking measurement. See [V68-SEARCH.md](V68-SEARCH.md) for the
 best near-miss and the next training strategy.
+
+V69 then tested 150 state-guarded blends that gave the fastest V68 challenger
+authority only at low body-yaw rates and returned exactly to V67 above a yaw
+threshold. Nine variants improved speed, but every one lost at least one
+required stability or control measurement; the fastest was 0.95% quicker over
+100 feet but increased heading error by 20.2%. V67 therefore remains the
+strict, lossless leader. See [V69-SEARCH.md](V69-SEARCH.md) for the complete
+result and the recommended next experiment.
