@@ -1,0 +1,45 @@
+{
+  "cpu_mujoco_steps": 100,
+  "finite_inference": true,
+  "input_shape": [
+    1,
+    61
+  ],
+  "metadata_keys": [
+    "action_scale",
+    "brake_safe_drive_policy",
+    "brake_safe_route",
+    "brake_safe_transition_policy",
+    "command_names",
+    "default_joint_pos",
+    "ducklab_command_gated_dynamic_residual",
+    "ducklab_high_policy_sha256",
+    "ducklab_high_speed_gate_mps",
+    "ducklab_low_policy_sha256",
+    "ducklab_mid_policy_sha256",
+    "ducklab_mid_speed_gate_mps",
+    "ducklab_policy_kind",
+    "ducklab_turn_gate_rad_s",
+    "ducklab_yaw_scale_negative",
+    "ducklab_yaw_scale_positive",
+    "hybrid_control_policy",
+    "hybrid_route",
+    "hybrid_speed_policy",
+    "joint_damping",
+    "joint_fusion_authority",
+    "joint_fusion_incumbent",
+    "joint_fusion_route",
+    "joint_fusion_specialist",
+    "joint_names",
+    "joint_stiffness",
+    "observation_names",
+    "run_path"
+  ],
+  "onnx_valid": true,
+  "output_shape": [
+    1,
+    14
+  ],
+  "policy": "/home/juice/projects/microduck-lab/releases/v80/duckwing-v80-high-command-residual.onnx",
+  "robot_model": "rollers"
+}

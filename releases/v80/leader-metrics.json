@@ -1,0 +1,53 @@
+{
+  "release": "v80",
+  "status": "simulation-qualified hardware-candidate",
+  "source_release": "v67",
+  "physics": {
+    "current_limit_a": 1.75,
+    "wheel_frictionloss": 0.003,
+    "control_hz": 50,
+    "physics_hz": 200
+  },
+  "route": {
+    "command_x_threshold_mps": 0.5,
+    "low_command_max_abs_action_error_vs_v67": 0.0,
+    "high_command_max_abs_action_error_vs_selected_residual": 0.0
+  },
+  "residual": {
+    "joint_groups": ["left_hip_pitch", "left_knee", "left_ankle", "right_hip_pitch", "right_knee", "right_ankle"],
+    "joint_position_gain": -0.075,
+    "joint_velocity_gain": -0.01,
+    "previous_action_gain": -0.07
+  },
+  "race5": {
+    "finish_time_100ft_s": 25.729329729271214,
+    "mean_world_forward_speed_mph": 2.651544945275176,
+    "peak_world_forward_speed_mph": 3.31328631993552,
+    "verified_top_speed_0_5s_mph": 3.0843928392789075,
+    "max_heading_error_deg": 9.53992435906985,
+    "max_lateral_drift_ft": 0.4030256645775466,
+    "tilt_max_deg": 15.773602225735189,
+    "both_blades_grounded_fraction": 0.6519036519036518
+  },
+  "randomized_start_5x20": {
+    "sustained_mean_forward_speed_mph": 2.497494954360678,
+    "sustained_world_x_speed_mph": 2.492101769493617,
+    "maximum_forward_speed_mph": 3.369052764154773,
+    "survival_fraction": 1.0,
+    "mean_abs_heading_deg": 3.0379994951310847,
+    "mean_max_abs_lateral_deviation_m": 0.15268060377588166
+  },
+  "clean_screen": {
+    "mean_world_forward_speed_mph": 2.5743214564241867,
+    "peak_world_forward_speed_mph": 3.265152459418901,
+    "tilt_max_deg": 15.773602225735189
+  },
+  "qualification": {
+    "race5_advances_v67": true,
+    "race5_gates_passed": 15,
+    "race5_gates_total": 15,
+    "pollen_checks_passed": 6,
+    "pollen_checks_total": 6,
+    "hardware_validated": false
+  }
+}
