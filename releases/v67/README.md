@@ -44,3 +44,9 @@ required stability or control measurement; the fastest was 0.95% quicker over
 100 feet but increased heading error by 20.2%. V67 therefore remains the
 strict, lossless leader. See [V69-SEARCH.md](V69-SEARCH.md) for the complete
 result and the recommended next experiment.
+
+V70 implemented that recommendation as a deployable teacher-guided residual
+run with contact/stride shaping. It completed cleanly but plateaued below V67;
+its conservative compositions improved drift or heading only by giving back
+speed, tilt, or contact. V67 remains definitive. See
+[V70-SEARCH.md](V70-SEARCH.md) for the checkpoint table and next strategy.
