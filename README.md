@@ -44,12 +44,12 @@ artifact](releases/v67/duckwing-v67-joint-specialist-fusion.onnx), SHA-256
 checksum, leader metrics, and evaluation summary; the rest of this platform is
 not required to copy or inspect those files.
 
-We should publish that same small bundle as a separate model-only GitHub
-repository (for example, `duckwing-v67-model`) once the repository name and
-GitHub credentials are confirmed. It should contain only the ONNX model, model
-card, license/provenance, checksum, and measured metrics—not the simulator,
-training checkpoints, or dashboard. This main README can then link directly to
-that model repository without making the platform depend on it.
+The recommended next publication is that same small bundle as a separate
+model-only GitHub repository (for example, `duckwing-v67-model`). It should
+contain only the ONNX model, model card, license/provenance, checksum, and
+measured metrics—not the simulator, training checkpoints, or dashboard. Once
+published, this paragraph can link directly to that model repository without
+making the platform depend on it.
 
 ## Ask an agent to run RL
 
