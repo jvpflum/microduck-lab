@@ -3,6 +3,7 @@ SHELL := /bin/bash
 .PHONY: bootstrap build-pollen-arena preflight test test-gamepad test-policy-bench list-envs smoke skate-smoke sprint-smoke race5-smoke swizzle-smoke hop-smoke backflip-smoke \
 	verify-artifact verify-skate-artifact evaluate-swizzle evaluate-sprint train-baseline train-skate \
 	train-speed-v70-residual \
+	train-race5-v71-all-around \
 	train-sprint-probe train-race5 train-race5-v16-constrained train-swizzle train-hop train-backflip evaluate-race5 import-pollen-baselines v69-search publish-agent-run research-paper bench-discover bench-list bench-dashboard bench-metrics bench-score bench-star verify
 
 bootstrap:
@@ -69,6 +70,9 @@ train-skate:
 
 train-speed-v70-residual:
 	./scripts/train-speed-v70-residual.sh
+
+train-race5-v71-all-around:
+	./scripts/train-race5-v71-all-around.sh
 
 train-sprint-probe:
 	./scripts/train-sprint-probe.sh
