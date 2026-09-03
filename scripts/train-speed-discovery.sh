@@ -30,6 +30,7 @@ run_name="microduck-speed-discovery-v1-e${env_count}-i${iterations}-s${seed}"
 training_log="${REPORT_DIR}/${run_name}.log"
 gpu_log="${REPORT_DIR}/${run_name}-gpu.jsonl"
 
+cd "${UPSTREAM_DIR}"
 mkdir -p "$(dirname "${warmstart_checkpoint}")"
 "${UV_BIN}" run python "${LAB_ROOT}/tools/prepare_warmstart.py" \
     "${source_checkpoint}" "${warmstart_checkpoint}" \
@@ -56,7 +57,6 @@ trap 'training_status=$?; cleanup; exit "${training_status}"' EXIT
 echo "Speed discovery batch: $((env_count * 24)) transitions/update, ${mini_batches} minibatches, $((env_count * 24 / mini_batches)) transitions/minibatch"
 echo "GPU telemetry: ${gpu_log}"
 mark_training_start
-cd "${UPSTREAM_DIR}"
 "${UV_BIN}" run train Mjlab-SpeedDiscovery-Flat-MicroDuck-Rollers \
     --env.scene.num-envs "${env_count}" \
     --agent.seed "${seed}" \
