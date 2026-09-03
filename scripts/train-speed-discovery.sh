@@ -84,7 +84,8 @@ if [[ "${DUCKLAB_SELECT_BEST:-1}" == "1" ]]; then
     "${UV_BIN}" run python "${LAB_ROOT}/tools/select_speed_discovery_checkpoint.py" \
         "${run_dir}" \
         --episodes "${DUCKLAB_SELECTION_EPISODES:-5}" \
-        --checkpoint-stride "${DUCKLAB_SELECTION_STRIDE:-1}"
+        --checkpoint-stride "${DUCKLAB_SELECTION_STRIDE:-1}" \
+        --wheel-friction "${DUCKLAB_SELECTION_WHEEL_FRICTION:-0.003}"
 fi
 
 "${UV_BIN}" run python "${LAB_ROOT}/tools/summarize_speed_discovery_run.py" \
