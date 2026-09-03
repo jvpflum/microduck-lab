@@ -11,41 +11,49 @@ Front flip is the first separate program. Other robots and behaviors can enter
 through the same generic run-receipt interface without being forced into the
 skating benchmark.
 
-## Current leader: DuckWing V67
+## Current leader: DuckWing V80
 
-V67 is the definitive simulation-qualified skating model. It is evaluated in
+V80 is the current simulation-qualified skating model. It is evaluated in
 deterministic CPU MuJoCo with wheel `frictionloss=0.003`, motor current limit
 `1.75 A`, and the frozen Race5 line controller. It passes all 15 retained
-qualification gates and wins all 9 comparable Pollen dimensions.
+qualification gates, satisfies the repository's formal advancement rule over
+V67, and wins all six direct Race5 comparisons against the Pollen roller.
 
-| Metric | V67 | Pollen roller | V67 vs Pollen |
+| Metric | V80 | Pollen roller | V80 vs Pollen |
 | --- | ---: | ---: | ---: |
-| Race sustained speed | **2.240 mph** | 1.066 mph | 2.10× |
-| Verified top speed (0.5 s) | **3.060 mph** | 1.283 mph | 2.39× |
-| 100-ft elapsed time | **25.815 s** | 57.589 s | 55.2% sooner |
-| First-second acceleration | **0.471 m/s²** | 0.323 m/s² | 46.0% higher |
-| Maximum lateral drift | **0.775 ft** | 1.250 ft | 38.0% less |
-| Maximum heading error | **10.22°** | 11.06° | 7.6% less |
+| Race sustained speed | **2.267 mph** | 1.066 mph | 2.13× |
+| Verified top speed (0.5 s) | **3.084 mph** | 1.283 mph | 2.40× |
+| 100-ft elapsed time | **25.729 s** | 57.589 s | 55.3% sooner |
+| First-second acceleration | **0.466 m/s²** | 0.323 m/s² | 44.3% higher |
+| Maximum lateral drift | **0.403 ft** | 1.250 ft | 67.8% less |
+| Maximum heading error | **9.54°** | 11.06° | 13.7% less |
 
-The 5 mph target is not reached. V68 and V69 produced faster experimental
-variants, but every candidate regressed at least one required control or
-stability measurement, so V67 remains the leader. See the [V67 release
-notes](releases/v67/README.md), [V68 report](releases/v67/V68-SEARCH.md), and
-[V69 report](releases/v67/V69-SEARCH.md).
+V80 preserves V67 exactly for commands at or below `0.5 m/s`. Above that
+threshold, it adds a small state-dependent residual to the six propulsion
+joints. Compared with V67, it finishes 100 ft sooner, improves sustained and
+top speed, cuts long-run drift nearly in half, reduces heading error and tilt,
+and improves the five-episode randomized-start speed test from 2.438 to 2.497
+mph with 100% survival.
+
+The 5 mph target is not reached. The protected speed donor's 5.405 mph result
+was a peak measured at zero wheel friction; it is useful research evidence,
+not an official-friction record. See the [V80 release notes](releases/v80/README.md),
+the frozen [V67 predecessor](releases/v67/README.md), and the historical
+[V68](releases/v67/V68-SEARCH.md) and [V69](releases/v67/V69-SEARCH.md) searches.
 
 These are simulation results, not a physical-robot claim or independent
 certification.
 
 ## Download only the model
 
-If you only need the current skating policy, start with the [V67 release
-directory](releases/v67/). It contains the [standalone ONNX
-artifact](releases/v67/duckwing-v67-joint-specialist-fusion.onnx), SHA-256
+If you only need the current skating policy, start with the [V80 release
+directory](releases/v80/). It contains the [standalone ONNX
+artifact](releases/v80/duckwing-v80-high-command-residual.onnx), SHA-256
 checksum, leader metrics, and evaluation summary; the rest of this platform is
 not required to copy or inspect those files.
 
 The recommended next publication is that same small bundle as a separate
-model-only GitHub repository (for example, `duckwing-v67-model`). It should
+model-only GitHub repository (for example, `duckwing-v80-model`). It should
 contain only the ONNX model, model card, license/provenance, checksum, and
 measured metrics—not the simulator, training checkpoints, or dashboard. Once
 published, this paragraph can link directly to that model repository without
@@ -129,21 +137,20 @@ Hugging Face deployment work.
 
 ## Verify the public leader
 
-The V67 release is inference-complete and includes checksums, metrics, and the
-exact ONNX artifact. A clean clone can reproduce the public next-step search
-without private optimizer checkpoints:
+The V80 release is inference-complete and includes checksums, metrics, the full
+Race5 evaluation, clean and randomized-start screens, and the exact ONNX
+artifact. A clean clone can verify the public artifact without private
+optimizer checkpoints:
 
 ```bash
-(cd releases/v67 && sha256sum -c SHA256SUMS)
+(cd releases/v80 && sha256sum -c SHA256SUMS)
 ./scripts/verify-artifact.sh \
-  "$(pwd)/releases/v67/duckwing-v67-joint-specialist-fusion.onnx"
-make v69-search
+  "$(pwd)/releases/v80/duckwing-v80-high-command-residual.onnx"
 ```
 
-V69 reconstructs the best rejected V68 challenger, applies a measured body-yaw
-state guard, and evaluates 150 candidates under the official `0.003` friction
-and `1.75 A` contract. It never changes the leader unless both speed measures
-improve and every retained gate is preserved.
+The V80 artifact is rebuilt from the immutable V67 policy by
+`tools/build_command_gated_dynamic_residual_policy.py`. The checked-in
+evaluation files use the official `0.003` friction and `1.75 A` contract.
 
 ## Programs and common commands
 
@@ -154,7 +161,7 @@ research.
 
 | Program | Purpose | Useful commands |
 | --- | --- | --- |
-| MicroDuck skating | Official-friction speed, steering, braking, and stability | `make race5-smoke`, `make train-race5`, `make v69-search` |
+| MicroDuck skating | Official-friction speed, steering, braking, and stability | `make race5-smoke`, `make train-race5`, `./scripts/verify-artifact.sh releases/v80/duckwing-v80-high-command-residual.onnx` |
 | MicroDuck front flip | Unassisted takeoff, forward rotation, clean landing, settling | `make backflip-smoke`, `make train-backflip` |
 | MicroDuck walking | Upstream locomotion reference | `make train-baseline` |
 
@@ -193,15 +200,17 @@ Never treat an exported ONNX actor as a lossless PPO continuation checkpoint.
 ## Promotion rules
 
 Reward curves and one impressive rollout are evidence, not promotion. A skating
-candidate must be faster over 100 ft and have higher sustained speed while
-preserving top speed, acceleration, drift, heading, tilt, bilateral contact,
-idle hold, turns, and braking. Other capabilities define their own frozen
-contract. Every result is labeled `promoted`, `rejected`, or `exploratory`.
+candidate must finish 100 ft faster, preserve the complete qualification gate,
+avoid regressions in long-run drift and heading, and retain low-speed agility
+and measured controller usage. Sustained, trap, and top speed then rank
+qualified racers. Other capabilities define their own frozen contract. Every
+result is labeled `promoted`, `rejected`, or `exploratory`.
 
-The complete process and history—from Pollen's roller baseline through V67,
-including failed transfers and the V68/V69 negative results—is in the
-[DuckWing research paper](docs/DUCKWING_RESEARCH_PAPER.md), with a
-[shareable Word version](docs/DUCKWING_RESEARCH_PAPER.docx).
+The detailed history from Pollen's roller baseline through V67, including
+failed transfers and the V68/V69 negative results, is in the [DuckWing research
+paper](docs/DUCKWING_RESEARCH_PAPER.md), with a [shareable Word
+version](docs/DUCKWING_RESEARCH_PAPER.docx). The [V80 release
+notes](releases/v80/README.md) continue that record with the current result.
 
 ## Repository map
 
@@ -212,8 +221,10 @@ including failed transfers and the V68/V69 negative results—is in the
   setup, exact skating prompt, resource hooks, and definition of done.
 - [`docs/POLICY_BENCH.md`](docs/POLICY_BENCH.md): dashboard and review workflow.
 - [`docs/RACE5.md`](docs/RACE5.md): exact skating task and private continuation.
-- [`releases/v67/`](releases/v67/): current leader, checksums, metrics, and
-  follow-up search reports.
+- [`releases/v80/`](releases/v80/): current leader, checksums, metrics, and
+  complete evaluation evidence.
+- [`releases/v67/`](releases/v67/): frozen predecessor and V68/V69 search
+  history.
 - [`upstream/microduck_rl`](upstream/microduck_rl): pinned training/runtime
   source kept as a Git submodule.
 
