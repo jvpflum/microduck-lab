@@ -1,121 +1,137 @@
-# DuckLab Robotics RL — featuring DuckWing skate racing
+# DuckLab Robotics RL
 
-DuckLab is a lightweight, agent-first robotics reinforcement-learning platform.
-A coding agent can design and launch novel experiments; the app displays live
-progress, immutable results, and the right simulator for human evaluation.
-DuckWing, its flagship case study, makes Pollen Robotics' MicroDuck skate faster,
-straighter, and more controllably in simulation. A separate MicroDuck front-flip
-program is the first additional capability.
+DuckLab is a lightweight, agent-first workbench for training and evaluating
+small-robot policies. A coding agent chooses the research approach, writes the
+task or reward when needed, launches and monitors jobs, evaluates artifacts,
+and publishes simulator/report links. The dashboard is the human evidence
+surface; new research does not require a new dashboard wizard.
 
-DuckWing uses Pollen's official robot runtime, browser arena, physics, and
-roller baseline as the reference point. It adds the practical layer around
-training: repeatable race measurements, saved ONNX policies, a simple dashboard
-to test them, and promotion only when a candidate actually improves.
+The flagship case study is DuckWing, a Pollen MicroDuck roller-skating policy.
+Front flip is the first separate program. Other robots and behaviors can enter
+through the same generic run-receipt interface without being forced into the
+skating benchmark.
 
-## Agentic robotics RL, without a workflow tax
+## Current leader: DuckWing V67
 
-New research does not need a custom dashboard wizard. Codex can create the
-task, reward, evaluator, training code, and viewer that fit the problem, then
-publish one generic run receipt containing progress, metrics, artifact hashes,
-and simulation/report links:
+V67 is the definitive simulation-qualified skating model. It is evaluated in
+deterministic CPU MuJoCo with wheel `frictionloss=0.003`, motor current limit
+`1.75 A`, and the frozen Race5 line controller. It passes all 15 retained
+qualification gates and wins all 9 comparable Pollen dimensions.
+
+| Metric | V67 | Pollen roller | V67 vs Pollen |
+| --- | ---: | ---: | ---: |
+| Race sustained speed | **2.240 mph** | 1.066 mph | 2.10× |
+| Verified top speed (0.5 s) | **3.060 mph** | 1.283 mph | 2.39× |
+| 100-ft elapsed time | **25.815 s** | 57.589 s | 55.2% sooner |
+| First-second acceleration | **0.471 m/s²** | 0.323 m/s² | 46.0% higher |
+| Maximum lateral drift | **0.775 ft** | 1.250 ft | 38.0% less |
+| Maximum heading error | **10.22°** | 11.06° | 7.6% less |
+
+The 5 mph target is not reached. V68 and V69 produced faster experimental
+variants, but every candidate regressed at least one required control or
+stability measurement, so V67 remains the leader. See the [V67 release
+notes](releases/v67/README.md), [V68 report](releases/v67/V68-SEARCH.md), and
+[V69 report](releases/v67/V69-SEARCH.md).
+
+These are simulation results, not a physical-robot claim or independent
+certification.
+
+## Download only the model
+
+If you only need the current skating policy, start with the [V67 release
+directory](releases/v67/). It contains the [standalone ONNX
+artifact](releases/v67/duckwing-v67-joint-specialist-fusion.onnx), SHA-256
+checksum, leader metrics, and evaluation summary; the rest of this platform is
+not required to copy or inspect those files.
+
+We should publish that same small bundle as a separate model-only GitHub
+repository (for example, `duckwing-v67-model`) once the repository name and
+GitHub credentials are confirmed. It should contain only the ONNX model, model
+card, license/provenance, checksum, and measured metrics—not the simulator,
+training checkpoints, or dashboard. This main README can then link directly to
+that model repository without making the platform depend on it.
+
+## Ask an agent to run RL
+
+Start with a plain-language goal. Repository instructions in
+[`AGENTS.md`](AGENTS.md) tell Codex to inspect prior evidence and resources,
+state a falsifiable hypothesis, choose the appropriate technique, prevent
+duplicate jobs, launch a bounded run, publish progress, evaluate checkpoints,
+and report a promoted, rejected, or exploratory result.
+
+For example:
+
+> Read `AGENTS.md`. Make this robot perform a stable front flip. Choose the
+> best RL approach, run it, monitor it, evaluate it, and publish the evidence
+> and simulator to DuckLab.
+
+The agent publishes a generic schema-v1 receipt. It can contain any task's
+metrics, artifacts, hypotheses, progress, and simulator/report actions:
 
 ```bash
 make publish-agent-run RECEIPT=/path/to/agent-run-receipt.json
 make bench-dashboard
 ```
 
-Stable programs can later opt into catalogued one-click launchers and strict
-promotion gates. See [the platform design](docs/AGENTIC_RL_PLATFORM.md) and the
-[example agent receipt](examples/agent-run-receipt.json). Skating remains the
-main benchmark; front flip has its own evaluator and never gets forced into a
-speed leaderboard.
+Publishing the same `run_id` updates the dashboard card atomically. Artifact
+SHA-256 values are computed or verified. Receipts expose reviewed links only;
+they cannot execute shell commands. See the [agentic platform design](docs/AGENTIC_RL_PLATFORM.md),
+[coding-agent workflow](docs/CODING_AGENT_WORKFLOW.md), and [example receipt](examples/agent-run-receipt.json).
 
-A request can begin as simply as: “Read `AGENTS.md`; make this robot perform a
-stable front flip, choose the best RL approach, run it, and publish the evidence
-and simulator to DuckLab.” The repository instructions define the rest of the
-agent's lifecycle, while the experiment remains free to be structurally novel.
+## Quick start
 
-## Why use DuckLab?
-
-Because “it looked fast” is not a benchmark. DuckLab lets you train a skating
-policy, open it in the browser simulator, and see whether it truly beat Pollen
-on speed **without giving up straight-line control, braking, turning, or
-stability**.
-
-The current all-around champion is
-[`DuckWing V67`](releases/v67/README.md). It keeps V66's command-aware control
-shell, imports straight-line propulsion from the official-friction V47 speed
-specialist, and uses V65's moving brake branch. In deterministic CPU MuJoCo at
-exactly `0.003` wheel frictionloss and `1.75 A`, V67 beats Pollen's roller
-baseline on all nine tracked comparison dimensions:
-
-| Verified race metric | DuckWing V67 | Pollen roller | Improvement |
-| --- | ---: | ---: | ---: |
-| Sustained forward speed | **2.24 mph** | 1.07 mph | **109.4% faster** |
-| Verified top speed (0.5 s) | **3.06 mph** | 1.28 mph | **139.0% higher** |
-| 100-ft elapsed time | **25.82 s** | 57.59 s | **55.2% sooner** |
-| First-second acceleration | **1.05 mph/s** | 0.72 mph/s | **46.4% higher** |
-| Maximum lateral drift | **0.78 ft** | 1.25 ft | **38.0% less** |
-| Maximum heading error | **10.22°** | 11.06° | **7.6% less** |
-
-V67 passed all **15** retained control checks, including idle hold, cruise,
-braking, both turns, line drift, long-run heading, and long-run upright
-stability. It is a simulation-only result—not a hardware-speed claim—and the
-5 mph target remains the next milestone. Faster experimental policies stay
-unpromoted until they also preserve the full control battery.
-
-## What you get
-
-- Pollen's colorful browser arena for trying factory and custom roller policies.
-- A race scoreboard that shows the current champion, Pollen comparison, speed,
-  drift, heading, acceleration, and 100-ft result.
-- Repeatable evaluation and ONNX checks so results are shareable and auditable.
-- Separate Spark and Windows/RTX worker workflows for larger training runs.
-- Public V61, V66, and V67 inference exports with checksums and scrubbed measurement
-  summaries.
-
-## Requirements
-
-- Linux ARM64 DGX Spark / GB10 **or** Linux x86_64 with a working NVIDIA GPU
-  (Windows workers use Ubuntu through WSL2)
-- Python 3.12 and `venv`
-- Git
-- At least 20 GiB available unified memory for GPU commands
-- Network access for the first dependency synchronization
-
-For a Windows RTX worker, follow [Windows 5090 worker setup](docs/WINDOWS_5090.md).
-The Spark and Windows machine should use separate clones and unique run names;
-Git is the code handoff, while raw training checkpoints stay private.
-
-## Start
+Requirements: Git, Python 3.12, network access for first setup, and either a
+DGX Spark/GB10 or a Linux NVIDIA GPU. Windows RTX workers use Ubuntu through
+WSL2; see [Windows 5090 setup](docs/WINDOWS_5090.md).
 
 ```bash
-git clone --recurse-submodules <repository-url>
+git clone --recurse-submodules https://github.com/jvpflum/microduck-lab.git
 cd microduck-lab
 make bootstrap
 make preflight
 make test
-make import-pollen-baselines
+make import-pollen-baselines   # optional; needed for factory comparisons
 make bench-dashboard
 ```
 
-Forward port 8091 over SSH, open `http://localhost:8091`, then click
-**Open factory playground**. In the arena, hold D-pad up for about one second
-to switch between walking and rollers; the left stick drives and turns.
+Open `http://localhost:8091`. Forward the port over SSH when the checkout is
+on a remote workstation:
 
-`make smoke` follows Pollen's required 64-environment, five-iteration gate.
-Weights & Biases is disabled; Policy Bench remains the local system of record.
-Training automatically exports the final checkpoint through Pollen's official
-normalizer-aware ONNX path. `make verify-artifact` validates its 61-to-14
-contract, metadata, finite CPU inference, and a 100-step CPU MuJoCo rehearsal.
-Successful skating runs are then automatically verified, registered, scored in
-the CPU deployment battery, and given training-curve metrics. They are never
-automatically starred or promoted.
+```bash
+ssh -L 8091:localhost:8091 <ssh-user>@<spark-address>
+```
 
-## Reproduce the current leader
+The dashboard can open the colorful Pollen browser arena for finished policies
+and a lightweight live-training viewer for active jobs. It also shows agent
+receipts, immutable artifacts, evaluation reports, and the appropriate task
+simulator. The dashboard is local and requires no cloud control plane.
 
-V67 and every input needed for its public follow-up experiment are committed as
-inference-only ONNX artifacts. After the fresh-clone setup above:
+## Repository topology
+
+The simulator is intentionally a pinned submodule, not a copy hidden inside
+this repository:
+
+| Path | Role | Pinned source |
+| --- | --- | --- |
+| `upstream/microduck_rl` | Training fork and CPU MuJoCo evaluation | [microduck_rl](https://github.com/jvpflum/microduck_rl) |
+| `upstream/microduck` | Robot runtime and model | [Pollen microduck](https://github.com/pollen-robotics/microduck) |
+| `upstream/microduck-simulator` | Browser arena and simulator | [microduck-simulator](https://github.com/jvpflum/microduck-simulator) |
+
+`git clone --recurse-submodules` checks out the exact commits recorded by
+DuckLab. Keeping the browser app separate preserves its own deployable Docker/
+Vite lifecycle, Hugging Face Space mirror, LFS assets, and upstream history;
+DuckLab can update the pointer only after validating a new simulator revision.
+Deleting that GitHub repository would break fresh clones and the submodule URL.
+If a single physical repository becomes a hard requirement, migrate it first
+with a tested `git subtree`/vendoring plan, preserve its license and history,
+update every build path, and archive the old remote only after the new clone and
+Hugging Face deployment work.
+
+## Verify the public leader
+
+The V67 release is inference-complete and includes checksums, metrics, and the
+exact ONNX artifact. A clean clone can reproduce the public next-step search
+without private optimizer checkpoints:
 
 ```bash
 (cd releases/v67 && sha256sum -c SHA256SUMS)
@@ -124,207 +140,26 @@ inference-only ONNX artifacts. After the fresh-clone setup above:
 make v69-search
 ```
 
-The first two commands verify V67's exact bytes and 61-observation/14-action
-deployment contract. The V69 search then reconstructs the best rejected V68
-challenger and tests a body-yaw state guard at the official `0.003` friction and
-`1.75 A` limit. It never changes the leader unless every promotion metric is
-preserved and both 100-ft time and sustained speed improve.
+V69 reconstructs the best rejected V68 challenger, applies a measured body-yaw
+state guard, and evaluates 150 candidates under the official `0.003` friction
+and `1.75 A` contract. It never changes the leader unless both speed measures
+improve and every retained gate is preserved.
 
-For an agent-ready handoff, give Codex or another coding agent the copy/paste
-prompt in [the coding-agent workflow](docs/CODING_AGENT_WORKFLOW.md). Repository
-rules are also encoded in [`AGENTS.md`](AGENTS.md), so a compatible agent can
-discover the benchmark, safety constraints, and definition of done directly.
+## Programs and common commands
 
-The complete methods-and-results narrative is available as the
-[DuckWing research paper](docs/DUCKWING_RESEARCH_PAPER.md), with a
-[shareable Word version](docs/DUCKWING_RESEARCH_PAPER.docx).
+The declarative capability catalog is at
+[`config/robotics-capabilities.json`](config/robotics-capabilities.json).
+Built-in adapters are hardened conveniences, not a requirement for novel
+research.
 
-## Train a custom walking baseline
+| Program | Purpose | Useful commands |
+| --- | --- | --- |
+| MicroDuck skating | Official-friction speed, steering, braking, and stability | `make race5-smoke`, `make train-race5`, `make v69-search` |
+| MicroDuck front flip | Unassisted takeoff, forward rotation, clean landing, settling | `make backflip-smoke`, `make train-backflip` |
+| MicroDuck walking | Upstream locomotion reference | `make train-baseline` |
 
-Custom training is an advanced path. Test Pollen's factory policies first and
-write down the specific capability or evaluation gate that needs improvement.
-
-```bash
-make train-baseline
-```
-
-Defaults are 4,096 parallel environments and 4,000 PPO iterations. Override
-them without editing source:
-
-```bash
-DUCKLAB_ENVS=2048 DUCKLAB_ITERATIONS=1000 make train-baseline
-```
-
-Do not run a full training job concurrently with memory-heavy inference
-services. This system uses unified memory; the preflight blocks when less than
-20 GiB is available or swap usage exceeds 50%.
-
-The dashboard offers two resource modes for new runs:
-
-- **Shared** is the portable default. DuckLab does not start, stop, or assume
-  any other service on the host.
-- **Training priority** is for a multi-use GPU machine. It runs only the
-  optional stop/restore hooks supplied by that machine's operator, then restores
-  them when training exits. It is safe to select with no hooks configured; no
-  service is changed. See `scripts/resource-profile.sh` for the three optional
-  `DUCKLAB_RESOURCE_*_CMD` variables.
-
-## Train a custom roller-skating policy
-
-Qualify Pollen's official passive-wheel environment before a long run:
-
-```bash
-make skate-smoke
-make verify-skate-artifact
-```
-
-Then train the skating baseline:
-
-```bash
-make train-skate
-```
-
-## Race5: reproducible straight-line skate racing
-
-Race5 is the separate 100-foot, centreline-controlled skate-racing task behind
-the public V66 result. Its public integration gate needs no private artifact:
-
-```bash
-make race5-smoke
-```
-
-For an exact continuation from the V11 champion, copy the raw trainer donor
-privately and point the recipe at it; raw `.pt` state is deliberately not
-published. A clean clone can still use every source configuration, test, smoke
-gate, simulator speed test, and the public V61/V66/V67 ONNX evaluation exports.
-
-```bash
-DUCKLAB_RACE5_WARMSTART_CHECKPOINT=/absolute/path/to/v11-model_10.pt \
-DUCKLAB_ENVS=4096 DUCKLAB_ITERATIONS=4000 \
-make train-race5
-```
-
-See [docs/RACE5.md](docs/RACE5.md) for the task map, evaluation procedure, and
-what is intentionally excluded from Git.
-
-The next-generation V11-preserving experiment is separate from the general
-Race5 recipe. It rewards usable world-forward speed only while centred and
-aligned with the measured race line, then requires the normal V67 evaluation
-battery before promotion:
-
-```bash
-make train-race5-v16-constrained
-```
-
-To train the current frontier fusion experiment, use the exact-friction V18
-launcher. It keeps the qualified control-aware shell fixed while PPO improves
-the straight-speed branch, which avoids repeating the control regressions seen
-in raw speed-specialist checkpoints:
-
-```bash
-./scripts/train-race5-v18-fusion.sh
-```
-
-The default is 4,096 environments, 3,000 iterations, and seed 1801. Private
-warm-start and teacher artifacts are required; set
-`DUCKWING_V18_WARMSTART_CHECKPOINT` when using a different local checkpoint.
-
-For symmetric forward/reverse propulsion with both blades grounded, use the
-dedicated swizzle workflow:
-
-```bash
-make swizzle-smoke
-make train-swizzle
-make evaluate-swizzle
-```
-
-See [docs/SWIZZLE_EVALUATION.md](docs/SWIZZLE_EVALUATION.md) for the checkpoint
-qualification battery and [docs/ROLLER_POLICY_SUITE.md](docs/ROLLER_POLICY_SUITE.md)
-for active braking, spin, recovery, and supervisor design.
-
-For simulation-only maximum-speed discovery, use the separate permissive task:
-
-```bash
-DUCKLAB_SPEED_WARMSTART_CHECKPOINT=/absolute/path/to/model_10.pt \
-DUCKLAB_ENVS=4096 DUCKLAB_ITERATIONS=4000 \
-./scripts/train-speed-discovery.sh
-```
-
-It does not change the normal skating or Race5 recipes. See
-[docs/SPEED_DISCOVERY.md](docs/SPEED_DISCOVERY.md) for the performance-gated
-2.5→6.7 m/s curriculum, 4,096/8,192 profiles, GPU telemetry, checkpoint
-selection, and evaluation metrics.
-
-### Official-friction speed sweep
-
-Once a fast donor exists, use the controlled official-friction sweep rather
-than guessing from a single PPO chart. It runs one job at a time (safe on the
-shared Spark), tests six small changes to speed/control reward balance and PPO
-exploration, then evaluates saved checkpoints with the exact Race5 bearing
-friction (`0.003`) and dashboard line-hold controller.
-
-```bash
-# 350 iterations per candidate is the inexpensive first screen.
-DUCKLAB_SWEEP_ENVS=4096 DUCKLAB_SWEEP_ITERATIONS=350 \
-./scripts/train-speed-official-sweep.sh
-```
-
-The generated `reports/official-speed-sweep-*/official_sweep_scoreboard.json`
-contains the Pareto front. A candidate must be good on sustained world-forward
-mph, survival, maximum lateral drift, and heading error; PPO reward alone does
-not promote a model. Extend only Pareto candidates to 2,000–4,000 iterations,
-then certify the finalists with the normal 5-episode, 20-second Race5 battery.
-
-## What the experiments taught us
-
-The benchmark is deliberately multi-objective. A policy that is fast in a
-single open-loop sprint can still be unusable if it creeps at zero command,
-cannot brake, loses turning, or falls during the long run. Policy Bench now
-requires 15 control gates and ranks nine comparable Pollen dimensions: idle
-creep, top speed, sustained speed, 100-ft time, trap speed, launch
-acceleration, long-run drift, heading error, and agility.
-
-The RTX 5090 transfer made the useful distinction clear:
-
-- **V57b/V59** are valuable speed teachers, but their raw policies trade away
-  idle hold, braking, or retention.
-- **V63** is a strong mid-speed branch (about 2.05 mph sustained on Spark),
-  but it creeps and becomes unstable when used alone.
-- **V65** is a three-way command-gated policy: a low-speed control branch, V63
-  in the middle, and V59 at high speed. The transferred 5090 report used a
-  newer line-controller/evaluator revision, so its metrics are retained as
-  provenance but are not mixed into Spark's canonical leaderboard.
-- **V66** routes V65 through the proven control-aware shell and uses a 96.5%
-  high-speed contribution. This preserves the control skills while allowing
-  the speed branch to improve the 100-ft result. Its line-hold settings are
-  `yaw_kp=0.70`, `lateral_kp=0.14`, `yaw_kd=0.07`, and `max_wz=0.15`.
-- **V67** retains that control shell, uses 25% V47 authority on hip yaw/roll,
-  105% on hip pitch/knee/ankle, and V65 for moving zero-command braking. With
-  line hold `0.70/0.22/0.07/0.15`, it improves every primary V66 race metric,
-  passes all 15 gates, and is the definitive simulation-qualified leader.
-- **V68 research** scored 586 per-joint and controller configurations around
-  V67. The best challenger improved speed, acceleration, drift, tilt, and
-  contact, but its 13.26° heading error exceeded V67's 10.22°; zero candidates
-  passed the no-regression gate. The full result is documented in
-  [the V68 search report](releases/v67/V68-SEARCH.md).
-- **V69 research** scored 150 measured body-yaw state guards around the V68
-  challenger. Nine improved speed, but every one regressed heading or another
-  retained measurement; V67 remains definitive. See the
-  [V69 search report](releases/v67/V69-SEARCH.md).
-
-The practical training lesson is to separate capabilities structurally rather
-than forcing one actor to remember incompatible behaviors. V68 also shows that
-post-hoc action fusion has reached a sharp contact-dynamics boundary: the next
-run should train a phase-aware propulsion residual with heading and tilt in the
-optimization objective, while keeping V67's control and brake routes immutable.
-Reward curves diagnose progress, but only the full deployment replay decides
-promotion.
-
-## Compare and promote policies
-
-MicroDuck Policy Bench provides an entirely open-source, offline workflow for
-immutable checkpoint snapshots, evaluation history, candidate comparisons,
-human-reviewed promotion, and a local HTML dashboard:
+For a saved run, Policy Bench provides discovery, immutable registration,
+evaluation, comparison, metrics, and review:
 
 ```bash
 make bench-discover
@@ -335,115 +170,56 @@ make bench-list
 make bench-dashboard
 ```
 
-The dashboard's **Open simulator** action opens Pollen's colorful browser arena
-with native gamepad support for both factory and custom models. For a custom
-saved model, Policy Bench verifies its immutable ONNX snapshot, loads that
-exact artifact into the correct policy slot, and selects feet or rollers
-automatically. The older white Viser surface is retained only as an advanced
-engineering debugger and is never the dashboard's normal Play path.
-While a run is active, its separate **Watch training live** action opens a
-six-robot gray-tile mjlab view of the newest immutable checkpoint. The trainer
-still runs thousands of environments headlessly; this lightweight sample is
-refreshed by reopening the button after a newer checkpoint is saved and never
-replaces the finished-model arena.
+The evaluator for a mature capability owns its physics and metrics. A front
+flip is never ranked by skating speed, and a new robot does not need to pretend
+it has MicroDuck's 61-observation/14-action contract.
 
-The main colorful arena continuously buffers six seconds of MuJoCo state and
-policy actions. After any useful manual maneuver, immediately click
-**Replay → Save clip**. The universal button uploads the previous six seconds
-to `reports/demonstrations/`; failed attempts can simply be left unsaved. The
-observation-only live-training viewer intentionally has no recorder.
-**Evaluate** runs the exported ONNX policy
-through Pollen's CPU MuJoCo runtime and adds a scored forward/reverse/coast/
-heading evaluation to the run. Its local DuckLab Assistant
-can turn a request such as “train swizzle for 8000 iterations with 4096
-environments” into a validated configuration and an explicit confirmation
-button. It cannot execute arbitrary shell commands and blocks concurrent full
-training.
+## Training safely on shared hardware
 
-Promoted policies move sequentially through experimental, evaluated,
-sim-qualified, hardware-candidate, and production stages. Hardware stages
-require explicit sign-off, and the viewer automatically selects the current
-sim-qualified swizzle checkpoint after verifying its hash. See
-[docs/POLICY_BENCH.md](docs/POLICY_BENCH.md) for the complete workflow.
+DGX Spark/GB10 memory is unified. Before a heavy run, check available memory,
+swap, disk, GPU process attribution, and existing trainers. Do not run full
+training concurrently with memory-heavy inference. DuckLab's default resource
+mode is `shared` and does not stop unrelated services.
 
-### Drive the factory robot with an Xbox controller
+For an explicitly authorized GPU training run, the optional
+`training-priority` mode can stop and restore operator-provided services. See
+the [resource workflow](docs/CODING_AGENT_WORKFLOW.md#heavy-gpu-runs-on-a-shared-spark).
+CPU composition and evaluation searches do not require pausing Hermes or vLLM.
 
-On macOS, install the Policy Bench companion once to manage every dashboard,
-Viser, and controller forward and automatically open viewers launched by Codex.
-See [the Policy Bench Mac setup](docs/POLICY_BENCH.md#dashboard-control-center).
+Training outputs and raw optimizer checkpoints stay local/ignored. Git carries
+code, compact inference artifacts, checksums, schemas, and reviewed evidence.
+Never treat an exported ONNX actor as a lossless PPO continuation checkpoint.
 
-Connect from your laptop with the dashboard and factory arena forwarded:
+## Promotion rules
 
-```bash
-ssh -L 8091:localhost:8091 <ssh-user>@<spark-address>
-```
+Reward curves and one impressive rollout are evidence, not promotion. A skating
+candidate must be faster over 100 ft and have higher sustained speed while
+preserving top speed, acceleration, drift, heading, tilt, bilateral contact,
+idle hold, turns, and braking. Other capabilities define their own frozen
+contract. Every result is labeled `promoted`, `rejected`, or `exploratory`.
 
-Open `http://localhost:8091`, click **Open simulator** on a factory or saved
-model, press a button on the controller so the browser detects it, and drive
-with the left stick. This is Pollen's controller implementation and is the
-default test path. No Viser or controller port forwarding is required. Custom
-policy previews start with a clean floor; use the in-arena **Ball on / Ball
-off** control when a ball is useful. That choice persists when the robot is
-reset.
+The complete process and history—from Pollen's roller baseline through V67,
+including failed transfers and the V68/V69 negative results—is in the
+[DuckWing research paper](docs/DUCKWING_RESEARCH_PAPER.md), with a
+[shareable Word version](docs/DUCKWING_RESEARCH_PAPER.docx).
 
-### Debug an exact custom checkpoint
+## Repository map
 
-The Viser launcher remains an advanced compatibility tool. For a single direct
-viewer, forward both of its ports:
+- [`AGENTS.md`](AGENTS.md): instructions for Codex and other coding agents.
+- [`docs/AGENTIC_RL_PLATFORM.md`](docs/AGENTIC_RL_PLATFORM.md): generic
+  agent-to-dashboard architecture.
+- [`docs/CODING_AGENT_WORKFLOW.md`](docs/CODING_AGENT_WORKFLOW.md): reproducible
+  setup, exact skating prompt, resource hooks, and definition of done.
+- [`docs/POLICY_BENCH.md`](docs/POLICY_BENCH.md): dashboard and review workflow.
+- [`docs/RACE5.md`](docs/RACE5.md): exact skating task and private continuation.
+- [`releases/v67/`](releases/v67/): current leader, checksums, metrics, and
+  follow-up search reports.
+- [`upstream/microduck_rl`](upstream/microduck_rl): pinned training/runtime
+  source kept as a Git submodule.
 
-```bash
-ssh -L 8080:localhost:8080 -L 8090:localhost:8090 <ssh-user>@<spark-address>
-```
+## Contributing
 
-In that SSH session, launch the final skating checkpoint:
-
-```bash
-./scripts/view-final-skate.sh
-```
-
-Open `http://localhost:8080` for Viser and `http://localhost:8090` for the
-controller. Connect the Xbox controller to the local computer, press a button
-so the browser detects it, and select **Arm Controller**. The left stick or
-triggers control propulsion, the right stick controls heading, and X coasts.
-Reset, pause/play, and emergency controls are on-screen to prevent accidental
-face-button actions. **Resume controls** clears an emergency latch. Commands
-automatically fall back to zero if the browser disconnects or stops updating
-for 500 ms. A nonzero drive command also resumes a paused simulation.
-
-Use the **Original roller** preset with the first roller checkpoint; its
-negative command means braking and it was not trained for reverse. Use the
-**Swizzle** preset with a qualified swizzle checkpoint for symmetric forward
-and reverse control. This interface controls simulation only and is not a
-physical-robot safety system. See [docs/GAMEPAD.md](docs/GAMEPAD.md) for the
-complete workflow and troubleshooting notes. Policy Bench can run multiple
-models at once; its full SSH forwarding configuration is in
-[docs/POLICY_BENCH.md](docs/POLICY_BENCH.md#dashboard-control-center).
-
-The default is 4,096 environments and 5,000 PPO iterations. Override either
-setting with `DUCKLAB_ENVS` and `DUCKLAB_ITERATIONS`, as with walking. The
-policy learns the upstream roller command semantics: coast at zero, push with
-a positive forward command, brake with a negative command, and track heading.
-Artifact verification rehearses the policy contract against the roller model.
-
-## Direct upstream commands
-
-```bash
-./scripts/ducklab.sh list-envs
-./scripts/ducklab.sh scripts/infer_policy.py --walking policy.onnx
-```
-
-Use the official `scripts/export.py` for every deployable ONNX file. It embeds
-the observation normalizer required by the 50 Hz robot runtime.
-
-Every immutable Policy Bench candidate records the DuckLab commit and the exact
-Pollen `microduck_rl` remote, branch, commit, and dirty state used to create it.
-The dashboard shows the current upstream revision and the per-run revision so a
-future upstream update cannot silently change the meaning of an older result.
-
-See [docs/V1.md](docs/V1.md) for v1.0 scope, qualification gates, and the
-arrival-day deployment plan.
-
-## License
-
-Lab automation and documentation are Apache-2.0. The pinned upstream project
-retains its own licenses; its 3D model files are CC BY-SA-NC.
+Read `AGENTS.md` and the relevant capability/release notes first. Keep changes
+small, reproducible, and attributable. Run `make test`, `git diff --check`,
+artifact verification, and a machine-path/secret review before committing.
+Do not overwrite a release or promote a model without complete evidence.
