@@ -46,18 +46,18 @@ certification.
 
 ## Download only the model
 
-If you only need the current skating policy, start with the [V80 release
-directory](releases/v80/). It contains the [standalone ONNX
-artifact](releases/v80/duckwing-v80-high-command-residual.onnx), SHA-256
-checksum, leader metrics, and evaluation summary; the rest of this platform is
-not required to copy or inspect those files.
+If you only need the current skating policy, download the public
+[DuckWing V80 model release on Hugging Face](https://huggingface.co/juicenv/duckwing-v80-roller-skating):
 
-The recommended next publication is that same small bundle as a separate
-model-only GitHub repository (for example, `duckwing-v80-model`). It should
-contain only the ONNX model, model card, license/provenance, checksum, and
-measured metrics—not the simulator, training checkpoints, or dashboard. Once
-published, this paragraph can link directly to that model repository without
-making the platform depend on it.
+```bash
+hf download juicenv/duckwing-v80-roller-skating policy.onnx \
+  --local-dir policies/duckwing-v80
+```
+
+The model repository contains only the inference-complete ONNX policy, model
+card, Apache-2.0 license, machine-readable manifest, checksums, and measured
+evaluation evidence. The source [V80 release directory](releases/v80/) remains
+the canonical in-repository copy and includes the exact construction recipe.
 
 ## Ask an agent to run RL
 
