@@ -1,0 +1,76 @@
+{
+  "model": "DuckWing V89",
+  "baseline": "Pollen official roller",
+  "physics": {
+    "control_hz": 50,
+    "current_limit_a": 1.75,
+    "physics_hz": 200,
+    "wheel_frictionloss": 0.003
+  },
+  "basis": "Frozen driving-reference metrics, verified unchanged in V89 Race5 phase metrics across 16 paired held-out seeds; not a new V89 versus Pollen simulation run.",
+  "baseline_report_sha256": "d692a31172d75d2318d036732074606cd0934fef79d864a3842274f6513b8997",
+  "v89_retention_evidence": "../releases/v89/evaluation-summary.json",
+  "rows": [
+    {
+      "metric": "Race sustained speed",
+      "phase": "race",
+      "field": "steady_mean_forward_speed_mps",
+      "v89": 2.2684921992166656,
+      "pollen": 1.0677124278985133
+    },
+    {
+      "metric": "Verified top speed (0.5 s)",
+      "phase": "max_speed",
+      "field": "verified_top_speed_0_5s_mph",
+      "v89": 3.0843928392789075,
+      "pollen": 1.2830762811135965
+    },
+    {
+      "metric": "100-ft elapsed time",
+      "phase": "max_speed",
+      "field": "finish_time_100ft_s",
+      "v89": 25.729329729271214,
+      "pollen": 57.589456986777634
+    },
+    {
+      "metric": "First-second acceleration",
+      "phase": "max_speed",
+      "field": "acceleration_first_second_mps2",
+      "v89": 0.4655457697551948,
+      "pollen": 0.323260856147632
+    },
+    {
+      "metric": "Maximum lateral drift",
+      "phase": "max_speed",
+      "field": "max_lateral_drift_ft",
+      "v89": 0.4030256645775466,
+      "pollen": 1.2471690595318081
+    },
+    {
+      "metric": "Maximum heading error",
+      "phase": "max_speed",
+      "field": "max_heading_error_deg",
+      "v89": 9.53992435906985,
+      "pollen": 11.056781253079457
+    }
+  ],
+  "braking_comparison_to_pollen_available": false,
+  "line_hold": {
+    "v89": {
+      "enabled": true,
+      "lateral_kp": 0.22,
+      "launch_bias_distance_m": 1.5,
+      "launch_bias_wz": 0.0,
+      "max_wz": 0.15,
+      "yaw_kd": 0.07,
+      "yaw_kp": 0.7
+    },
+    "pollen": {
+      "enabled": true,
+      "lateral_kp": 0.1,
+      "max_wz": 0.18,
+      "yaw_kd": 0.08,
+      "yaw_kp": 0.55
+    }
+  }
+}
