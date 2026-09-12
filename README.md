@@ -11,9 +11,37 @@ Front flip is the first separate program. Other robots and behaviors can enter
 through the same generic run-receipt interface without being forced into the
 skating benchmark.
 
-## Current leader: DuckWing V80
+## Latest validated control model: DuckWing V89
 
-V80 is the current simulation-qualified skating model. It is evaluated in
+[V89](releases/v89/README.md) adds learned high-speed braking to the frozen
+V80 driving policy. In 16 independent held-out simulation episodes, V89
+completed every high-speed brake healthily; V80 had two unhealthy brakes.
+The following comparisons use the 14 episodes where both policies braked
+healthily, so falling never counts as a successful fast stop.
+
+| High-speed braking metric | V80 | V89 |
+| --- | ---: | ---: |
+| Mean lateral drift | 0.599 m | **0.325 m** |
+| Worst lateral drift | 1.179 m | **0.787 m** |
+| Mean stopping time | 2.930 s | **2.371 s** |
+| Mean stopping path | 1.812 m | **1.493 m** |
+| Healthy brakes, all held-out episodes | 14/16 | **16/16** |
+
+Mean braking drift fell **45.7%**. Race5 and manual-agility phase metrics
+matched V80 exactly on all 16 paired seeds. Low-speed braking remained
+unchanged. This is a qualified braking-control variant, not a new speed
+record. V80 remains the immutable speed benchmark; the 5 mph goal and
+physical-robot validation remain open. V90 training is underway through Ray
+and has not been qualified or released.
+
+Download the inference-complete [V89 ONNX policy](releases/v89/duckwing-v89-braking-control.onnx)
+and verify its [checksums](releases/v89/SHA256SUMS). Its 15,616-value temporal
+input requires the history contract in the release notes; it cannot be fed a
+single 61-value frame.
+
+## Speed benchmark: DuckWing V80
+
+V80 is the simulation-qualified speed benchmark. It is evaluated in
 deterministic CPU MuJoCo with wheel `frictionloss=0.003`, motor current limit
 `1.75 A`, and the frozen Race5 line controller. It passes all 15 retained
 qualification gates, satisfies the repository's formal advancement rule over
@@ -46,7 +74,7 @@ certification.
 
 ## Download only the model
 
-If you only need the current skating policy, download the public
+For the original 61-input speed benchmark, download the public
 [DuckWing V80 model release on Hugging Face](https://huggingface.co/juicenv/duckwing-v80-roller-skating):
 
 ```bash
@@ -180,6 +208,19 @@ make bench-dashboard
 The evaluator for a mature capability owns its physics and metrics. A front
 flip is never ranked by skating speed, and a new robot does not need to pretend
 it has MicroDuck's 61-observation/14-action contract.
+
+## Ray compute and MinIO artifacts
+
+The portable [compute package](compute/README.md) provides authenticated job
+submission, durable receipts, resource-based Ray scheduling, cancellation and
+bounded retries. The head also runs jobs when its resources match. ARM64 GB10
+and x86 RTX workers can share the cluster; application environments must be
+validated independently on each architecture.
+
+Optional MinIO/S3 artifact transfers use content hashes and credentials from
+operator environment variables. The dashboard remains local; MinIO is artifact
+storage, not a public model distribution endpoint. See the
+[privacy and publishing guide](docs/PRIVACY.md).
 
 ## Training safely on shared hardware
 

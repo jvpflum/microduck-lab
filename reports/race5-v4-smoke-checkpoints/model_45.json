@@ -96,7 +96,7 @@
     }
   },
   "physics_hz": 200,
-  "policy": "/home/juice/projects/microduck-lab/reports/race5-v4-smoke-checkpoints/model_45.onnx",
+  "policy": "private-artifact/model_45.onnx",
   "profile": "race-5mph",
   "wheel_frictionloss": 0.003
 }

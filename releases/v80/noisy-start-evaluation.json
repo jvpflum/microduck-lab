@@ -124,7 +124,7 @@
   },
   "model": "MicroDuck passive rollers",
   "physics_hz": 200,
-  "policy": "/home/juice/projects/microduck-lab/releases/v80/duckwing-v80-high-command-residual.onnx",
+  "policy": "private-artifact/duckwing-v80-high-command-residual.onnx",
   "race_line_control": true,
   "summary": {
     "average_episode_distance_m": 22.329602887492786,

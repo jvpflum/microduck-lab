@@ -20,3 +20,14 @@ upstream/microduck_rl/*.onnx
 *.ckpt
 *.safetensors
 !releases/**/*.onnx
+
+# Private execution state and operator credentials
+.secrets/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.sqlite3*
+private-results/
+compute/.venv/

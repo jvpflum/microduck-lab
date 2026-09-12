@@ -2095,6 +2095,14 @@ class Bench:
             "race": RACE_POLLEN_BASELINE_REPORT,
             "race5": RACE5_POLLEN_LINE_BASELINE_REPORT,
         }.get(focus_task)
+        # Recover the exact baseline used by a saved evaluation when the
+        # default baseline is unavailable in a fresh checkout.
+        if not baseline_path or not baseline_path.is_file():
+            for entry in leaderboard:
+                recorded = entry["evaluation"].get("baseline_comparison", {}).get("baseline_report")
+                if recorded and Path(recorded).is_file():
+                    baseline_path = Path(recorded)
+                    break
         baseline_entry = None
         if baseline_path and baseline_path.is_file():
             try:
@@ -2717,7 +2725,8 @@ class Bench:
                 "<div class='hero-kpis'>"
                 f"<div><small>Pollen record</small><strong>{best_wins}/{best_total}</strong><span>measured wins</span></div>"
                 f"<div><small>100 ft</small><strong>{best_time}</strong><span>vs {baseline_time}</span></div>"
-                f"<div><small>Top speed</small><strong>{cell(best_performance, 'top_speed_mph')}</strong><span>mph verified</span></div>"
+                f"<div><small>Top speed</small><strong>{cell(best_performance, 'top_speed_mph')} mph</strong><span>verified top speed</span></div>"
+                f"<div><small>Sustained speed</small><strong>{cell(best_performance, 'sustained_speed_mph')} mph</strong><span>measured average</span></div>"
                 f"<div><small>Control gates</small><strong>{sum(bool(g.get('passed')) for g in overall_best['score'].get('qualification_gates', {}).values())}/{len(overall_best['score'].get('qualification_gates', {}))}</strong><span>passed</span></div></div></section>"
             )
         else:

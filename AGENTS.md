@@ -35,8 +35,13 @@ and promotion rule.
 
 ## Source of truth
 
-- The simulation-qualified leader is DuckWing V67 in `releases/v67/`.
+- The immutable speed benchmark is DuckWing V80 in `releases/v80/`; V67 is
+  its frozen predecessor. V89 in `releases/v89/` is the qualified braking-control
+  variant. Driving performance matches V80; held-out high-speed braking improves.
+  Do not describe V89 as a new speed record.
 - Never overwrite a release artifact. A new version must earn a new directory.
+  The recorded metadata-only privacy cleanup is an explicit exception for
+  removing machine paths; graph parameters and numerical results are unchanged.
 - The official comparison contract is deterministic CPU MuJoCo, wheel
   `frictionloss=0.003`, motor current limit `1.75 A`, and the committed Race5
   controller/evaluator settings.
@@ -72,3 +77,12 @@ benefit from stopping vLLM or Hermes.
 Do not modify CUDA, NVIDIA drivers, Docker, the firewall, vLLM, or Hermes merely
 to make an experiment run. Do not expose credentials, install untrusted code,
 or commit files containing private paths, optimizer state, or session data.
+
+## Ray and artifact storage
+
+Read `compute/README.md` before distributed jobs. Let Ray choose placement by
+resources; the head is also eligible. Require the validated architecture for
+authoritative CPU evaluation and label other architectures as portability
+checks. MinIO transfers are explicit and use private environment credentials.
+Never publish endpoints, API tokens, passwords, private receipts or optimizer
+state. Follow `docs/PRIVACY.md` and run the public privacy scanner before push.

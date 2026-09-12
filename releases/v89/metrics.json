@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "name": "DuckWing V89",
+  "status": "qualified-braking-control-variant",
+  "speed_record_changed": false,
+  "hardware_verified": false,
+  "holdout_seeds": [
+    89901,
+    89902,
+    89903,
+    89904,
+    89905,
+    89906,
+    89907,
+    89908,
+    89909,
+    89910,
+    89911,
+    89912,
+    89913,
+    89914,
+    89915,
+    89916
+  ],
+  "high_speed_braking": {
+    "comparison_available": true,
+    "healthy_baseline_pair_indices": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "healthy_baseline_count": 14,
+    "unhealthy_baseline_count": 2,
+    "unhealthy_candidate_count": 0,
+    "candidate_mean": {
+      "brake_high_time_s": 2.3714285714285714,
+      "brake_high_path_m": 1.4931015828520167,
+      "brake_high_drift_m": 0.3254679478227604
+    },
+    "candidate_worst": {
+      "brake_high_time_s": 2.64,
+      "brake_high_path_m": 1.7838364693652111,
+      "brake_high_drift_m": 0.787443643423388
+    },
+    "baseline_mean": {
+      "brake_high_time_s": 2.93,
+      "brake_high_path_m": 1.8124863506251536,
+      "brake_high_drift_m": 0.5988690569652052
+    },
+    "baseline_worst": {
+      "brake_high_time_s": 3.34,
+      "brake_high_path_m": 2.1579944496837333,
+      "brake_high_drift_m": 1.1793000634988715
+    }
+  },
+  "retention_phase_metrics_exact": {
+    "race-5mph-89901": true,
+    "race-5mph-89902": true,
+    "race-5mph-89903": true,
+    "race-5mph-89904": true,
+    "race-5mph-89905": true,
+    "race-5mph-89906": true,
+    "race-5mph-89907": true,
+    "race-5mph-89908": true,
+    "race-5mph-89909": true,
+    "race-5mph-89910": true,
+    "race-5mph-89911": true,
+    "race-5mph-89912": true,
+    "race-5mph-89913": true,
+    "race-5mph-89914": true,
+    "race-5mph-89915": true,
+    "race-5mph-89916": true,
+    "manual-agility-89901": true,
+    "manual-agility-89902": true,
+    "manual-agility-89903": true,
+    "manual-agility-89904": true,
+    "manual-agility-89905": true,
+    "manual-agility-89906": true,
+    "manual-agility-89907": true,
+    "manual-agility-89908": true,
+    "manual-agility-89909": true,
+    "manual-agility-89910": true,
+    "manual-agility-89911": true,
+    "manual-agility-89912": true,
+    "manual-agility-89913": true,
+    "manual-agility-89914": true,
+    "manual-agility-89915": true,
+    "manual-agility-89916": true
+  },
+  "speed_reference": "../v80/leader-metrics.json"
+}

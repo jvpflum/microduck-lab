@@ -70,7 +70,9 @@ the generic agent receipt remains unchanged.
   and promotion rule. A mature capability must never silently redefine these
   after seeing a result.
 
-For skating, DuckWing V67 remains the frozen leader under exact Race5 physics.
+For skating, DuckWing V80 remains the frozen speed benchmark. V89 preserves
+its driving performance and improves held-out braking as a qualified control
+variant. V67 remains the immutable predecessor under exact Race5 physics.
 For front flip, the current evaluator separately measures 256 unassisted
 episodes, takeoff/landing/settling rates, body strikes, clearance, forward and
 off-axis rotation, and horizontal drift. Those measurements are not forced into

@@ -40,6 +40,6 @@
     1,
     14
   ],
-  "policy": "/home/juice/projects/microduck-lab/releases/v80/duckwing-v80-high-command-residual.onnx",
+  "policy": "private-artifact/duckwing-v80-high-command-residual.onnx",
   "robot_model": "rollers"
 }

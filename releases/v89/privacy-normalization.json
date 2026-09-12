@@ -1,0 +1,16 @@
+{
+  "path": "releases/v89/duckwing-v89-braking-control.onnx",
+  "original_sha256": "1693fd8608037a6b73a128ba737c57adc7bcb6228cac2cc8603719f4be740c3a",
+  "published_sha256": "09663852ae1db90fdcf321dedc4e39810eb65ffc6998df3cd8fc34d3231f84f7",
+  "removed_metadata_keys": [
+    "run_path",
+    "hybrid_control_policy",
+    "hybrid_speed_policy",
+    "joint_fusion_incumbent",
+    "joint_fusion_specialist",
+    "brake_safe_drive_policy",
+    "brake_safe_transition_policy"
+  ],
+  "graph_byte_identical": true,
+  "output_max_abs_error": 0
+}

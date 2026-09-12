@@ -96,7 +96,7 @@
     }
   },
   "physics_hz": 200,
-  "policy": "/home/juice/projects/microduck-lab/reports/race5-curriculum-checkpoints/model_20.onnx",
+  "policy": "private-artifact/model_20.onnx",
   "profile": "race-5mph",
   "wheel_frictionloss": 0.003
 }
