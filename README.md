@@ -11,6 +11,22 @@ artifacts.
 It combines high-speed driving, steering, low-speed control and learned braking
 in one inference-complete ONNX file. No separate donor models are required.
 
+### What V89 improves
+
+- **19.1% faster high-speed stopping.**
+- **17.6% shorter stopping path.**
+- **45.7% less mean lateral drift while braking.**
+- **33.2% less worst-case braking drift.**
+- **More reliable stops:** 16/16 healthy held-out high-speed brakes, up from 14/16.
+- **Retained driving control:** Race5 and manual-agility phase metrics matched
+  the reference exactly on all 16 paired seeds; low-speed braking was unchanged.
+
+Braking improvements compare V89 with the prior validated DuckWing V80
+reference, using the 14 paired episodes where both brakes were healthy.
+Reliability counts include all 16 held-out episodes. These percentages are
+separate from the Pollen driving comparison below; matching Pollen braking
+measurements are not available. See the [braking evidence](releases/v89/evaluation-summary.json).
+
 ### V89 compared with Pollen's official roller
 
 | Simulation metric | V89 | Pollen baseline | V89 advantage |
