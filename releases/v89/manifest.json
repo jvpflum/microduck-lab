@@ -1,0 +1,19 @@
+{
+  "name": "DuckWing V89",
+  "status": "qualified-braking-control-variant",
+  "policy": "duckwing-v89-braking-control.onnx",
+  "sha256": "09663852ae1db90fdcf321dedc4e39810eb65ffc6998df3cd8fc34d3231f84f7",
+  "input_shape": [
+    1,
+    15616
+  ],
+  "history_length": 256,
+  "control_frequency_hz": 50,
+  "license": "Apache-2.0",
+  "inference_complete": true,
+  "optimizer_state_included": false,
+  "speed_record_changed": false,
+  "hardware_verified": false,
+  "evidence": "evaluation-summary.json",
+  "metrics": "metrics.json"
+}

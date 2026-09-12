@@ -1,0 +1,307 @@
+{
+  "purpose": "Remove private machine paths from public inference metadata only. Historical evidence hashes identify originally evaluated exports. Git history is not rewritten.",
+  "artifacts": [
+    {
+      "path": "incoming/rtx5090/top5-2026-09-01/v56-i10-line-speed/policy.onnx",
+      "original_sha256": "a39596dd05f77bff52a2b7b7d9c624ef023c75db7f8f9f704ceb02f56692f974",
+      "published_sha256": "15f6d19dee9f5416a7dfb4ae0834532d96e0df98908c6717bfec3f9ef531f9b9",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "incoming/rtx5090/top5-2026-09-01/v57b-i50-frontier-speed/policy.onnx",
+      "original_sha256": "421b3a7471038eb2e3f54cd16002bc518860bd8e02edb7b1feb836a4c8946954",
+      "published_sha256": "ce1949784a5d0a85dad4343c2f9d137ee4a161dc2338a4fffde4784a002a1dcc",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "incoming/rtx5090/top5-2026-09-01/v58-i20-peak-line/policy.onnx",
+      "original_sha256": "5c56d378ec4066623bd801de65c699ea186b546393745a3fbea88fd7e3b45a7d",
+      "published_sha256": "51ca66af18548634b8256b6b58ba807510fac0f799b00d794af8256c5b4d808c",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "incoming/rtx5090/top5-2026-09-01/v59-i99-promoted-speed-leader/policy.onnx",
+      "original_sha256": "a8ad436e1d70d070e0b55f16390a92357601b4195b06316208e9bdca55908887",
+      "published_sha256": "c989672e152e754e137f15a6af3372a75b0a56b0da10034211fdc91f5cd2f62e",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "incoming/rtx5090/top5-2026-09-01/v60-i20-balanced/policy.onnx",
+      "original_sha256": "79b26f6166a261419b9ff976e7ce32ee5c17d486fd0a09926ecbb553be7a424d",
+      "published_sha256": "da9169a0fc9f6432759bd1d99844a7873de2b92baa3c5bc3c5720e1a82da9603",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "incoming/rtx5090/v47-official-friction-speed-specialist/policy.onnx",
+      "original_sha256": "6079db680499a771ef34a9d391b97eee4276332df54bd3a461a7362e021add87",
+      "published_sha256": "f8c942f0a856eb109d21eb1ef6c8fa8a7aeb23f9d5aeee031211df2076369e99",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "incoming/rtx5090/v65-v63-immediate-switch-2026-09-01/policy.onnx",
+      "original_sha256": "c184db69cdebba1c93fba41ee686eb96d169906a4227d8640db009a4ab9a705b",
+      "published_sha256": "46d10e93f5775f82f5e84f6b8b1a83f198ee2bbeb1f546b33d572eeb70744859",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "releases/v61/duckwing-v61-v57b-control-fusion.onnx",
+      "original_sha256": "7665aef0d534c7fa61b3340fdb3f147a88c054f696f1f47ff08d482420baf28c",
+      "published_sha256": "45bf642e8f14eb6a5fff7486c76a18be03dad39c1fcb298486f8182c488f0d1c",
+      "removed_metadata_keys": [
+        "run_path",
+        "hybrid_control_policy",
+        "hybrid_speed_policy"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "releases/v66/duckwing-v66-v65-control-fusion.onnx",
+      "original_sha256": "a4ae6955ca593807022928964aaf197730b670330ab8db273b5cc9a84efe9192",
+      "published_sha256": "abbb17a47334e165a3a1fca07f191b0219d10fcbf2b6cfa20dc117a73ca9e904",
+      "removed_metadata_keys": [
+        "run_path",
+        "hybrid_control_policy",
+        "hybrid_speed_policy"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "releases/v67/duckwing-v67-joint-specialist-fusion.onnx",
+      "original_sha256": "e02067f1d3ed12ba3d9e7051a5f172b9380ba0fab7517c77def4e82e5d5d1566",
+      "published_sha256": "30c482ad68cbd65fce40744b71e6f89fdfa86b8f86edb62d09eee773871bc1c5",
+      "removed_metadata_keys": [
+        "run_path",
+        "hybrid_control_policy",
+        "hybrid_speed_policy",
+        "joint_fusion_incumbent",
+        "joint_fusion_specialist",
+        "brake_safe_drive_policy",
+        "brake_safe_transition_policy"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "releases/v80/duckwing-v80-high-command-residual.onnx",
+      "original_sha256": "30892afbf7812de324b546d47fc08cf676e351ba45ea52f4a4fc6349d919851a",
+      "published_sha256": "5e7f30f36e7462e2e4690f2e3013b9f4d78588349f4f7e32a61fc4de84e74e2f",
+      "removed_metadata_keys": [
+        "run_path",
+        "hybrid_control_policy",
+        "hybrid_speed_policy",
+        "joint_fusion_incumbent",
+        "joint_fusion_specialist",
+        "brake_safe_drive_policy",
+        "brake_safe_transition_policy"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_0.onnx",
+      "original_sha256": "101a92787b99afef8a0e3eb702c65c1d662cb53f798b3c29431205abae16ff8e",
+      "published_sha256": "a517e8cc5111406ecb7511c6d0301dc58de22383f6bfd7e3e7bb128d0b3daf4d",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_10.onnx",
+      "original_sha256": "47609f1a9a4338773960d01f5b46504d3898dcfb19133668e0a3235019b22997",
+      "published_sha256": "a065a08793e9c808050008509f4d41279d3b04c5bb4bb313cce99ff036f71b65",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_100.onnx",
+      "original_sha256": "47fbc31464fbffbaf5bb9cf31e9f46cf1529eaa6988df4981f7928081e2beaa5",
+      "published_sha256": "499c3b0e7843d0d1089bc9efb864226ee80b391a6eab4840cc1c3155a0bc588f",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_15.onnx",
+      "original_sha256": "ce701c7e0a470466c6d8e57bd06b46acfb0f9422442970c84a358d8379b2c5dd",
+      "published_sha256": "fb3ee4303d24a520539e031b03737ba3c77a0bb31e04652f3f8e11f20ea154e1",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_20.onnx",
+      "original_sha256": "31b3f194d2d53a68fb4ad9d90074839c4173776b57ec445cb1baa97e6ff227dd",
+      "published_sha256": "1f9da5e1350d6a6a6632a97def632924779b74f1dbb9ad5f763661055b5a64b6",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_25.onnx",
+      "original_sha256": "af8d42ad1f32aa7d9a50462600c83fb51657afe867c1570bf3778a4a456c08d0",
+      "published_sha256": "dd71ecd79b618cfbd755c42aff3b38955e7de87d51f3eec25f585d7be00706c2",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_30.onnx",
+      "original_sha256": "63b91cc3eb0aad538f2adae49592b93fab20b65ddc69b7a385f3f61e0dc1bfee",
+      "published_sha256": "ee472fc56eccc334bb5f472c840fc98d383ae242015be1a90c5bf30406aee38b",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_35.onnx",
+      "original_sha256": "55559f23d820034f744eddbfa20ad95b610a658899aa2ca8b29b3a7867f80316",
+      "published_sha256": "bc3372deaf7d67b8e4c400dbd428af3dc9bdbd01ee559e7c869bb5e760114b82",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_40.onnx",
+      "original_sha256": "15667401bd012cda6280f1ff38654979a0991d22a178cb198f83c5cc2302c1b9",
+      "published_sha256": "61f2df42b189e28ca91374436895180bdc1b935eac58692c3af93a7a8c0fa24f",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_5.onnx",
+      "original_sha256": "be2e3610c2afbe6474d477263faa2b06016d59ae1298c9e670e6ab3a7b476844",
+      "published_sha256": "3d241aee0911ba1fa9e13ee7e437b32419187da7c3e0b436f546e7ff00e49414",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-curriculum-checkpoints/model_70.onnx",
+      "original_sha256": "56603fa7332c1ce4876505c3430e09f2c2fc88e9c0637fa36bc10f49c899b916",
+      "published_sha256": "056cac053bc8de8e22f85eee95e73059c5a4d8d09e19e60d26a4e102f73f3356",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-v4-smoke-checkpoints/model_25.onnx",
+      "original_sha256": "4708f5dd24d97dec10ecf9bcd1be415d706e09f0b358767966b0e296581885d0",
+      "published_sha256": "448478524ecd86aa0220f57c172ced8e070cbfd933ee055d2571dbb4b8eefcdd",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-v4-smoke-checkpoints/model_30.onnx",
+      "original_sha256": "47154ca5edaebdc093812ccf6f8d613be1b604ec849ecb62f057709afd03b0dc",
+      "published_sha256": "56a15977089970e768f1782026e0345a101181286de28d86b18d63df1934b070",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-v4-smoke-checkpoints/model_35.onnx",
+      "original_sha256": "09b979799fc7a2f3bf4ccd63c99270096df11771c65092de725cc3543b734fcc",
+      "published_sha256": "69918d155f848af7fa2bc4963712744390a1e0efec7e60af31e5fe7035427d33",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-v4-smoke-checkpoints/model_40.onnx",
+      "original_sha256": "218c6f5342240179df1b129831512f4e3fef702afac5caa97cec407d540d50f3",
+      "published_sha256": "2c56ff0f3d843a37ae05574091262988c254748e0206a83f40e45cbf9e943f34",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "reports/race5-v4-smoke-checkpoints/model_45.onnx",
+      "original_sha256": "774348998dfa070be888abcf0b4adcc8b2b1fb93a8f5b58cba6fea90c10967bb",
+      "published_sha256": "757e9c7e2e10dd5bbf78a0affb3e09acf44f1df239795fc0ee1ead9cf5efa0e5",
+      "removed_metadata_keys": [
+        "run_path"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    },
+    {
+      "path": "releases/v89/duckwing-v89-braking-control.onnx",
+      "original_sha256": "1693fd8608037a6b73a128ba737c57adc7bcb6228cac2cc8603719f4be740c3a",
+      "published_sha256": "09663852ae1db90fdcf321dedc4e39810eb65ffc6998df3cd8fc34d3231f84f7",
+      "removed_metadata_keys": [
+        "run_path",
+        "hybrid_control_policy",
+        "hybrid_speed_policy",
+        "joint_fusion_incumbent",
+        "joint_fusion_specialist",
+        "brake_safe_drive_policy",
+        "brake_safe_transition_policy"
+      ],
+      "graph_byte_identical": true,
+      "output_max_abs_error": 0
+    }
+  ]
+}

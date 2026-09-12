@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "platform": {
+    "name": "DuckLab Robotics RL",
+    "description": "A lightweight, artifact-first robotics reinforcement-learning workbench"
+  },
+  "robots": {
+    "microduck": {
+      "display_name": "Pollen MicroDuck",
+      "observation_size": 61,
+      "action_size": 14,
+      "policy_format": "normalizer-aware ONNX"
+    }
+  },
+  "programs": {
+    "microduck-skating": {
+      "display_name": "MicroDuck skating",
+      "status": "flagship",
+      "summary": "Official-friction speed, stability, steering, braking, and control retention.",
+      "task_tokens": ["race5", "race", "sprint", "swizzle", "roller"]
+    },
+    "microduck-front-flip": {
+      "display_name": "MicroDuck front flip",
+      "status": "active",
+      "summary": "Unassisted takeoff, forward rotation, clean landing, low drift, and settling.",
+      "task_tokens": ["backflip"]
+    },
+    "microduck-walking": {
+      "display_name": "MicroDuck walking",
+      "status": "reference",
+      "summary": "Upstream locomotion reference and integration check.",
+      "task_tokens": ["walking"]
+    }
+  },
+  "tasks": {
+    "race5": {
+      "display_name": "Race 5 MPH",
+      "robot_id": "microduck",
+      "program_id": "microduck-skating",
+      "aliases": ["race5", "race 5 mph", "five mph"],
+      "play_task": "Mjlab-Velocity-Race5-MicroDuck",
+      "train_script": "scripts/train-race5-v2.sh",
+      "default_iterations": 150,
+      "evaluator": {"script": "tools/evaluate_swizzle.py", "suite": "race5-v3", "arguments": ["--profile", "race-5mph", "--line-hold"]},
+      "viewer": {"slot": "drive", "loco": "rollers", "label": "Race 5 MPH"}
+    },
+    "race": {
+      "display_name": "Race",
+      "robot_id": "microduck",
+      "program_id": "microduck-skating",
+      "aliases": ["race", "racing"],
+      "play_task": "Mjlab-Velocity-Race-MicroDuck",
+      "train_script": "scripts/train-race-v1.sh",
+      "default_iterations": 100,
+      "evaluator": {"script": "tools/evaluate_swizzle.py", "suite": "race-v1", "arguments": ["--profile", "race"]},
+      "viewer": {"slot": "drive", "loco": "rollers", "label": "Race"}
+    },
+    "sprint": {
+      "display_name": "Sprint",
+      "robot_id": "microduck",
+      "program_id": "microduck-skating",
+      "aliases": ["sprint"],
+      "play_task": "Mjlab-Velocity-Sprint-MicroDuck",
+      "train_script": "scripts/train-sprint-probe.sh",
+      "default_iterations": 50,
+      "evaluator": {"script": "tools/evaluate_swizzle.py", "suite": "sprint-v1", "arguments": ["--profile", "sprint"]},
+      "viewer": {"slot": "drive", "loco": "rollers", "label": "Sprint"}
+    },
+    "swizzle": {
+      "display_name": "Swizzle",
+      "robot_id": "microduck",
+      "program_id": "microduck-skating",
+      "aliases": ["swizzle", "skate", "skating"],
+      "play_task": "Mjlab-Velocity-Swizzle-MicroDuck",
+      "train_script": "scripts/train-swizzle.sh",
+      "default_iterations": 8000,
+      "evaluator": {"script": "tools/evaluate_swizzle.py", "suite": "skating-v1", "arguments": []},
+      "viewer": {"slot": "drive", "loco": "rollers", "label": "Swizzle"}
+    },
+    "roller": {
+      "display_name": "Roller",
+      "robot_id": "microduck",
+      "program_id": "microduck-skating",
+      "aliases": ["roller", "rollers"],
+      "play_task": "Mjlab-Velocity-Flat-MicroDuck-Rollers",
+      "train_script": "scripts/train-skate.sh",
+      "default_iterations": 5000,
+      "evaluator": {"script": "tools/evaluate_swizzle.py", "suite": "skating-v1", "arguments": []},
+      "viewer": {"slot": "drive", "loco": "rollers", "label": "Drive"}
+    },
+    "walking": {
+      "display_name": "Walking",
+      "robot_id": "microduck",
+      "program_id": "microduck-walking",
+      "aliases": ["walk", "walking"],
+      "play_task": "Mjlab-Velocity-Flat-MicroDuck",
+      "train_script": "scripts/train-baseline.sh",
+      "default_iterations": 4000,
+      "evaluator": null,
+      "viewer": {"slot": "walk", "loco": "legs", "label": "Run"}
+    },
+    "hop": {
+      "display_name": "Roller hop",
+      "robot_id": "microduck",
+      "program_id": "microduck-skating",
+      "aliases": ["hop", "jump"],
+      "play_task": "Mjlab-RollerHop-Flat-MicroDuck",
+      "train_script": "scripts/train-hop.sh",
+      "default_iterations": 1500,
+      "evaluator": {"script": "tools/evaluate_hop.py", "suite": "hop-v1", "arguments": []},
+      "viewer": {"slot": "drive", "loco": "rollers", "label": "Hop"}
+    },
+    "backflip": {
+      "display_name": "Front flip",
+      "robot_id": "microduck",
+      "program_id": "microduck-front-flip",
+      "aliases": ["front flip", "frontflip"],
+      "legacy_note": "The internal token predates correction of the forward rotation direction.",
+      "play_task": "Mjlab-RollerBackflip-Flat-MicroDuck",
+      "train_script": "scripts/train-backflip.sh",
+      "default_iterations": 2500,
+      "evaluator": {"script": "tools/evaluate_frontflip.py", "suite": "frontflip-v1", "arguments": []},
+      "viewer": {"slot": "crouch", "loco": "rollers", "label": "Front Flip", "period": "4.0", "end": "1.0"}
+    }
+  }
+}

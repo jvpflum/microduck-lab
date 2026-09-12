@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+import os
+from pathlib import Path
+import runpy
+root=Path(__file__).resolve().parent
+if (root/'.secrets/api-token').exists():
+    os.environ.setdefault('HOME_RAY_TOKEN_FILE',str(root/'.secrets/api-token'))
+runpy.run_module('home_ray',run_name='__main__')

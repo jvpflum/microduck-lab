@@ -1,0 +1,33 @@
+.tools/
+__pycache__/
+artifacts/
+# Generated searches can contain thousands of multi-megabyte policies. Curated
+# public artifacts belong under releases/; already-tracked historical reports
+# remain tracked normally.
+reports/**
+policy-bench/
+baselines/
+checkpoints/
+upstream/microduck_rl/logs/
+upstream/microduck_rl/wandb/
+upstream/microduck_rl/*.onnx
+
+# Curated, reviewed public model exports live under releases/. Never commit
+# raw trainer state or generated bench data: it can contain machine paths,
+# optimizer state, logs, and local run metadata.
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+!releases/**/*.onnx
+
+# Private execution state and operator credentials
+.secrets/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.sqlite3*
+private-results/
+compute/.venv/

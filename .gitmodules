@@ -1,0 +1,10 @@
+[submodule "upstream/microduck_rl"]
+	path = upstream/microduck_rl
+	url = https://github.com/jvpflum/microduck_rl.git
+	branch = develop
+[submodule "upstream/microduck"]
+	path = upstream/microduck
+	url = https://github.com/pollen-robotics/microduck.git
+[submodule "upstream/microduck-simulator"]
+	path = upstream/microduck-simulator
+	url = https://github.com/jvpflum/microduck-simulator.git

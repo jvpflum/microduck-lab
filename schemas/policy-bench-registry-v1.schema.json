@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://microduck.local/schemas/policy-bench-registry-v1.schema.json",
+  "title": "MicroDuck Policy Bench Registry v1",
+  "type": "object",
+  "required": ["schema_version", "updated_at", "tasks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "tasks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "propertyNames": {
+          "enum": ["experimental", "evaluated", "sim-qualified", "hardware-candidate", "production"]
+        },
+        "additionalProperties": {"type": "string"}
+      }
+    }
+  },
+  "additionalProperties": false
+}

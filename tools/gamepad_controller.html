@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MicroDuck Gamepad</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+    body { margin: 0; background: #0b1020; color: #e8eefc; }
+    main { width: min(1500px, calc(100% - 32px)); margin: 20px auto; }
+    .drive-workspace { display: grid; grid-template-columns: minmax(360px, 460px) minmax(600px, 1fr); gap: 16px; align-items: start; }
+    .controller-pane { min-width: 0; }
+    .arena-card { position: sticky; top: 16px; height: calc(100vh - 32px); padding: 12px; display: grid; grid-template-rows: auto 1fr; gap: 8px; }
+    .arena-card h2 { padding: 4px 4px 0; }
+    .arena-card iframe { width: 100%; height: 100%; min-height: 620px; border: 0; border-radius: 12px; background: #080c14; }
+    .card { background: #151c30; border: 1px solid #2b3655; border-radius: 18px; padding: 22px; margin: 14px 0; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    p { color: #aebbd6; line-height: 1.45; }
+    .status { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #ef4444; }
+    .dot.ok { background: #22c55e; box-shadow: 0 0 14px #22c55e88; }
+    button, select, input { font: inherit; }
+    button { border: 0; border-radius: 10px; padding: 11px 16px; background: #3b82f6; color: white; font-weight: 700; cursor: pointer; }
+    button.secondary { background: #334155; }
+    button.danger { background: #dc2626; }
+    button:disabled { opacity: .45; cursor: default; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: grid; gap: 6px; color: #aebbd6; }
+    select, input[type=range] { width: 100%; }
+    .meter { height: 12px; border-radius: 99px; background: #27324d; overflow: hidden; position: relative; }
+    .meter span { position: absolute; left: 50%; top: 0; height: 100%; width: 0; background: #60a5fa; }
+    .values { font-family: ui-monospace, monospace; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .warn { color: #fbbf24; }
+    .diagnostic { margin-top: 14px; padding: 12px; border: 1px solid #34415f; border-radius: 10px; background: #0d1426; font: 13px/1.5 ui-monospace, monospace; overflow-wrap: anywhere; }
+    .diagnostic strong { color: #dbeafe; }
+    .input-live { color: #6ee7b7; }
+    .hold { touch-action: none; user-select: none; }
+    h2 { margin: 0 0 6px; font-size: 19px; }
+    kbd { background: #27324d; border-radius: 6px; padding: 2px 7px; }
+    @media (max-width: 1050px) { .drive-workspace { grid-template-columns: 1fr; } .arena-card { position: static; height: 75vh; } }
+    @media (max-width: 560px) { .grid, .values { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body><main><div class="drive-workspace"><section class="controller-pane">
+  <div class="card">
+    <h1>MicroDuck Gamepad</h1>
+    <div class="status"><span id="dot" class="dot"></span><span id="status">No controller detected</span></div>
+    <p>Connect an Xbox controller to this computer, press any controller button, then arm command override. No switch in Viser is required.</p>
+    <div class="buttons">
+      <button id="arm" disabled>Arm controller</button>
+      <button id="estop" class="danger">Emergency zero</button>
+      <button id="clear" class="secondary">Resume controls</button>
+      <button id="resetSim" class="secondary">Reset robot</button>
+      <button id="pauseSim" class="secondary">Pause / play</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Controller input</h2>
+    <p>The standard Xbox layout is automatic. If the sticks do not move the meters below, select the axis that changes in the raw input readout.</p>
+    <div class="grid">
+      <label>Controller
+        <select id="controller"><option value="">Waiting for a controller…</option></select>
+      </label>
+      <label>Propulsion source
+        <select id="driveSource"><option value="auto">Automatic (recommended)</option><option value="triggers">Triggers</option></select>
+      </label>
+      <label>Heading source
+        <select id="turnSource"><option value="auto">Automatic (recommended)</option></select>
+      </label>
+      <label><span>Axis direction</span>
+        <span><input id="invertDrive" type="checkbox" checked> Invert propulsion axis</span>
+        <span><input id="invertTurn" type="checkbox"> Invert heading axis</span>
+      </label>
+    </div>
+    <div class="buttons">
+      <button id="testForward" class="hold">Hold to test forward</button>
+      <button id="testReverse" class="hold secondary">Hold to test negative</button>
+    </div>
+    <div class="diagnostic">
+      <div><strong>Mapping:</strong> <span id="mappingValue">none</span></div>
+      <div><strong>Raw axes:</strong> <span id="rawAxes">—</span></div>
+      <div><strong>Pressed buttons:</strong> <span id="rawButtons">—</span></div>
+      <div class="input-live"><strong>Sending:</strong> <span id="sendingValue">zero</span></div>
+    </div>
+  </div>
+
+  <div class="card grid">
+    <label>Policy semantics
+      <select id="mode">
+        <option value="stride">Original roller: backward = brake</option>
+        <option value="swizzle">Swizzle: backward = reverse</option>
+      </select>
+    </label>
+    <label>Stick dead zone <output id="deadOut">0.12</output>
+      <input id="dead" type="range" min="0.05" max="0.30" step="0.01" value="0.12">
+    </label>
+    <label>Max forward command <output id="fwdOut">0.60</output>
+      <input id="fwd" type="range" min="0.10" max="0.60" step="0.05" value="0.60">
+    </label>
+    <label>Max negative command <output id="negOut">0.50</output>
+      <input id="neg" type="range" min="0.10" max="0.60" step="0.05" value="0.50">
+    </label>
+    <label>Max heading error <output id="yawOut">0.00</output>
+      <input id="yaw" type="range" min="0.00" max="0.50" step="0.05" value="0.00">
+    </label>
+  </div>
+
+  <div class="card">
+    <div class="values">
+      <div>Propulsion: <strong id="xValue">+0.00</strong></div>
+      <div>Heading: <strong id="yawValue">+0.00</strong></div>
+      <div>Left stick: <span id="leftValue">0.00</span></div>
+      <div>Right stick: <span id="rightValue">0.00</span></div>
+    </div>
+    <p><strong>Controls:</strong> left stick Y, triggers, or <kbd>W</kbd>/<kbd>S</kbd> = propulsion; right stick X or <kbd>A</kbd>/<kbd>D</kbd> = heading; controller <kbd>X</kbd> = coast. Reset, pause, and emergency actions are on-screen so an accidental controller press cannot stop the simulation.</p>
+    <p id="meaning" class="warn">This checkpoint interprets negative propulsion as braking, not reverse.</p>
+  </div>
+  </section><section id="arenaCard" class="card arena-card">
+    <h2>Live arena</h2>
+    <iframe id="arenaFrame" title="MicroDuck Viser arena" allow="fullscreen"></iframe>
+  </section></div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const arenaPort = new URLSearchParams(location.search).get('arena_port');
+if (arenaPort && /^\d+$/.test(arenaPort)) {
+  $('arenaFrame').src = `${location.protocol}//${location.hostname}:${arenaPort}`;
+} else {
+  $('arenaCard').hidden = true;
+}
+let armed = false, emergency = false, manualDrive = null, requestTakeover = false;
+let resetRequested = false, pauseRequested = false;
+let controllerSignature = '', lastSourceSignature = '';
+const keys = new Set();
+const clientId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+
+function shaped(value, dead) {
+  const mag = Math.abs(value);
+  if (mag <= dead) return 0;
+  return Math.sign(value) * (mag - dead) / (1 - dead);
+}
+function setOutput(slider, output) { output.value = Number(slider.value).toFixed(2); }
+for (const [s, o] of [[$('dead'),$('deadOut')],[$('fwd'),$('fwdOut')],[$('neg'),$('negOut')],[$('yaw'),$('yawOut')]]) {
+  s.addEventListener('input', () => setOutput(s,o)); setOutput(s,o);
+}
+$('mode').addEventListener('change', () => {
+  const swizzle = $('mode').value === 'swizzle';
+  $('neg').value = swizzle ? '0.60' : '0.50';
+  $('yaw').value = swizzle ? '0.50' : '0.00';
+  setOutput($('neg'),$('negOut')); setOutput($('yaw'),$('yawOut'));
+  $('meaning').textContent = swizzle
+    ? 'Negative propulsion means reverse. Active braking is not trained yet.'
+    : 'This checkpoint interprets negative propulsion as braking, not reverse.';
+});
+$('arm').onclick = () => {
+  armed = !armed;
+  if (armed) requestTakeover = true;
+  $('arm').textContent = armed ? 'Disarm controller' : 'Arm controller';
+};
+$('estop').onclick = () => { emergency = true; requestTakeover = true; };
+$('clear').onclick = () => { emergency = false; requestTakeover = true; };
+$('resetSim').onclick = () => { resetRequested = true; requestTakeover = true; };
+$('pauseSim').onclick = () => { pauseRequested = true; requestTakeover = true; };
+
+for (const id of ['controller','driveSource','turnSource','invertDrive','invertTurn']) {
+  $(id).addEventListener('change', () => localStorage.setItem('microduck-' + id, $(id).type === 'checkbox' ? String($(id).checked) : $(id).value));
+  const saved = localStorage.getItem('microduck-' + id);
+  if (saved !== null && $(id).type === 'checkbox') $(id).checked = saved === 'true';
+}
+
+function bindHold(id, value) {
+  const button = $(id);
+  const start = event => { event.preventDefault(); button.setPointerCapture(event.pointerId); manualDrive = value; };
+  const stop = () => { manualDrive = null; };
+  button.addEventListener('pointerdown', start);
+  button.addEventListener('pointerup', stop);
+  button.addEventListener('pointercancel', stop);
+  button.addEventListener('lostpointercapture', stop);
+  button.addEventListener('pointerleave', event => { if (!event.buttons) stop(); });
+}
+bindHold('testForward', 0.35);
+bindHold('testReverse', -0.35);
+window.addEventListener('keydown', event => {
+  if (['KeyW','KeyA','KeyS','KeyD'].includes(event.code)) { keys.add(event.code); event.preventDefault(); }
+});
+window.addEventListener('keyup', event => keys.delete(event.code));
+window.addEventListener('blur', () => { keys.clear(); manualDrive = null; });
+
+function currentPads() {
+  return navigator.getGamepads ? Array.from(navigator.getGamepads()).filter(Boolean) : [];
+}
+
+function syncControllers(pads) {
+  const signature = pads.map(pad => `${pad.index}:${pad.id}:${pad.mapping}`).join('|');
+  if (signature === controllerSignature) return;
+  controllerSignature = signature;
+  const selected = $('controller').value || localStorage.getItem('microduck-controller');
+  $('controller').replaceChildren();
+  for (const pad of pads) {
+    const option = document.createElement('option');
+    option.value = String(pad.index);
+    option.textContent = `${pad.id} · ${pad.mapping || 'unmapped'} · ${pad.axes.length} axes`;
+    $('controller').appendChild(option);
+  }
+  if (!pads.length) {
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = 'Waiting for a controller…';
+    $('controller').appendChild(option);
+  } else if (pads.some(pad => String(pad.index) === selected)) {
+    $('controller').value = selected;
+  } else {
+    const standard = pads.find(pad => pad.mapping === 'standard');
+    $('controller').value = String((standard || pads[0]).index);
+  }
+}
+
+function syncSources(pad) {
+  const signature = pad ? `${pad.id}:${pad.axes.length}` : '';
+  if (signature === lastSourceSignature) return;
+  lastSourceSignature = signature;
+  for (const [select, base] of [[$('driveSource'), [['auto','Automatic (recommended)'],['triggers','Triggers'],['dpad','D-pad up/down']]], [$('turnSource'), [['auto','Automatic (recommended)']]]]) {
+    const previous = select.value || localStorage.getItem('microduck-' + select.id) || 'auto';
+    select.replaceChildren();
+    for (const [value,label] of base) {
+      const option = document.createElement('option'); option.value = value; option.textContent = label; select.appendChild(option);
+    }
+    for (let index = 0; index < (pad?.axes.length || 0); index++) {
+      const option = document.createElement('option'); option.value = `axis:${index}`; option.textContent = `Axis ${index}`; select.appendChild(option);
+    }
+    if (Array.from(select.options).some(option => option.value === previous)) select.value = previous;
+  }
+}
+
+function selectedPad(pads) {
+  const index = Number($('controller').value);
+  return pads.find(pad => pad.index === index) || pads.find(pad => pad.mapping === 'standard') || pads[0];
+}
+
+function strongestAxis(pad, indices) {
+  return indices.reduce((best, index) => Math.abs(pad.axes[index] || 0) > Math.abs(best.value) ? {index, value:pad.axes[index] || 0} : best, {index:-1,value:0});
+}
+
+function driveInput(pad, dead) {
+  const source = $('driveSource').value;
+  const lt = pad?.buttons[6]?.value || 0, rt = pad?.buttons[7]?.value || 0;
+  const trigger = rt - lt;
+  if (source === 'triggers') return shaped(trigger, dead);
+  if (source === 'dpad') return (pad?.buttons[12]?.pressed ? 1 : 0) - (pad?.buttons[13]?.pressed ? 1 : 0);
+  if (source.startsWith('axis:')) {
+    const raw = pad?.axes[Number(source.slice(5))] || 0;
+    return shaped(raw * ($('invertDrive').checked ? -1 : 1), dead);
+  }
+  if (Math.abs(trigger) > dead) return shaped(trigger, dead);
+  if (pad?.buttons[12]?.pressed || pad?.buttons[13]?.pressed) return (pad.buttons[12]?.pressed ? 1 : 0) - (pad.buttons[13]?.pressed ? 1 : 0);
+  if (!pad) return 0;
+  const index = pad.mapping === 'standard' && pad.axes.length > 1 ? 1 : strongestAxis(pad, pad.axes.map((_, index) => index).filter(index => index % 2 === 1)).index;
+  const raw = index >= 0 ? pad.axes[index] : 0;
+  return shaped(raw * ($('invertDrive').checked ? -1 : 1), dead);
+}
+
+function turnInput(pad, dead) {
+  const source = $('turnSource').value;
+  if (source.startsWith('axis:')) {
+    const raw = pad?.axes[Number(source.slice(5))] || 0;
+    return shaped(raw * ($('invertTurn').checked ? -1 : 1), dead);
+  }
+  if (!pad) return 0;
+  const index = pad.mapping === 'standard' && pad.axes.length > 2 ? 2 : strongestAxis(pad, pad.axes.map((_, index) => index).filter(index => index % 2 === 0 && index !== 0)).index;
+  const raw = index >= 0 ? pad.axes[index] : 0;
+  return shaped(raw * ($('invertTurn').checked ? -1 : 1), dead);
+}
+
+async function send(payload) {
+  try {
+    const response = await fetch('/api/state', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...payload, client_id:clientId, takeover:requestTakeover})});
+    if (!response.ok) throw new Error(await response.text() || `Bridge returned ${response.status}`);
+    requestTakeover = false;
+  } catch (error) {
+    $('status').textContent = error.message || 'Bridge disconnected';
+    $('dot').classList.remove('ok');
+  }
+}
+
+async function loop() {
+  try {
+  const pads = currentPads();
+  syncControllers(pads);
+  const pad = selectedPad(pads);
+  syncSources(pad);
+  const manualActive = manualDrive !== null || ['KeyW','KeyA','KeyS','KeyD'].some(code => keys.has(code));
+  const connected = Boolean(pad) || manualActive;
+  $('arm').disabled = false;
+
+  let commandX = 0, heading = 0, reset = false, pause = false;
+  if (pad) {
+    const dead = Number($('dead').value);
+    const drive = driveInput(pad, dead);
+    const right = turnInput(pad, dead);
+    const scale = drive >= 0 ? Number($('fwd').value) : Number($('neg').value);
+    commandX = drive * scale;
+    heading = right * Number($('yaw').value);
+    if (pad.buttons[2]?.pressed) commandX = 0; // X: coast
+    $('leftValue').textContent = drive.toFixed(2);
+    $('rightValue').textContent = right.toFixed(2);
+    $('mappingValue').textContent = `${pad.mapping || 'unmapped'} · ${pad.id}`;
+    $('rawAxes').textContent = pad.axes.map((value,index) => `${index}:${value.toFixed(3)}`).join('  ') || 'none';
+    $('rawButtons').textContent = pad.buttons.map((button,index) => button.pressed || button.value > .05 ? `${index}:${button.value.toFixed(2)}` : '').filter(Boolean).join('  ') || 'none';
+  } else {
+    $('leftValue').textContent = '0.00'; $('rightValue').textContent = '0.00';
+    $('mappingValue').textContent = 'No browser gamepad; W/A/S/D and test buttons remain available';
+    $('rawAxes').textContent = '—'; $('rawButtons').textContent = '—';
+  }
+  if (manualDrive !== null) commandX = manualDrive;
+  if (keys.has('KeyW')) commandX = 0.35;
+  if (keys.has('KeyS')) commandX = -0.35;
+  if (keys.has('KeyA')) heading = -Number($('yaw').value || 0.3);
+  if (keys.has('KeyD')) heading = Number($('yaw').value || 0.3);
+  reset = resetRequested;
+  pause = pauseRequested;
+  if (emergency) { commandX = 0; heading = 0; }
+  $('xValue').textContent = (commandX >= 0 ? '+' : '') + commandX.toFixed(2);
+  $('yawValue').textContent = (heading >= 0 ? '+' : '') + heading.toFixed(2);
+  $('sendingValue').textContent = !armed ? 'not armed' : `propulsion ${commandX >= 0 ? '+' : ''}${commandX.toFixed(2)}, heading ${heading >= 0 ? '+' : ''}${heading.toFixed(2)}`;
+  $('dot').classList.toggle('ok', connected && armed && !emergency);
+  $('status').textContent = emergency ? 'EMERGENCY ZERO — click Resume controls' : !armed ? (pad ? 'Controller detected — not armed' : 'Keyboard test ready — not armed') : !connected ? 'Armed — waiting for controller or keyboard input' : Math.abs(commandX) > .001 || Math.abs(heading) > .001 ? 'Sending live command to MicroDuck' : 'Armed — move a stick, trigger, D-pad, or W/A/S/D';
+  // Keep one in-flight request at a time; overlapping fetches can starve the
+  // heartbeat when the simulator is using the CPU heavily.
+  await send({armed, connected, emergency_stop: emergency, command_x: commandX, heading, reset, pause,
+    gamepad_id: pad?.id || 'keyboard/manual', mapping: pad?.mapping || '', axes: pad ? Array.from(pad.axes) : []});
+  resetRequested = false;
+  pauseRequested = false;
+  } catch (error) {
+    $('status').textContent = 'Gamepad API error: ' + error.message;
+    $('dot').classList.remove('ok');
+  } finally {
+    // Never let one browser Gamepad API exception kill the command heartbeat.
+    setTimeout(loop, 50);
+  }
+}
+window.addEventListener('error', event => {
+  $('status').textContent = 'Controller page error: ' + event.message;
+  $('dot').classList.remove('ok');
+});
+window.addEventListener('gamepadconnected', () => { controllerSignature = ''; });
+window.addEventListener('gamepaddisconnected', () => { controllerSignature = ''; });
+loop();
+</script></body></html>

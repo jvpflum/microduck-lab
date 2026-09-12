@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-01",
+  "source_worker": "Chromedome RTX 5090",
+  "contents": "Five ONNX policies plus scrubbed deterministic exact-friction evaluations; no raw training checkpoints, logs, reports, W&B data, or secrets.",
+  "ranking_basis": "Pareto selection across sustained world-forward speed, verified top speed, 100-foot time, lateral drift, yaw, and short-race performance.",
+  "candidates": [
+    "v59-i99-promoted-speed-leader",
+    "v57b-i50-frontier-speed",
+    "v60-i20-balanced",
+    "v58-i20-peak-line",
+    "v56-i10-line-speed"
+  ]
+}
