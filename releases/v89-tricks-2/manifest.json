@@ -1,0 +1,46 @@
+{
+  "name": "DuckWing V89 Tricks 2",
+  "version": "v89-tricks-2",
+  "kind": "composed-policy-and-command-controller",
+  "policy": "policy.onnx",
+  "controller": "trick_controller.py",
+  "neural_weights_changed": false,
+  "tricks": [
+    {
+      "id": "skate_360",
+      "degrees": 360,
+      "directions": [
+        "left",
+        "right"
+      ],
+      "status": "simulation-validated",
+      "fresh_trials_passed": 16,
+      "fresh_trials_total": 16
+    },
+    {
+      "id": "turn_180",
+      "degrees": 180,
+      "directions": [
+        "left",
+        "right"
+      ],
+      "status": "simulation-validated",
+      "fresh_trials_passed": 16,
+      "fresh_trials_total": 16
+    },
+    {
+      "id": "skate_720",
+      "degrees": 720,
+      "directions": [
+        "left",
+        "right"
+      ],
+      "status": "simulation-validated",
+      "fresh_trials_passed": 16,
+      "fresh_trials_total": 16
+    }
+  ],
+  "hardware_validated": false,
+  "app_integrated": false,
+  "policy_sha256": "09663852ae1db90fdcf321dedc4e39810eb65ffc6998df3cd8fc34d3231f84f7"
+}

@@ -67,6 +67,44 @@ once per 50 Hz control step. The [history adapter](tools/evaluation_policy.py)
 and [release notes](releases/v89/README.md) describe integration. Existing
 single-frame consumers need this adapter before using V89.
 
+## Skating tricks: V89 Tricks 2
+
+**V89 can now perform 180°, 360° and 720° skating turns in simulation.**
+The [V89 Tricks 2 bundle](releases/v89-tricks-2.zip) includes the unchanged
+V89 ONNX model, a selectable heading-feedback trick controller, checksums,
+per-trial validation data and replay videos. Tricks are composed around V89;
+these are not newly trained neural weights.
+
+| Trick | Fresh simulation trials | Time to turn target | Replay |
+| --- | ---: | ---: | --- |
+| 180° turn and rolling exit | **16/16 passed** | **0.86–1.16 s** | [Video](releases/v89-tricks-2/turn-180.mp4) |
+| 360° skating turn and rolling exit | **16/16 passed** | **1.52–2.24 s** | [Video](releases/v89-tricks-2/skate-360.mp4) |
+| 720° double spin and rolling exit | **16/16 passed** | **2.86–4.40 s** | [Video](releases/v89-tricks-2/skate-720.mp4) |
+
+Each trick was tested in both directions from eight fresh initial joint-noise
+seeds in CPU MuJoCo at 200 Hz physics and 50 Hz control, with the existing
+0.003 wheel friction and 1.75 A motor limits. Passing requires the requested
+signed rotation within 15°, no body ground contact, tilt below 45°, and two
+final seconds with heading error below 20°, mean absolute yaw rate below
+0.5 rad/s and rolling speed above 0.15 m/s. Turn time measures reaching that
+rotation threshold; recovery is checked separately.
+
+Use `TrickController.start(heading_radians, direction=1, degrees=720)` and feed
+its updated commands into the normal V89 observation builder, preserving
+history. The release notes explain cancellation and return to ordinary control.
+The controller uses simulator heading in these tests; hardware heading
+estimation, physical execution and app-button integration remain open.
+
+See the [release notes and integration](releases/v89-tricks-2/README.md),
+[180°/360° measurements](releases/v89-tricks-2/validation.json) and
+[720° measurements](releases/v89-tricks-2/validation-720.json).
+The bar-hop and flat-ground hop experiments are research, with no qualified
+hop included in this release.
+
+```bash
+(cd releases/v89-tricks-2 && sha256sum -c SHA256SUMS)
+```
+
 ## Quick start
 
 Requirements: Git, Python 3.12, Node/npm for the browser arena, and a supported
