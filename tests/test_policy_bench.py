@@ -22,7 +22,7 @@ SPEC.loader.exec_module(policy_bench)
 class PolicyBenchTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         self.state = self.root / "state"
         self.run_dir = self.root / "logs" / "velocity_swizzle" / "run-a"
         (self.run_dir / "params").mkdir(parents=True)

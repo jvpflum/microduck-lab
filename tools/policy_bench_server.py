@@ -140,17 +140,21 @@ def cleanup_orphaned_dashboard_viewers(
     proc = proc_root
     if not proc.is_dir():
         return 0
-    snapshot_root = str((state_dir / "runs").resolve())
+    snapshot_root = (state_dir / "runs").resolve()
     for entry in proc.iterdir():
         if not entry.name.isdigit() or int(entry.name) == os.getpid():
             continue
         try:
-            command = (entry / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
+            arguments = (entry / "cmdline").read_bytes().decode(errors="replace").split("\0")
             pid = int(entry.name)
             process_group = os.getpgid(pid)
         except (OSError, PermissionError, ProcessLookupError):
             continue
-        if "tools/play_viser_compat.py" in command and snapshot_root in command and process_group == pid:
+        snapshots = [Path(arguments[index + 1]).resolve()
+                     for index, argument in enumerate(arguments[:-1])
+                     if argument == "--checkpoint-file" and arguments[index + 1]]
+        is_viewer = any(argument.endswith("tools/play_viser_compat.py") for argument in arguments)
+        if is_viewer and any(path.is_relative_to(snapshot_root) for path in snapshots) and process_group == pid:
             groups.add(process_group)
     for process_group in groups:
         try:

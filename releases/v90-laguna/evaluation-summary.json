@@ -1,0 +1,471 @@
+{
+  "scope": "Flat robot-scale Laguna Seca simulation; single training seed; parallel worlds are not independent training seeds",
+  "original_training_comparison": {
+    "earlier_course_driver": {
+      "clean_finishes": 15,
+      "worlds": 64,
+      "offtrack_failures": 2,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 349.05999755859375
+    },
+    "v90_laguna": {
+      "clean_finishes": 55,
+      "worlds": 64,
+      "offtrack_failures": 0,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 344.0
+    }
+  },
+  "fresh_package_validation": {
+    "anchor--3": {
+      "clean_finishes": 12,
+      "worlds": 48,
+      "offtrack_failures": 1,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 347.5799865722656
+    },
+    "package--3": {
+      "clean_finishes": 42,
+      "worlds": 48,
+      "offtrack_failures": 0,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 339.239990234375
+    },
+    "anchor-3": {
+      "clean_finishes": 11,
+      "worlds": 48,
+      "offtrack_failures": 2,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 351.8399963378906
+    },
+    "package-3": {
+      "clean_finishes": 42,
+      "worlds": 48,
+      "offtrack_failures": 1,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 340.260009765625
+    }
+  },
+  "race_gates": {
+    "-3": true,
+    "3": true
+  },
+  "export_max_absolute_error": 3.725290298461914e-08,
+  "combined_transitions": {
+    "passed": 10,
+    "worlds": 48,
+    "mode_handoffs_correct": true,
+    "cases": [
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 5.7173051834106445,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.13187308609485626
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": true,
+        "heading_error_deg": 8.86730670928955,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11811571568250656
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 8.732806205749512,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.06551900506019592
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 9.906068801879883,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.09113932400941849
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 6.8109002113342285,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.09521429985761642
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.594672203063965,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.08342647552490234
+      },
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 9.363096237182617,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.09439747780561447
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": true,
+        "heading_error_deg": 7.953303813934326,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.1229512169957161
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 6.7242937088012695,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.13717572391033173
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.169889450073242,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12656854093074799
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 9.816402435302734,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.1237463429570198
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 7.052743911743164,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.10490116477012634
+      },
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 5.478030204772949,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12747569382190704
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 6.73844575881958,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.1433659940958023
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 9.510000228881836,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.09750807285308838
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.459516525268555,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.07304570823907852
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 6.29153299331665,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.09357938915491104
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": true,
+        "heading_error_deg": 6.868437767028809,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11620603501796722
+      },
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 7.145689010620117,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.13557319343090057
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 6.084250450134277,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.08168578892946243
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": true,
+        "heading_error_deg": 6.202822208404541,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.10926000028848648
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.524813652038574,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11431857943534851
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 9.261080741882324,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12994451820850372
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 9.118083953857422,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11456836760044098
+      },
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 8.082231521606445,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12018738687038422
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": true,
+        "heading_error_deg": 8.971261978149414,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11322491616010666
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 8.579864501953125,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.06009003520011902
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 9.432491302490234,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12010227888822556
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 7.031488418579102,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.13780350983142853
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.60997200012207,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.09352823346853256
+      },
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 9.588888168334961,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.06679733097553253
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 6.951192378997803,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.0901605561375618
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": true,
+        "heading_error_deg": 5.573925971984863,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12257516384124756
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 7.101866722106934,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.10379458963871002
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 3.7938146591186523,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.06599954515695572
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.84717082977295,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12159403413534164
+      },
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 6.041589260101318,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12058702111244202
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": true,
+        "heading_error_deg": 9.142576217651367,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11217270791530609
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 6.048842430114746,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.0872531458735466
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": true,
+        "heading_error_deg": 6.507667541503906,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.10989125818014145
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 7.781005859375,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.06647506356239319
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.450528144836426,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.08142145723104477
+      },
+      {
+        "degrees": 180,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 9.418379783630371,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.07083060592412949
+      },
+      {
+        "degrees": 180,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 8.123485565185547,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12500928342342377
+      },
+      {
+        "degrees": 360,
+        "direction": -1,
+        "passed": false,
+        "heading_error_deg": 4.853204250335693,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.10900260508060455
+      },
+      {
+        "degrees": 360,
+        "direction": 1,
+        "passed": true,
+        "heading_error_deg": 8.200461387634277,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11118079721927643
+      },
+      {
+        "degrees": 720,
+        "direction": -1,
+        "passed": true,
+        "heading_error_deg": 9.448664665222168,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.11607657372951508
+      },
+      {
+        "degrees": 720,
+        "direction": 1,
+        "passed": false,
+        "heading_error_deg": 9.063606262207031,
+        "body_contact_or_fall": false,
+        "final_forward_speed": 0.12139903753995895
+      }
+    ],
+    "scope": "open-floor transitions; not arbitrary mid-corner track rejoining"
+  },
+  "combined_release_gate_passed": false,
+  "rejected_continuation": {
+    "updates": 12,
+    "starting_v90_laguna": {
+      "clean_finishes": 60,
+      "worlds": 64,
+      "offtrack_failures": 0,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 335.67999267578125
+    },
+    "rejected_candidate": {
+      "clean_finishes": 44,
+      "worlds": 64,
+      "offtrack_failures": 0,
+      "body_contacts": 0,
+      "fastest_clean_lap_s": 343.1400146484375
+    },
+    "gates": {
+      "clean_laps_improved": false,
+      "heldout_not_worse": false,
+      "no_more_body_contacts": true,
+      "no_more_offtrack": true
+    },
+    "included_in_bundle": false
+  }
+}

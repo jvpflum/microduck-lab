@@ -43,6 +43,14 @@ DAGs, high availability, or application-science validation. WSL workers need a
 persistent Linux session and a Windows logon keep-alive; unattended cold boot
 is not established.
 
+The optional `sim:duckwing-v89-mjwarp` software capability identifies the
+prepared original DuckWing MuJoCo-Warp environment. The validator accepts it,
+but installation is operator-managed: advertise it at Ray startup only on
+nodes whose dependencies, source/policy hashes and GPU learning smoke have
+passed. A hardware `cuda` label alone does not imply this simulator is ready.
+The preview-controller campaign uses this capability with a full GPU request;
+its public protocol contains no machine names or private endpoints.
+
 ## MinIO/S3
 
 MinIO is optional private artifact storage, separate from Ray's submission

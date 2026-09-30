@@ -1,0 +1,17 @@
+private-results/
+anchor.b64
+anchor.pt
+*-jobs.json
+smoke-results/
+source-hashes.json
+smoke-source-hashes.json
+live-frame.json
+live-model.json
+progress.json
+progress.jsonl
+summary.json
+selection.json
+selection-*.json
+final-*.json
+runtime.json
+smoke-reference.json

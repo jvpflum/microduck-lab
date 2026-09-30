@@ -15,6 +15,13 @@ class ContractTests(unittest.TestCase):
             with self.assertRaises(ValueError): validate(dict(command=['true'],**patch))
         self.assertEqual(validate({'command':['true'],'gpus':1,'system_retries':2,'idempotent':True})['system_retries'],2)
 
+    def test_prepared_simulator_capability_is_explicit(self):
+        job = validate({'command': ['true'], 'gpus': 1,
+                        'capabilities': ['cuda', 'arch:x86_64', 'sim:duckwing-v89-mjwarp']})
+        self.assertIn('sim:duckwing-v89-mjwarp', job['capabilities'])
+        with self.assertRaises(ValueError):
+            validate({'command': ['true'], 'capabilities': ['sim:unverified']})
+
     def test_batch_atomic_and_restart_marks_unknown_work(self):
         with tempfile.TemporaryDirectory() as d:
             b=Broker(d,FakeRay(),'http://unused','token')

@@ -2,7 +2,7 @@
 import math
 import re
 
-CAPABILITIES = {'arch:x86_64', 'arch:arm64', 'gpu:rtx5090', 'gpu:gb10', 'cuda', 'high_memory'}
+CAPABILITIES = {'arch:x86_64', 'arch:arm64', 'gpu:rtx5090', 'gpu:gb10', 'cuda', 'high_memory', 'sim:duckwing-v89-mjwarp'}
 
 def validate(raw):
     allowed = {'command', 'cpus', 'gpus', 'capabilities', 'memory_gb', 'timeout_s',

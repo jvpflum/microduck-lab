@@ -1,0 +1,189 @@
+{
+  "status": "diagnostic-complete",
+  "release_promoted": false,
+  "recovery_all_passed": false,
+  "results": [
+    {
+      "arm": "skate_only",
+      "reset_seed": 98011,
+      "worlds": 48,
+      "passed": 0,
+      "gate_pass_counts": {
+        "original_trick_tail": 8,
+        "recovery_tail": 10,
+        "no_body_contact_or_fall": 48,
+        "skate_exit": 48,
+        "race_engaged": 0
+      },
+      "race_tail_summary": {
+        "mean_vx": {
+          "min": 0.1058410033583641,
+          "median": 0.138046495616436,
+          "max": 0.18690963089466095
+        },
+        "mean_abs_yaw": {
+          "min": 0.4134998321533203,
+          "median": 0.4658603370189667,
+          "max": 0.5538038015365601
+        },
+        "max_heading_error_deg": {
+          "min": 5.744297981262207,
+          "median": 11.358761310577393,
+          "max": 38.71088790893555
+        }
+      }
+    },
+    {
+      "arm": "current",
+      "reset_seed": 98011,
+      "worlds": 48,
+      "passed": 8,
+      "gate_pass_counts": {
+        "original_trick_tail": 12,
+        "recovery_tail": 0,
+        "no_body_contact_or_fall": 48,
+        "skate_exit": 32,
+        "race_engaged": 48
+      },
+      "race_tail_summary": {
+        "mean_vx": {
+          "min": 0.05096479877829552,
+          "median": 0.07489500939846039,
+          "max": 0.10098383575677872
+        },
+        "mean_abs_yaw": {
+          "min": 0.5324217677116394,
+          "median": 0.6084190905094147,
+          "max": 0.6874052286148071
+        },
+        "max_heading_error_deg": {
+          "min": 212.18014526367188,
+          "median": 280.0343933105469,
+          "max": 339.6959533691406
+        }
+      }
+    },
+    {
+      "arm": "recovery",
+      "reset_seed": 98011,
+      "worlds": 48,
+      "passed": 36,
+      "gate_pass_counts": {
+        "original_trick_tail": 10,
+        "recovery_tail": 46,
+        "no_body_contact_or_fall": 48,
+        "skate_exit": 38,
+        "race_engaged": 46
+      },
+      "race_tail_summary": {
+        "mean_vx": {
+          "min": 0.06477083265781403,
+          "median": 0.08236681297421455,
+          "max": 0.19783645868301392
+        },
+        "mean_abs_yaw": {
+          "min": 0.46102628111839294,
+          "median": 0.5974127352237701,
+          "max": 0.7053743004798889
+        },
+        "max_heading_error_deg": {
+          "min": 9.934208869934082,
+          "median": 72.05426025390625,
+          "max": 97.71882629394531
+        }
+      }
+    },
+    {
+      "arm": "skate_only",
+      "reset_seed": 98012,
+      "worlds": 48,
+      "passed": 0,
+      "gate_pass_counts": {
+        "original_trick_tail": 13,
+        "recovery_tail": 12,
+        "no_body_contact_or_fall": 48,
+        "skate_exit": 48,
+        "race_engaged": 0
+      },
+      "race_tail_summary": {
+        "mean_vx": {
+          "min": 0.09494268894195557,
+          "median": 0.14112158864736557,
+          "max": 0.17307773232460022
+        },
+        "mean_abs_yaw": {
+          "min": 0.38614600896835327,
+          "median": 0.470825657248497,
+          "max": 0.5362571477890015
+        },
+        "max_heading_error_deg": {
+          "min": 5.008522987365723,
+          "median": 10.314158916473389,
+          "max": 25.258256912231445
+        }
+      }
+    },
+    {
+      "arm": "current",
+      "reset_seed": 98012,
+      "worlds": 48,
+      "passed": 2,
+      "gate_pass_counts": {
+        "original_trick_tail": 3,
+        "recovery_tail": 0,
+        "no_body_contact_or_fall": 48,
+        "skate_exit": 35,
+        "race_engaged": 48
+      },
+      "race_tail_summary": {
+        "mean_vx": {
+          "min": 0.053765591233968735,
+          "median": 0.07540497183799744,
+          "max": 0.11814790219068527
+        },
+        "mean_abs_yaw": {
+          "min": 0.5389744639396667,
+          "median": 0.5986652970314026,
+          "max": 0.6992452144622803
+        },
+        "max_heading_error_deg": {
+          "min": 208.44802856445312,
+          "median": 279.97113037109375,
+          "max": 352.4809875488281
+        }
+      }
+    },
+    {
+      "arm": "recovery",
+      "reset_seed": 98012,
+      "worlds": 48,
+      "passed": 40,
+      "gate_pass_counts": {
+        "original_trick_tail": 11,
+        "recovery_tail": 46,
+        "no_body_contact_or_fall": 48,
+        "skate_exit": 42,
+        "race_engaged": 46
+      },
+      "race_tail_summary": {
+        "mean_vx": {
+          "min": 0.06364841759204865,
+          "median": 0.07779819518327713,
+          "max": 0.25941112637519836
+        },
+        "mean_abs_yaw": {
+          "min": 0.4635384678840637,
+          "median": 0.6123036742210388,
+          "max": 0.7389625906944275
+        },
+        "max_heading_error_deg": {
+          "min": 4.807182788848877,
+          "median": 63.52750778198242,
+          "max": 105.49735260009766
+        }
+      }
+    }
+  ],
+  "scope": "36-second open-floor diagnostic, synthetic straight-route observations; not actual track rejoining",
+  "interpretation": "76/96 extended recovery checks passed versus 10/96 direct engagement checks. The arms use different recovery windows; original trick checks and actual course qualification remain separate. Race-tail speed and heading remain unqualified."
+}

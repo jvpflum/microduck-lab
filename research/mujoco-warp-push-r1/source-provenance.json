@@ -1,0 +1,30 @@
+{
+  "worker_source_sha256": {
+    "run.py": "806c4507b48a6ffb40da479a99bd1d54a5b63c2454657a4ec3390ab6a2885e9a",
+    "trick_controller.py": "5fcb082354e86200184cec78d4bba40c1a6da7de8b2b1e2162d7e8e395e2abe1",
+    "test_qualification.py": "99f38beb16799bfbd6dfab32bd3af37e9142225ee1d5298ee031c1df9244655e",
+    "race_env.py": "32e03bea0cd2e4e25a9af1b4520bbf69b6072402b53048eabbccbd97bf48123f",
+    "reward_spec.py": "0120866cc76a845a52b4f1fb9ae280489a562a4b1235d694ed04171054becd4f",
+    "qualification.py": "de7b5aee5b8199dda4bfc7f458de20d49ecbed50d1ee95eff88772e3e5229f43",
+    "cuda_policy.py": "b2c9f2518e369d33cbf1fc3ced1b51525f010b5f811bd9810f0b32ebd449d3d3",
+    "v89_gpu_env.py": "dc290c1bacea353917c101336d1a6d85b634157fdd78fda3f95df11e6d89d12d",
+    "launch.py": "83fc264b52fb99633a46ad71a975719d86277ac0c8937b208e7024adff0e8148",
+    "course.json": "3c55f55945910608d889b38207f9157b389b8be7838337ce880b908a29225f7c",
+    "campaign.json": "4dc9824e4035a0b9a3314257433420902c4f2663f1ed202fd7cfec6c3a6a2c6f"
+  },
+  "checkpoint_supplied_privately": true,
+  "raw_optimizer_states_published": false,
+  "readiness_run": "real Ray full-GPU learning smoke; exit 0 and smoke-passed",
+  "runtime": {
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "physics_device": "cuda:0",
+    "policy_device": "cuda:0",
+    "optimizer_device": "cuda:0",
+    "torch": "2.9.1+cu128",
+    "mujoco": "3.10.0",
+    "warp": "1.15.0",
+    "baseline_sha256": "1693fd8608037a6b73a128ba737c57adc7bcb6228cac2cc8603719f4be740c3a",
+    "anchor_sha256": "2d1a028358803e845e58c10d22bcb80b4c9ae343f679e2b4c4d56846b2cfe3cd"
+  },
+  "public_submitter": "schedule.py adapts only client discovery, private receipt location and operator anchor argument; worker launch and experiment sources are unchanged"
+}

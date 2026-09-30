@@ -1,0 +1,31 @@
+{
+  "name": "DuckWing V90 Laguna",
+  "version": "v90-laguna",
+  "status": "research-bundle-racing-passed-combined-transitions-failed",
+  "general_purpose_leader_promoted": false,
+  "base_neural_weights_changed": false,
+  "hardware_validated": false,
+  "racing_checkpoint_sha256": "2d1a028358803e845e58c10d22bcb80b4c9ae343f679e2b4c4d56846b2cfe3cd",
+  "base_policy": "policy.onnx",
+  "racing_actor": "racing-weights.json",
+  "controller": "controller.py",
+  "tricks": [
+    180,
+    360,
+    720
+  ],
+  "combined_transitions_passed": 10,
+  "combined_transitions_total": 48,
+  "files": {
+    "README.md": "44b000fa1da9a7bc7288bcc57ae82da076fec3d0c4be68bb68affaa67c3b2fbc",
+    "controller.py": "400733fb23d45e18875d034f26a1d3fe844bbb8eb9b95434ce9beb197f7e9635",
+    "course.json": "13f175f1465bb80ccac63561db3d9d4c8848366d62ecd5962dab086212486f06",
+    "course.svg": "a0f923e5d183f75eff335c3c4525b9828da321624fb29dd3d043c69ca0e8628e",
+    "evaluation-summary.json": "ba53b1c316162fec1e1d76472302e8423bfcba888b7d1f99dd28f1f00cd64f71",
+    "policy.onnx": "09663852ae1db90fdcf321dedc4e39810eb65ffc6998df3cd8fc34d3231f84f7",
+    "racing-weights.json": "5b24f39f723b050dec028420b36c4150dda36459c9931ab8000d8cbfa5834e11",
+    "test_adapter.py": "201c9456d3a43122a44c93e1564d4e2233f06876a2b3ea26bfd539cd9a5f151d",
+    "trick_controller.py": "5fcb082354e86200184cec78d4bba40c1a6da7de8b2b1e2162d7e8e395e2abe1",
+    "tricks-showreel.mp4": "588bebbf4f4564f57fa348bd734719809d84317fdcfd5b1f2c1d71871d3fb2c9"
+  }
+}

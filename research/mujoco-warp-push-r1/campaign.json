@@ -1,0 +1,76 @@
+{
+  "name": "duckwing-mujoco-warp-push-r1",
+  "active_stack": "original source MJCF with MuJoCo-Warp CUDA; no Isaac Lab/Newton/PhysX",
+  "training_seeds": [
+    99001,
+    99002
+  ],
+  "worlds": 128,
+  "updates": 24,
+  "driver_hz": 10,
+  "physics_hz": 200,
+  "control_hz": 50,
+  "horizon": 3600,
+  "max_driver_decisions": 22118400,
+  "max_low_level_control_steps": 110592000,
+  "checkpoint_updates": [
+    8,
+    16,
+    24
+  ],
+  "timeout_s_per_job": 43200,
+  "resources": {
+    "cpus": 4,
+    "gpus": 1,
+    "memory_gb": 12,
+    "capabilities": [
+      "arch:x86_64",
+      "cuda",
+      "sim:duckwing-v89-mjwarp"
+    ]
+  },
+  "training_reset": {
+    "heading_degrees": [
+      -3,
+      3
+    ],
+    "joint_noise_rad": 0.003
+  },
+  "selection": [
+    {
+      "seed": 99201,
+      "heading_degrees": 0,
+      "worlds": 64
+    },
+    {
+      "seed": 99202,
+      "heading_degrees": 3,
+      "worlds": 64
+    }
+  ],
+  "final": [
+    {
+      "seed": 99301,
+      "heading_degrees": -3,
+      "worlds": 48
+    },
+    {
+      "seed": 99302,
+      "heading_degrees": 3,
+      "worlds": 48
+    },
+    {
+      "seed": 99303,
+      "heading_degrees": 6,
+      "worlds": 48,
+      "stress_only": true
+    }
+  ],
+  "qualification": "No lower clean-lap count or higher off-track/body-contact count on either matched selection cohort; >=16 paired clean laps, median paired time ratio <=0.95 and >=60% paired wins. Fresh nominal finals use the same gates; +6 degree stress requires safety/completion retention. All checkpoints/results retained. Combined track/trick transitions remain required for a general-purpose release.",
+  "V89_sha256": "1693fd8608037a6b73a128ba737c57adc7bcb6228cac2cc8603719f4be740c3a",
+  "anchor_sha256": "2d1a028358803e845e58c10d22bcb80b4c9ae343f679e2b4c4d56846b2cfe3cd",
+  "actor": "Frozen 14-input racing anchor plus zero-initialized bounded 28-input preview residual; separate critic. V89 motor policy and standalone trick controller stay frozen.",
+  "automatic_promotion": false,
+  "system_retries": 0,
+  "studio_rig_excluded": true
+}

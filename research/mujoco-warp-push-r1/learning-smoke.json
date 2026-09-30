@@ -1,0 +1,35 @@
+{
+  "status": "smoke-passed",
+  "actual_learning": {
+    "driver_steps": 128,
+    "active_actor_samples": 864,
+    "actor_updates": 3,
+    "kl_max": 0.00011922315752599388,
+    "clean_finishes": 0,
+    "offtrack_failures": 0,
+    "body_contacts": 0,
+    "mean_progress_m": 2.253896474838257
+  },
+  "parameter_change": {
+    "0.weight": 4.7169625759124756e-05,
+    "0.bias": 4.715472459793091e-05,
+    "2.weight": 4.74853441119194e-05,
+    "2.bias": 4.714354872703552e-05,
+    "4.weight": 9.014461102196947e-05,
+    "4.bias": 9.004388994071633e-05
+  },
+  "initial_anchor_action_error": 0.0,
+  "runtime": {
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "physics_device": "cuda:0",
+    "policy_device": "cuda:0",
+    "optimizer_device": "cuda:0",
+    "torch": "2.9.1+cu128",
+    "mujoco": "3.10.0",
+    "warp": "1.15.0",
+    "baseline_sha256": "1693fd8608037a6b73a128ba737c57adc7bcb6228cac2cc8603719f4be740c3a",
+    "anchor_sha256": "2d1a028358803e845e58c10d22bcb80b4c9ae343f679e2b4c4d56846b2cfe3cd"
+  },
+  "promotion": false,
+  "smoke_is_qualification": false
+}

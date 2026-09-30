@@ -201,6 +201,21 @@ class PolicyBenchServerTests(unittest.TestCase):
         self.assertEqual(cleaned, 1)
         killpg.assert_called_once_with(123, server.signal.SIGTERM)
 
+    def test_startup_cleanup_ignores_sibling_paths_and_unrelated_arguments(self) -> None:
+        proc = self.root / "proc"
+        for pid, checkpoint in ((123, self.state / "runs-other" / "model.pt"),
+                                (124, self.root / "logs" / "model.pt")):
+            entry = proc / str(pid)
+            entry.mkdir(parents=True)
+            (entry / "cmdline").write_bytes(
+                f"python\0tools/play_viser_compat.py\0--checkpoint-file\0{checkpoint}\0--note\0{self.state / 'runs'}\0".encode()
+            )
+        with mock.patch.object(server.os, "getpid", return_value=999), \
+             mock.patch.object(server.os, "getpgid", side_effect=lambda pid: pid), \
+             mock.patch.object(server.os, "killpg") as killpg:
+            self.assertEqual(server.cleanup_orphaned_dashboard_viewers(self.state, proc), 0)
+        killpg.assert_not_called()
+
     @mock.patch.object(server, "port_available", return_value=True)
     @mock.patch.object(server.subprocess, "Popen", side_effect=FakeProcess)
     def test_play_uses_argument_vector_and_hashed_snapshot(self, popen, _port) -> None:

@@ -105,6 +105,32 @@ hop included in this release.
 (cd releases/v89-tricks-2 && sha256sum -c SHA256SUMS)
 ```
 
+## Laguna racing and current research
+
+[V90 Laguna](releases/v90-laguna/) is now available as a **racing research
+bundle**, with the unchanged V89 base and its published 180°, 360° and 720°
+trick controller. Fresh GPU validation completed **42/48 clean laps** from
+each tested -3° and +3° starting heading, versus **12/48 and 11/48** for the
+earlier course driver. The fastest clean lap in that validation was **5:39.24**;
+a separate retained-control cohort recorded **5:35.68**. These are distinct
+cohorts on an approximately 59.84 m flat robot-scale course.
+
+The combined skate → trick → race → skate test passed **10/48**, so V90 Laguna
+does not replace V89 as the general-purpose model. A later racing continuation
+regressed from 60/64 to 44/64 clean laps and was rejected. See the bundle's
+[measured results and limitations](releases/v90-laguna/README.md).
+
+As of 2026-09-29, training has returned to the original **MuJoCo-Warp CUDA**
+stack. The Isaac Lab/Newton migration was repeatable but failed behavior-parity
+gates and is paused. A new two-seed preview-controller campaign targets corner
+entry, turning and exit speed while preserving V89's skating/trick foundation.
+Its budget is up to **22.1 million driver decisions / 110.6 million low-level
+control steps**, followed by matched safety and lap-time checks. Training
+outcomes are pending; the passing learning smoke is readiness evidence.
+
+See the [research ledger](research/) for source, fixed protocols, GPU readiness,
+rejected experiments and the remaining combined-behavior qualification.
+
 ## Quick start
 
 Requirements: Git, Python 3.12, Node/npm for the browser arena, and a supported

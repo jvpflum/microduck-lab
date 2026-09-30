@@ -1,0 +1,192 @@
+{
+  "schema_version": 2,
+  "protected_policy": {
+    "name": "V89",
+    "sha256": "1693fd8608037a6b73a128ba737c57adc7bcb6228cac2cc8603719f4be740c3a",
+    "modified": false
+  },
+  "scenario": {
+    "idle_s": 2.0,
+    "launch_s": 3.0,
+    "command_x": 0.8,
+    "stop_s": 5.0,
+    "physics_dt_s": 0.005,
+    "control_dt_s": 0.02
+  },
+  "runs": [
+    {
+      "ray_job": "isaaclab-duckwing-v89-replay-r3-x86",
+      "purpose": "corrected reset and observation alignment",
+      "duration_s": 11.447285652160645,
+      "initial_observation_max_abs": 0.0,
+      "initial_action_max_abs": 0.0,
+      "cpu_fell": false,
+      "cpu_final_xy_m": [
+        0.8228450444926771,
+        0.03617076085896292
+      ],
+      "isaac_final_xy_m": [
+        0.14921313524246216,
+        -0.062302011996507645
+      ],
+      "final_xy_separation_m": 0.680791330845168,
+      "behavior_equivalent": false,
+      "historical_invalid_isaac_fell": true,
+      "isaac_fall_classification_valid": false,
+      "invalidated_reason": "Isaac xyzw was passed to a wxyz tilt check."
+    },
+    {
+      "ray_job": "isaaclab-duckwing-v89-replay-r4-x86",
+      "purpose": "source contact material override",
+      "duration_s": 10.892556428909302,
+      "initial_observation_max_abs": 0.0,
+      "initial_action_max_abs": 0.0,
+      "mean_action_abs_difference": 0.1323699705689214,
+      "cpu_fell": false,
+      "cpu_final_xy_m": [
+        0.8228450444926771,
+        0.03617076085896292
+      ],
+      "isaac_final_xy_m": [
+        0.2910135090351105,
+        -0.12938569486141205
+      ],
+      "final_xy_separation_m": 0.557004238886784,
+      "behavior_equivalent": false,
+      "historical_invalid_isaac_fell": false,
+      "isaac_fall_classification_valid": false,
+      "invalidated_reason": "Isaac xyzw was passed to a wxyz tilt check."
+    },
+    {
+      "ray_job": "isaaclab-duckwing-v89-replay-r5-x86",
+      "purpose": "rejected joint damping mapping",
+      "duration_s": 8.334438562393188,
+      "cpu_fell": false,
+      "final_xy_separation_m": 0.8222653142813866,
+      "behavior_equivalent": false,
+      "change_rejected": true,
+      "historical_invalid_isaac_fell": true,
+      "isaac_fall_classification_valid": false,
+      "invalidated_reason": "Isaac xyzw was passed to a wxyz tilt check."
+    },
+    {
+      "ray_job": "isaaclab-duckwing-v89-replay-r6-x86",
+      "purpose": "shared CPU action dynamics isolation",
+      "control_mode": "shared_cpu",
+      "duration_s": 11.657634735107422,
+      "initial_observation_max_abs": 0.0,
+      "initial_action_max_abs": 0.0,
+      "cpu_fell": false,
+      "cpu_final_xy_m": [
+        0.8228450444926771,
+        0.03617076085896292
+      ],
+      "isaac_final_xy_m": [
+        -0.07411324977874756,
+        -0.061228834092617035
+      ],
+      "final_xy_separation_m": 0.9022310473260359,
+      "behavior_equivalent": false,
+      "historical_invalid_isaac_fell": true,
+      "isaac_fall_classification_valid": false,
+      "invalidated_reason": "Isaac xyzw was passed to a wxyz tilt check.",
+      "historical_superseded_conclusion": "remaining mismatch is in dynamics or contact, not initial policy inference"
+    }
+  ],
+  "release_promoted": false,
+  "training_started": false,
+  "repair_evidence": [
+    "physics-audit-r1",
+    "physics-audit-r2",
+    "v89-replay-r7",
+    "controlled-tests-r1",
+    "controlled-tests-r2",
+    "runtime-tolerance-r1",
+    "first-divergence-r1",
+    "collision-parity-r1",
+    "repeatability-r1",
+    "deterministic-r1",
+    "deterministic-r2"
+  ],
+  "current_replay_job": "isaaclab-duckwing-deterministic-r2-x86",
+  "status": "adapter_corrected_behavioral_parity_failed",
+  "next_diagnostic": "Compare source-GPU and imported-GPU across the preserved skating/trick contract before simulator-specific adaptation; CPU parity remains failed.",
+  "current_repeats": {
+    "policy_repeat_1": {
+      "metrics": {
+        "initial_observation_max_abs": 0.0,
+        "initial_action_max_abs": 0.0,
+        "mean_observation_max_abs": 3.390035743586719,
+        "mean_action_abs_difference": 0.1810617576309014,
+        "final_xy_separation_m": 0.5662023108067946,
+        "cpu_final_xy_m": [
+          0.8228450444926771,
+          0.03617076085896292
+        ],
+        "isaac_final_xy_m": [
+          0.2961772084236145,
+          -0.17168988287448883
+        ],
+        "cpu_fell": false,
+        "isaac_fell": false,
+        "finite": true,
+        "source_gpu_fell": false,
+        "source_gpu_final_xy_m": [
+          0.34915193915367126,
+          -0.039868101477622986
+        ],
+        "source_gpu_max_separation_m": 0.48084230084296864,
+        "source_gpu_final_separation_m": 0.4797572997163803
+      },
+      "gates": {
+        "finite": true,
+        "both_upright": true,
+        "initial_observation_close": true,
+        "initial_action_close": true,
+        "mean_action_close": false,
+        "final_path_close": false
+      },
+      "behavior_equivalent": false,
+      "deterministic_requested": true
+    },
+    "policy_repeat_2": {
+      "metrics": {
+        "initial_observation_max_abs": 0.0,
+        "initial_action_max_abs": 0.0,
+        "mean_observation_max_abs": 3.390035743586719,
+        "mean_action_abs_difference": 0.1810617576309014,
+        "final_xy_separation_m": 0.5662023108067946,
+        "cpu_final_xy_m": [
+          0.8228450444926771,
+          0.03617076085896292
+        ],
+        "isaac_final_xy_m": [
+          0.2961772084236145,
+          -0.17168988287448883
+        ],
+        "cpu_fell": false,
+        "isaac_fell": false,
+        "finite": true,
+        "source_gpu_fell": false,
+        "source_gpu_final_xy_m": [
+          0.34915193915367126,
+          -0.039868101477622986
+        ],
+        "source_gpu_max_separation_m": 0.48084230084296864,
+        "source_gpu_final_separation_m": 0.4797572997163803
+      },
+      "gates": {
+        "finite": true,
+        "both_upright": true,
+        "initial_observation_close": true,
+        "initial_action_close": true,
+        "mean_action_close": false,
+        "final_path_close": false
+      },
+      "behavior_equivalent": false,
+      "deterministic_requested": true
+    }
+  },
+  "deterministic_repeat_metrics_and_recorded_snapshots_equal": true,
+  "isaac_vs_direct_source_gpu_final_separation_m": 0.14206795608639236
+}
