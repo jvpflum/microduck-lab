@@ -37,5 +37,19 @@
     }
   ],
   "public_artifact_policy": "Portable source, tests, curated inference releases and scrubbed evidence. Private raw training state and licensed source assets are stored separately.",
-  "historical_paths_preserved": true
+  "historical_paths_preserved": true,
+  "related_repositories": [
+    {
+      "url": "https://github.com/jvpflum/microduck-arena-work",
+      "role": "Separate Arena competition source and entered policies; indexed, not merged"
+    },
+    {
+      "url": "https://github.com/jvpflum/microduck_rl",
+      "role": "Pinned training-environment submodule"
+    },
+    {
+      "url": "https://github.com/jvpflum/microduck-simulator",
+      "role": "Pinned browser-simulator submodule"
+    }
+  ]
 }

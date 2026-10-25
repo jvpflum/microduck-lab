@@ -18,6 +18,26 @@ review. It is recorded as user-reported in the inventory and is not used for a
 record, leaderboard, or release claim. None of these listed campaigns submitted
 an entry or changed a protected release.
 
+## Separate Arena competition repository
+
+The related [microduck-arena-work repository](https://github.com/jvpflum/microduck-arena-work)
+contains a different campaign: evolution-strategy searches, motor-gain wrappers,
+Arena job tooling, entered/reserve policies for sprint, hill and roller events,
+and Got a Talent work. The inspected revision is
+[`938eb907`](https://github.com/jvpflum/microduck-arena-work/tree/938eb9071aac972242815485873d4ab604e9eef2).
+Its reported entry times are not independently re-evaluated by this publication.
+
+This directory is a curated historical PPO/CPU-judge snapshot, **not the complete
+Arena archive**. Topic overlap does not make the policies, experiments or results
+identical. The separate repo's later entries must not be inferred absent from the
+limited local inventory below. No code or policy from that repo has been merged,
+deleted, synchronized or archived by this organization change.
+
+`microduck-lab` is the overall project index and current Isaac workshop home;
+the separate Arena repo remains linked competition history/tooling. Keep future
+shared summaries here and identify the exact source repo/revision for each result.
+Do not maintain silently diverging copies or combine the two score tables.
+
 ## Evidence and method
 
 [The machine-readable inventory](evidence-inventory.json) preserves denominators,

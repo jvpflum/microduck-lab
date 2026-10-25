@@ -28,6 +28,9 @@ across racing, skating and barefoot walking.
 | Laguna Seca | Learned course navigation over retained V89 locomotion | [Laguna](programs/laguna-seca/) |
 | Historical experiments | Transfer failures and exploratory continuations | [Research ledger](research/) |
 
+The separate [Arena competition repository](https://github.com/jvpflum/microduck-arena-work)
+is indexed from the Arena section; its entries and search history have not been merged here.
+
 [Program map and contribution rules](programs/README.md). Existing release paths and
 DuckWing training interfaces remain stable. The detailed DuckWing reference below
 is retained for existing users.

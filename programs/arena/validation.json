@@ -25,9 +25,9 @@
   "entry_submitted": false,
   "release_modified": false,
   "files": {
-    "README.md": "c94d7a17698de96123c8069a6ce496b35d9f9d1768243af12b5ac1410f76aaa2",
+    "README.md": "ca61c15e2e0a8da9d97d9e76ea26294347e67e7f184ea4c272c8d41c4f35ebf6",
     "SOURCE_MAP.md": "b1abbd0603c65aca6bcc19ec169ed77a0a146328aee4664f8d95fbbe35269a05",
-    "evidence-inventory.json": "6fd525a99e91419d28f4004e29db7595013d95a15d3aa6c361c757c7b1c89424",
+    "evidence-inventory.json": "03928f7c28512ac6c934cb26d2b49e262e0296ba9707293bd6705c7ed27e6b13",
     "fresh-sprint/README.md": "8129f5046afb5a315445b94e8cd469a22b1f7de5b20cf96d0380c1721752358f",
     "fresh-sprint/checkpoint_state.py": "32476b76e965f07344bc78ff5dc917a0a0d41cc72b4e24d5ecebcc06b16fe733",
     "fresh-sprint/env.py": "9b85148e3f8fa5930df408dc5a0e6978cb5a435811d5c01efdfb8bc81fbf32f0",
@@ -37,5 +37,6 @@
     "fresh-sprint/test_env.py": "ddb5edcfabac28b42dea74d072b484e08ec43a162e3c8e281bcc972464eedf66",
     "fresh-sprint/test_train.py": "8a9a29eb2acf1a7e77642dbac2c282d2e9fc011503235f92a7204a4e99d69ac5",
     "fresh-sprint/train.py": "ad8c41467d8f6836ff8f81774f8f5678104732d4308922d076cfb47d671119cc"
-  }
+  },
+  "documentation_followup": "Linked the separate Arena repository and narrowed inventory coverage; source/tests unchanged."
 }

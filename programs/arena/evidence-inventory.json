@@ -214,5 +214,18 @@
   "entry_submitted_by_these_campaigns": false,
   "new_release_promoted": false,
   "protected_releases_modified": false,
-  "olympic_aggregate_result": null
+  "olympic_aggregate_result": null,
+  "coverage_note": "This is a limited historical local PPO/CPU-judge inventory. Separate Arena entry/search/talent campaigns exist and are not merged or independently re-evaluated here.",
+  "related_repository": {
+    "url": "https://github.com/jvpflum/microduck-arena-work",
+    "inspected_revision": "938eb9071aac972242815485873d4ab604e9eef2",
+    "contents": [
+      "evolution-strategy search",
+      "motor-gain wrapper search",
+      "entered/reserve event policies",
+      "Got a Talent",
+      "Arena job tooling"
+    ],
+    "merged_into_this_inventory": false
+  }
 }
