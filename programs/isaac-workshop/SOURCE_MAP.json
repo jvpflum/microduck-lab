@@ -1,0 +1,478 @@
+{
+  "schema": "isaac-workshop-public-source-map-v1",
+  "isaaclab_commit": "b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e",
+  "files": [
+    {
+      "published_path": "src/isaac_workshop/navigation_bridge.py",
+      "development_component": "navigation-readiness-r5/navigation_bridge.py",
+      "original_sha256": "18ae9a4510562d33ac074a491006912fff045074272db484e7d0e51767d09b24",
+      "published_sha256": "18ae9a4510562d33ac074a491006912fff045074272db484e7d0e51767d09b24",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "digest",
+        "finite_vector",
+        "Contract",
+        "CameraPacket",
+        "image_channels",
+        "bounded_command",
+        "NavigationBridge",
+        "goal_in_body",
+        "camera_counterfactual"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/probe_controller.py",
+      "development_component": "navigation-readiness-r5/probe_controller.py",
+      "original_sha256": "7db678e7374babc3806aa28973c0a4482ca61bbd227e6f8eb2abbbe601d6f620",
+      "published_sha256": "7db678e7374babc3806aa28973c0a4482ca61bbd227e6f8eb2abbbe601d6f620",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "depth_stop_evidence",
+        "DepthStopProbe"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/alignment_metrics.py",
+      "development_component": "navigation-readiness-r5/alignment_metrics.py",
+      "original_sha256": "212d1aeabac40faaf16cad66c2820b5ed8ccf2496dc203ed5b58527c8cb603ff",
+      "published_sha256": "212d1aeabac40faaf16cad66c2820b5ed8ccf2496dc203ed5b58527c8cb603ff",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "rotation_xyzw",
+        "camera_rays",
+        "optical_depth_to_triangles",
+        "depth_residual",
+        "tilted_camera",
+        "floor_reference_coverage"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/camera_mount.py",
+      "development_component": "navigation-readiness-r5/camera_mount.py",
+      "original_sha256": "98bd3b255200315685b67e0d8513e35f86cab2cdd5477cabd2f38549b73268a5",
+      "published_sha256": "98bd3b255200315685b67e0d8513e35f86cab2cdd5477cabd2f38549b73268a5",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "make_spec",
+        "explain_camera",
+        "expected_usd_local_matrix",
+        "validate_local_matrix",
+        "verify_native"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/mixed_commands.py",
+      "development_component": "training-mixed-preservation-r5/mixed_commands.py",
+      "original_sha256": "685e44c21bf1466d840b089d7cef3a830e198d2427927054863d3cb56ad77ed1",
+      "published_sha256": "8ef17930bf035aee17cbb0b23f74eee4da0d053f2b7140f04b70a8989d2ee247",
+      "changes": [
+        "Normalize trailing blank lines; Python AST unchanged."
+      ],
+      "unchanged_top_level_definitions": [
+        "case_at",
+        "command_at",
+        "recipe",
+        "command_type",
+        "verify_observations",
+        "empty_exposure",
+        "record_exposure",
+        "begin_behavior",
+        "record_behavior"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/fresh_checkpoint.py",
+      "development_component": "training-mixed-preservation-r5/fresh_checkpoint.py",
+      "original_sha256": "ce6affe50d2ce1f8623dac714ab455c32c6e8d164524961b8925fed48b338271",
+      "published_sha256": "ce6affe50d2ce1f8623dac714ab455c32c6e8d164524961b8925fed48b338271",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "assert_tree_equal",
+        "finite_tree",
+        "construct_models",
+        "validate_fresh_state"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/ppo_source_contract.py",
+      "development_component": "training-mixed-preservation-r5/ppo_source_contract.py",
+      "original_sha256": "b518a85dfd3af9289b9ee4e9e1400b525f43e0f96badf69b593b2f3e768f2639",
+      "published_sha256": "b518a85dfd3af9289b9ee4e9e1400b525f43e0f96badf69b593b2f3e768f2639",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "canonical_ast",
+        "canonical_ast_sha256",
+        "verify_method_source",
+        "verify_ppo_update"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/head_depth.py",
+      "development_component": "perception/head_depth.py",
+      "original_sha256": "cadae1320b932bc0f5cb1227435c9b916247dc7f3c1adb9f25019837969b7f2d",
+      "published_sha256": "cadae1320b932bc0f5cb1227435c9b916247dc7f3c1adb9f25019837969b7f2d",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "CameraSpec",
+        "configure_head_camera",
+        "configure_depth_observation_group",
+        "head_depth_observation",
+        "rotation_xyzw",
+        "depth_geometry",
+        "clock_progress",
+        "_png",
+        "_json",
+        "HeadDepthRecorder"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/contact_metrics.py",
+      "development_component": "runtime/training_plan.py",
+      "original_sha256": "00f8fbe55d2a72b8d8208d9c5bb059c5235cfaa9973199c81e847e046a26eb1f",
+      "published_sha256": "6cfac053440513bb911db0b907622744db0e69b2cc428dce608bd9e9b3a8b8f6",
+      "changes": [
+        "Extract exact contact_metrics function; omit private planning/receipt CLI."
+      ],
+      "unchanged_top_level_definitions": [
+        "contact_metrics"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/score_locomotion.py",
+      "development_component": "locomotion-qualification-r1/score_locomotion.py",
+      "original_sha256": "ed265825ec7b60a7710885201829e15f59f75556d603667868a44a12239a1096",
+      "published_sha256": "38aa56a5a2b6d2ab805f536ce3f2215d4d8813a2ea3d565e7ebfbba559d8ac4e",
+      "changes": [
+        "Package-relative contact import; scoring functions and thresholds unchanged."
+      ],
+      "unchanged_top_level_definitions": [
+        "scenario",
+        "command_at",
+        "wrapped_angle",
+        "vector",
+        "expected_endpoint",
+        "validate_episode",
+        "score_episode",
+        "main"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/curriculum.py",
+      "development_component": "locomotion-foundation-r1/curriculum.py",
+      "original_sha256": "5d2ee8384dba9e4a4ab8da3d60c0b2b240dbf86d1b19020aed2d3601eef9a27d",
+      "published_sha256": "5d2ee8384dba9e4a4ab8da3d60c0b2b240dbf86d1b19020aed2d3601eef9a27d",
+      "changes": [
+        "Package-relative imports only."
+      ],
+      "unchanged_top_level_definitions": [
+        "Skill",
+        "skills",
+        "command",
+        "ExposureLedger",
+        "verify_command_observations",
+        "target_metrics"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/native_curriculum.py",
+      "development_component": "locomotion-foundation-r1/native_curriculum.py",
+      "original_sha256": "14f7360be0b2dcdf93029067f813e844ed0a2ae18b10b675b182bfd82bf5e465",
+      "published_sha256": "8ca47f9dea538313c125792c2e42ea13cfdb12553792e5d87911a68726795915",
+      "changes": [
+        "Package-relative imports only."
+      ],
+      "unchanged_top_level_definitions": [
+        "admit_foundation",
+        "command_type",
+        "prepare",
+        "validate_randomization_readbacks"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/evaluation_contract.py",
+      "development_component": "locomotion-foundation-r1/evaluation_contract.py",
+      "original_sha256": "0846cef3b52654686bfda2fe62d59e3aad611b718ebd5fe4a6ddb8f8c0a776e1",
+      "published_sha256": "443373728608d1d56cb1f4edcf6dd933b130ce17c360df67ffba5f7b8c19f7fe",
+      "changes": [
+        "Package-local immutable scorer path and published-import-adjusted hash; isolated module keeps package context. Domain/scoring thresholds unchanged."
+      ],
+      "unchanged_top_level_definitions": [
+        "digest",
+        "validate_domain",
+        "suite",
+        "promotion"
+      ],
+      "modified_or_new_top_level_definitions": [
+        "score"
+      ]
+    },
+    {
+      "published_path": "src/isaac_workshop/prepare_trainer.py",
+      "development_component": "locomotion-foundation-r1/prepare_trainer.py",
+      "original_sha256": "e41111447bdd22e979fa5a68eb426f3982fcb8052d93019453277edfbea782a9",
+      "published_sha256": "d71c7849a9325c4953756364d559cda662e3ea636e8adb039709ac690e48bbef",
+      "changes": [
+        "Package-relative imports only."
+      ],
+      "unchanged_top_level_definitions": [
+        "build_proposal",
+        "main"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_navigation_bridge.py",
+      "development_component": "navigation-readiness-r5/test_navigation_bridge.py",
+      "original_sha256": "c90f82251264c485d6aacaf003dd9bdf25e328d17e37e84c46777a70bb3abc17",
+      "published_sha256": "54e09ff4b5ea2cf3a186a51bd6a890baaf68b389133a9a7562b23692e791488f",
+      "changes": [
+        "Package imports only."
+      ],
+      "unchanged_top_level_definitions": [
+        "Tests"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_probe_controller.py",
+      "development_component": "navigation-readiness-r5/test_probe_controller.py",
+      "original_sha256": "c03225156ddfa9523d01deda6b6bddd04f2d9feaaa1b3a55b063eb4cb234d231",
+      "published_sha256": "24d0aabc71f7b7cfa32d1e42a092ca1ebf3fac8a65f12eaed8a73a78b4125621",
+      "changes": [
+        "Package imports; private-development path assertions omitted."
+      ],
+      "unchanged_top_level_definitions": [
+        "fixture"
+      ],
+      "modified_or_new_top_level_definitions": [
+        "ProbeTests"
+      ]
+    },
+    {
+      "published_path": "tests/test_alignment_metrics.py",
+      "development_component": "camera-alignment-r1/test_alignment_metrics.py",
+      "original_sha256": "515e51fa88c34c097adfbfd3012934bd2ce0cf23b3b3deab98fa69d0d298a636",
+      "published_sha256": "0d1b84e7503f08082c02f3bfbf92d165c0d8875f2f4978e3d73c25b6617f92c4",
+      "changes": [
+        "Package imports only."
+      ],
+      "unchanged_top_level_definitions": [
+        "Tests"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_curriculum.py",
+      "development_component": "locomotion-foundation-r1/test_curriculum.py",
+      "original_sha256": "f68d15746381ba9007d8bb668d9001f3d91f5daae9a747c2670b641cbc6ddf98",
+      "published_sha256": "220865897d42bca8e5b9b6af3413b256a8ad9884ce706db46bf96571602d9baf",
+      "changes": [
+        "Package imports only."
+      ],
+      "unchanged_top_level_definitions": [
+        "domain",
+        "admission",
+        "CurriculumTests"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_score_locomotion.py",
+      "development_component": "locomotion-qualification-r1/test_score_locomotion.py",
+      "original_sha256": "fc5e39c0ddfade101d263f86f679bd3df461ae873b58d9f66709eb65072d640b",
+      "published_sha256": "d69e4339c74772872eecfea1795c5ccd63739ae270e516b1036002c4881e0d17",
+      "changes": [
+        "Package imports only."
+      ],
+      "unchanged_top_level_definitions": [
+        "fixture",
+        "ScorerTests",
+        "TimeAndYawTests"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_mixed_commands.py",
+      "development_component": "training-mixed-preservation-r5/test_mixed_commands.py",
+      "original_sha256": "3a048a4f1a1b0b9114b5af2bb95b7ce2af7ae499ab7211df7721c25106572c05",
+      "published_sha256": "1bf85ec6c654f12630a838a0560bb27cd8c5d0b80981b4625e4fa30b77819bce",
+      "changes": [
+        "Package imports; private-development path assertions omitted."
+      ],
+      "unchanged_top_level_definitions": [
+        "Tensors",
+        "NativeCommandFixture"
+      ],
+      "modified_or_new_top_level_definitions": [
+        "CommandTests"
+      ]
+    },
+    {
+      "published_path": "tests/test_head_depth.py",
+      "development_component": "perception/test_head_depth.py",
+      "original_sha256": "71218ded0537237d753171f05a2ab7a4a8280d2a4628fb2ed0c0abe09acbae97",
+      "published_sha256": "04ffc0e78ab3e4493db2b833e20f1e40bab113555cd4f3d25ef927c6a57d9b53",
+      "changes": [
+        "Package import; optional Torch image-adapter tests excluded from NumPy-only suite. Native adapter remains source reference."
+      ],
+      "unchanged_top_level_definitions": [
+        "HeadDepthTests"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "media/workshop-cabinet-clearance.png",
+      "development_component": "cabinet-clearance-render-r1",
+      "original_sha256": "97d8fecba4e2e9693e121b41ba81a1ba467420f08d5a67ad2ca0172abbba2705",
+      "published_sha256": "97d8fecba4e2e9693e121b41ba81a1ba467420f08d5a67ad2ca0172abbba2705",
+      "changes": [
+        "None; exact native renderer PNG."
+      ],
+      "visual_scope": "Stopped-timeline scene only; no locomotion or physical qualification. Capture log qualification failed."
+    },
+    {
+      "published_path": "src/isaac_workshop/camera_readiness.py",
+      "development_component": "navigation-readiness-r5/camera_readiness.py",
+      "original_sha256": "a0bba995e8e2786be7729791d34b6ccbcf63fa02b318bd862048a3df496ee732",
+      "published_sha256": "a73ccbdab46fa542ceb5c0f14e14d3977668ee6a44a03496c6ca5dbc9ae43e4b",
+      "changes": [
+        "Package imports only. Native asset-dependent diagnostics remain fail-closed until exact unvendored inputs are supplied."
+      ],
+      "unchanged_top_level_definitions": [
+        "readiness",
+        "bounded_warmup",
+        "verify_source_contract",
+        "ensure_camera_ready"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/capture_alignment.py",
+      "development_component": "navigation-readiness-r5/capture_alignment.py",
+      "original_sha256": "121f7416a049b8f0aa340ae7edb405a319413856216e934f150dfef0a12836b8",
+      "published_sha256": "affbf0b8fd08b6f55b0f514b64bf2edd3077edb66a657f0995142e745da198a0",
+      "changes": [
+        "Package imports only. Native asset-dependent diagnostics remain fail-closed until exact unvendored inputs are supplied."
+      ],
+      "unchanged_top_level_definitions": [
+        "sha",
+        "load_floor",
+        "capture_transaction",
+        "residual_record",
+        "SameStateCapture"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/compare_probe_pair.py",
+      "development_component": "navigation-readiness-r5/compare_probe_pair.py",
+      "original_sha256": "655840e6724865b75ef50f111006bdce4dd35fc836732876b6094bd212cde808",
+      "published_sha256": "1a48e8b8ab9446b7e9f287a2a937d2c9911a9c3d1b46dba8a2b822a8c8dc48e4",
+      "changes": [
+        "Package imports only. Native asset-dependent diagnostics remain fail-closed until exact unvendored inputs are supplied."
+      ],
+      "unchanged_top_level_definitions": [
+        "load",
+        "compare"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/warmup-source-contract.json",
+      "development_component": "navigation-readiness-r5/warmup-source-contract.json",
+      "original_sha256": "639600a0ae32d22c2f08a90eb368abd14d197813dbde3cae4c48729b88a70184",
+      "published_sha256": "03efd89eddce783221e92fc23096a9613e9d6d6675e61179d516f85d0ee3987f",
+      "changes": [
+        "Removed local source-cache locations; exact public source paths/URLs and hashes retained."
+      ],
+      "unchanged_top_level_definitions": [],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/command_refresh.py",
+      "development_component": "navigation-readiness-r5/native_probe.py",
+      "original_sha256": "9de773d1d8104f088095cde115afb24e6c37d5cca05485efbb70ee664524c9fb",
+      "published_sha256": "46579c5f7d546c8367eeabc67fa703c243384f60e0a780f47f11276996b4c2b4",
+      "changes": [
+        "Exact apply_command_and_refresh function extracted; private scene-specific probe wiring omitted."
+      ],
+      "unchanged_top_level_definitions": [
+        "apply_command_and_refresh"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_probe_pair.py",
+      "development_component": "navigation-readiness-r5/test_probe_pair.py",
+      "original_sha256": "6e79257c2b85fcb186cc42761fdcbeb9f0b93f5c3a67c309f33f76d6d583f202",
+      "published_sha256": "93ad18649c81575b11135d88e62dc2aa59c5b71665f64aa93fbc48410e206dca",
+      "changes": [
+        "Package import only; retains paired actual-artifact format tests with explicitly synthetic fixtures."
+      ],
+      "unchanged_top_level_definitions": [
+        "PairTests"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_capture_alignment.py",
+      "development_component": "navigation-readiness-r5/test_capture_alignment.py",
+      "original_sha256": "ea5cb731227a8432dafbae49514808630419137d704bc50c4c7df3281bf877e3",
+      "published_sha256": "99e0993228ca7e2fd9936d29860dc14af12ac162f1eadf18b504f6738601b5b5",
+      "changes": [
+        "Package import; source-asset decode/private historical-file assertions omitted. All capture transaction/frozen-state/rejection fixtures retained."
+      ],
+      "unchanged_top_level_definitions": [],
+      "modified_or_new_top_level_definitions": [
+        "AlignmentTests"
+      ]
+    },
+    {
+      "published_path": "tests/test_camera_readiness.py",
+      "development_component": "navigation-readiness-r5/test_camera_readiness.py",
+      "original_sha256": "fb2e3aead0aeacf91f962442e80db0c186b7c0191b5f76213acf40c029ffc474",
+      "published_sha256": "2448c720a7990e1039850391b5d36a8e704797d2942e7ab5700606478c4dd980",
+      "changes": [
+        "Select seven portable warmup tests; native source/cache fixtures not claimed in this public suite."
+      ],
+      "unchanged_top_level_definitions": [],
+      "modified_or_new_top_level_definitions": [
+        "WarmupTests"
+      ]
+    },
+    {
+      "published_path": "src/isaac_workshop/onnx_contract.py",
+      "development_component": "foundation-benchmark-r1/onnx_contract.py",
+      "original_sha256": "776bdd40520f64391fc53f3b76e7c5a4cdbc16f6108087f799cde5353b3d14fe",
+      "published_sha256": "776bdd40520f64391fc53f3b76e7c5a4cdbc16f6108087f799cde5353b3d14fe",
+      "changes": []
+    },
+    {
+      "published_path": "media/walk-turn-stop.mp4",
+      "development_component": "candidate-walk-turn-stop-video-r1",
+      "original_sha256": "17634192e64c3eb25eebd321530da20151b042d64c3071c15ddfd7fbf63c6b2b",
+      "published_sha256": "17634192e64c3eb25eebd321530da20151b042d64c3071c15ddfd7fbf63c6b2b",
+      "changes": [],
+      "visual_scope": "Earlier native candidate400controls; failed turning/contact; two empty startup depth samples followed by399nonzero samples. Not autonomous or qualified."
+    }
+  ],
+  "unvendored": [
+    "Native task-owned scene/source admission and compute transport",
+    "Vendor robot meshes, scene packs, MDL/textures and checkpoint tensors",
+    "Native PPO implementation and runtime installers",
+    "Private raw worker logs, per-job receipts and endpoint/machine configuration"
+  ],
+  "public_copy_is_native_launch_payload": false
+}

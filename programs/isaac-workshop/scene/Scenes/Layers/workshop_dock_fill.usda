@@ -1,0 +1,45 @@
+#usda 1.0
+(
+    customLayerData = {
+        bool nativeAppearanceVerified = 0
+        bool physicalFixtureGeometryAdded = 0
+        string purpose = "Additive dock readability refinement after native revision3."
+        bool sourceLightingChanged = 0
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def "WorkshopDockFill"
+    {
+        def RectLight "DockNeutralFill" (
+            prepend apiSchemas = ["ShapingAPI"]
+            customData = {
+                bool addsPhysicalFixture = 0
+                string calibration = "Uncalibrated artistic preview values; native appearance pending."
+                string role = "Neutral local fill to reveal the dock pad and housing in the matched r3 camera."
+            }
+        )
+        {
+            color3f inputs:color = (1, 1, 1)
+            float inputs:colorTemperature = 4800
+            float inputs:diffuse = 1
+            bool inputs:enableColorTemperature = 1
+            float inputs:exposure = 0
+            float inputs:height = 20
+            float inputs:intensity = 6000
+            bool inputs:normalize = 0
+            float inputs:shaping:cone:angle = 25
+            float inputs:shaping:cone:softness = 0.5
+            float inputs:specular = 1
+            float inputs:width = 30
+            custom int omni:rtx:usdluxVersion = 2505
+            custom bool visibleInPrimaryRay = 0
+            matrix4d xformOp:transform = ( (0.8262273428075476, -0.5633368246415098, -2.7755575615628914e-17, 0), (0.5061567052263551, 0.7423631676653208, 0.43897872049600706, 0), (-0.24729287848941348, -0.3626962217844731, 0.8984974585115356, 0), (-100.00000000000004, -470.00000000000006, 119.99999999999996, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

@@ -1,0 +1,50 @@
+#usda 1.0
+(
+    customLayerData = {
+        string displayAssetSha256 = "1121de62c96a163f796a813568a7d8d59c40c105659fafd85cf4ad4ec879b727"
+        string futureRuntimeSelectorUntouched = "/Root/Training/Walker"
+        string scope = "Two exact native visual-only MicroDucks. Neither is a running policy or physics robot."
+        string supportReceiptSha256 = "64a6fcd87d3f5f1553228999d94713430e1bc26c7b5b1a0530641a8b8af01f25"
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def Xform "WorkshopRobots" (
+        kind = "group"
+    )
+    {
+        def Xform "BenchDisplay" (
+            customData = {
+                bool physicsDisabled = 1
+                string role = "Static maintenance display; native authored CAD rest pose."
+                string supportPrim = "/Root/WorkshopDressing/RepairTable_A"
+                bool walkingVerified = 0
+            }
+            prepend references = @../../Assets/BenchMicroDuck/bench_microduck.usda@</BenchMicroDuck>
+        )
+        {
+            double xformOp:rotateZ = -90
+            double3 xformOp:translate = (-380, -1050, 125.32430367319209)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+        }
+
+        def Xform "FloorWalkerPreview" (
+            customData = {
+                bool physicsDisabled = 1
+                string role = "Frozen render-only staging preview; no walking, controller or training execution."
+                string supportPrim = "/Root/Geometry/Floor/floor_02/floor"
+                bool walkingVerified = 0
+            }
+            prepend references = @../../Assets/BenchMicroDuck/bench_microduck.usda@</BenchMicroDuck>
+        )
+        {
+            double xformOp:rotateZ = 90
+            double3 xformOp:translate = (-50, -1100, 2.7952798136644477)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+        }
+    }
+}

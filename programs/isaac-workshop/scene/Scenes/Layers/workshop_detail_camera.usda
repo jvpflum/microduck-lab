@@ -1,0 +1,28 @@
+#usda 1.0
+(
+    customLayerData = {
+        string geometryReviewJSON = '{"aperture_mm": [36, 20.25], "bounds_fit_camera_frustum": true, "broadphase_aabb_candidates": [{"max": [-350.44238600299286, -996.6781101605557, 127.60658731611504], "min": [-409.55761399700714, -1103.3218898394443, 5.106679664340087], "path": "/Root/WorkshopDressing/RepairTable_A/side_table", "rays": [1, 3, 5, 7]}], "camera": "/Root/WorkshopCameras/BenchDetail", "conservative_bench_duck_box_cm": {"max": [-372.5, -1042.5, 151.8243036731921], "min": [-387.5, -1057.5, 125.37430367319209]}, "depth_of_field": "disabled (fStop0) for evidence clarity", "dressing_sha256": "7cece9b0b7b194a37ed0e09fbeeb77e35d38bf74148a64b4b4f2c8ee9608b13f", "eye_cm": [-450, -1160, 170], "focal_length_mm": 45, "limitations": ["Geometric line segments to conservative duck bounds pass AABB broadphase plus triangle intersection tests for the table candidate; transparency, lighting and native camera framing still require rendering.", "Robot layer was not yet available at camera authorship; parent must rebuild final stage and verify exact posed geometry.", "Camera uses centimetre stage units; focal/aperture numbers are millimetres because USD camera optical units are tenths of a scene unit."], "narrowphase_triangle_tests": 74832, "native_framing_verified": false, "nonrobot_triangle_occlusions": [], "projected_duck_corner_ndc": [[-0.04525856720858823, -0.5473034583174189], [-0.04754739346064651, 0.3703674181841869], [-0.18567726927142883, -0.405647321615021], [-0.19420004096641116, 0.4337628457788637], [0.19183796817731902, -0.4541676745017364], [0.20094956366447736, 0.4121120889935165], [0.03906611417954533, -0.32783647111801156], [0.04075973782321303, 0.46834626730488593]], "sightline_segments": 9, "source_geometry_modified": false, "source_stage": "project/Scenes/workshop_custom.usda", "source_stage_sha256": "77da46d0a6715e3d925d2e053d50ac4846ad589066ed293d0bfa179e3a3931dc", "target_cm": [-380, -1050, 139], "visible_mesh_aabbs_tested": 1598}'
+        string purpose = "Proposed measured bench detail view; native appearance/framing pending."
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def "WorkshopCameras"
+    {
+        def Camera "BenchDetail"
+        {
+            float2 clippingRange = (1, 100000)
+            float focalLength = 45
+            float focusDistance = 134.01866
+            float fStop = 0
+            float horizontalAperture = 36
+            float verticalAperture = 20.25
+            matrix4d xformOp:transform = ( (0.8436614877321074, -0.5368754921931593, 0, 0), (0.12418525022580647, 0.1951482503548387, 0.972879840478668, 0), (-0.5223153432017873, -0.8207812536028084, 0.2313110805607915, 0), (-450.0000000000001, -1160, 170.00000000000009, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

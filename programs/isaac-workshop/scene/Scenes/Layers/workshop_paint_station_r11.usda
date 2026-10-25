@@ -1,0 +1,68 @@
+#usda 1.0
+(
+    customLayerData = {
+        string baseSceneSha256 = "b8970529ab3ac8bad77745bfe11f20cd873e17428743220b5a103f125814bf37"
+        string existingObjects = "unchanged"
+        string nativeAppearance = "pending"
+        string scope = "Isolated source-derived paint workstation; visual-only staged proposal."
+        string sourceReferenceRoot = "external/sample-pack-additions-r1/authored"
+        string supplementalManifestSha256 = "5abcecf540cfe6b542ab4bf6b3287ed6a00887314c2e53cbd97b021302f68b27"
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+over "Root"
+{
+    def Xform "WorkshopPaintR11"
+    {
+        def Xform "WatercolorPan"
+        {
+            matrix4d xformOp:transform = ( (0.9848077750243771, -0.17364818154826964, 0, 0), (-3.855764186783564e-17, -2.1867125333238693e-16, 1.0000000223517425, 0), (-0.17364818154826966, -0.9848077750243773, -2.220446098881151e-16, 0), (-392.4694830265511, -1022.9504538623895, 94.8181652147752, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../../../sample-pack-additions-r1/authored/Samples/Marbles/assets/standalone/SM_watercolor_pan/SM_watercolor_pan.usd@</SM_paint_tray>
+            )
+            {
+            }
+        }
+
+        def Xform "LooseBrush"
+        {
+            matrix4d xformOp:transform = ( (0.2079116908177595, 0.9781476007338056, 0, 0), (2.1719239756330512e-16, -4.616566924692467e-17, 1.0000000000000002, 0), (0.9781476007338058, -0.20791169081775956, -2.220446049250313e-16, 0), (-394.114382470125, -1010.6426395610798, 94.28605253439963, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../../../sample-pack-additions-r1/authored/Samples/Marbles/assets/standalone/SM_art_brushes/SM_art_brushes_01.usd@</SM_Art_Brush_01>
+            )
+            {
+            }
+        }
+
+        def Xform "Pencil"
+        {
+            matrix4d xformOp:transform = ( (0.9998477175047292, 0.017452406827375203, 0, 0), (3.875212778975446e-18, -2.220107914185319e-16, 1.0000000223517425, 0), (0.017452406827375207, -0.9998477175047294, -2.220446098881151e-16, 0), (-391.12151061026947, -1015.3104687674861, 94.24294902779245, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../../../sample-pack-additions-r1/authored/Samples/Marbles/assets/standalone/A_watercolor_pencils/SM_watercolor_pencil_01.usd@</SM_watercolor_pencil_01>
+            )
+            {
+            }
+        }
+
+        def Xform "PaintTube"
+        {
+            matrix4d xformOp:transform = ( (0.9563047559630354, -0.29237170472273677, 0, 0), (-6.4919559666418e-17, -2.1234231172574068e-16, 1.0000000000000002, 0), (-0.2923717047227368, -0.9563047559630357, -2.220446049250313e-16, 0), (-374.53978455443195, -1023.885625137541, 93.81789303761542, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../../../sample-pack-additions-r1/authored/Samples/Marbles/assets/standalone/SM_paint_tubes/SM_paint_tube_01.usd@</SM_paint_tube_01>
+            )
+            {
+            }
+        }
+    }
+}

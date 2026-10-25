@@ -1,0 +1,262 @@
+{
+  "schema": "isaac-workshop-curated-evidence-v1",
+  "snapshot_date": "2026-10-25",
+  "raw_private_artifacts_included": false,
+  "training": {
+    "source_audit_sha256": "3ade6a1ab0d1ce334dc9c002ea82ac68204d2b8facd22899c61ae24454791056",
+    "candidate_sha256": "b1935f16a845fc76b6fd85cc77b83062a0d0a98f9f4cb1f30e6ac47230285c51",
+    "teacher_sha256": "26c1c9f8667a17c593fe142312b5ab590a49edad4e280be238ea3157122327e3",
+    "integrity_audit_passed": true,
+    "qualified": false,
+    "rollout": {
+      "updates": 75,
+      "controls": 1800,
+      "solved_substeps": 7200,
+      "simulated_seconds_total": 36.0,
+      "exposure": {
+        "walk": {
+          "active_controls": 600,
+          "stop_controls": 220,
+          "episode_generations": [
+            0,
+            3,
+            6
+          ],
+          "completed_timeouts": 2,
+          "early_terminal_episodes": 0,
+          "terminations": {
+            "time_out": 2
+          },
+          "nonsole_or_nonfloor_magnitude_integral_n_s": 39.63111774430083,
+          "maximum_nonsole_or_nonfloor_force_n": 29.721507421026846
+        },
+        "left_turn": {
+          "active_controls": 400,
+          "stop_controls": 200,
+          "episode_generations": [
+            1,
+            4
+          ],
+          "completed_timeouts": 2,
+          "early_terminal_episodes": 0,
+          "terminations": {
+            "time_out": 2
+          },
+          "nonsole_or_nonfloor_magnitude_integral_n_s": 74.37890893770081,
+          "maximum_nonsole_or_nonfloor_force_n": 25.134824269733112
+        },
+        "right_turn": {
+          "active_controls": 280,
+          "stop_controls": 100,
+          "episode_generations": [
+            2,
+            5
+          ],
+          "completed_timeouts": 1,
+          "early_terminal_episodes": 1,
+          "terminations": {
+            "fell_over": 1,
+            "time_out": 1
+          },
+          "nonsole_or_nonfloor_magnitude_integral_n_s": 38.032967058215185,
+          "maximum_nonsole_or_nonfloor_force_n": 34.06501142865793
+        }
+      }
+    },
+    "limits": [
+      "One right-turn episode fell. Requested exposure was not balanced actual exposure. Training success is not skill qualification."
+    ]
+  },
+  "postpilot_evaluation": {
+    "source_audit_sha256": "dcf9432491c1c8ad31dd1e4668e3b19cbde76855d729ad810fba31ca5dc27bce",
+    "evidence_audit_passed": true,
+    "episodes": {
+      "teacher-walk_stop": {
+        "qualified": false,
+        "failed_behavior_checks": [
+          "endpoint_yaw_error_rad",
+          "nonsole_nonfloor_force_magnitude_integral_n_s"
+        ],
+        "yaw_change_after_4s_rad": 0.1309636972782544,
+        "yaw_change_after_6s_rad": 0.32664128345136834,
+        "requested_yaw_change_rad": 0.0
+      },
+      "candidate-walk_stop": {
+        "qualified": false,
+        "failed_behavior_checks": [
+          "endpoint_yaw_error_rad",
+          "nonsole_nonfloor_force_magnitude_integral_n_s"
+        ],
+        "yaw_change_after_4s_rad": 0.05888412875910509,
+        "yaw_change_after_6s_rad": 0.2471524553107416,
+        "requested_yaw_change_rad": 0.0
+      },
+      "teacher-left_turn_stop": {
+        "qualified": false,
+        "failed_behavior_checks": [
+          "endpoint_yaw_error_rad",
+          "nonsole_nonfloor_force_magnitude_integral_n_s"
+        ],
+        "yaw_change_after_4s_rad": -0.004333631672158944,
+        "yaw_change_after_6s_rad": -0.005678931521400976,
+        "requested_yaw_change_rad": 1.2
+      },
+      "candidate-left_turn_stop": {
+        "qualified": false,
+        "failed_behavior_checks": [
+          "endpoint_yaw_error_rad",
+          "nonsole_nonfloor_force_magnitude_integral_n_s"
+        ],
+        "yaw_change_after_4s_rad": -0.0057093860739794175,
+        "yaw_change_after_6s_rad": -0.006904545363898951,
+        "requested_yaw_change_rad": 1.2
+      },
+      "teacher-right_turn_stop": {
+        "qualified": false,
+        "failed_behavior_checks": [
+          "endpoint_yaw_error_rad",
+          "nonsole_nonfloor_force_magnitude_integral_n_s"
+        ],
+        "yaw_change_after_4s_rad": -0.032164766823159274,
+        "yaw_change_after_6s_rad": -0.03237747475399222,
+        "requested_yaw_change_rad": -1.2
+      },
+      "candidate-right_turn_stop": {
+        "qualified": false,
+        "failed_behavior_checks": [
+          "endpoint_yaw_error_rad",
+          "nonsole_nonfloor_force_magnitude_integral_n_s"
+        ],
+        "yaw_change_after_4s_rad": -0.02821574340787336,
+        "yaw_change_after_6s_rad": -0.030441736630720806,
+        "requested_yaw_change_rad": -1.2
+      }
+    },
+    "controls": 1800,
+    "solved_substeps": 7200,
+    "resets": 0,
+    "decision": {
+      "promote_candidate": false,
+      "bounded_pilot_gate_passed": false,
+      "reason": "Walk illegal-contact magnitude integral increased beyond the frozen non-regression allowance. All other bounded-pilot checks pass, but all six episodes still fail strict zero-contact qualification and candidate turns remain far below requested yaw. Preserve both checkpoints and thresholds.",
+      "next": "Parent chooses next evidence-backed locomotion adaptation after this failed retention gate. Camera startup/causality work remains separate; do not promote this candidate or call these training starts held out."
+    }
+  },
+  "earlier_candidate_video": {
+    "source_audit_sha256": "39f4eb852c84fa67ab703d73fe79901fd93a2c958828e8e2e6e1e5c56d8fcdb9",
+    "sha256": "17634192e64c3eb25eebd321530da20151b042d64c3071c15ddfd7fbf63c6b2b",
+    "bytes": 1466630,
+    "width": 1920,
+    "height": 1080,
+    "frames": 400,
+    "fps": 50,
+    "duration_seconds": 8,
+    "trajectory": {
+      "start_position_m": [
+        -0.5,
+        -11.0,
+        0.15295296907424927
+      ],
+      "after_walk_position_m": [
+        -0.4136476218700409,
+        -10.501799583435059,
+        0.147996187210083
+      ],
+      "after_turn_position_m": [
+        -0.4251289963722229,
+        -10.500971794128418,
+        0.10545270889997482
+      ],
+      "final_position_m": [
+        -0.4257713258266449,
+        -10.500454902648926,
+        0.10518970340490341
+      ],
+      "walk_y_displacement_m": 0.4982004165649414,
+      "walk_x_displacement_m": 0.0863523781299591,
+      "actual_yaw_change_during_requested_turn_rad": -0.04892292856210689,
+      "requested_yaw_change_rad": 0.6,
+      "stop_phase_translation_m": 0.0008244779739869846,
+      "last_second_translation_m": 0.0001605266401665915,
+      "final_horizontal_speed_m_s": 0.00042573104617282305,
+      "maximum_tilt_rad": 0.18762615619686127,
+      "camera_frame_range": [
+        1,
+        401
+      ],
+      "camera_timestamp_range_s": [
+        0.0,
+        7.999993324279785
+      ],
+      "minimum_valid_depth_pixels": 0
+    },
+    "candidate_qualified": false,
+    "camera_navigation_qualified": false,
+    "later_75_update_candidate": false,
+    "depth_coverage": {
+      "samples": 401,
+      "nonzero_sample_count": 399,
+      "positive_valid_pixel_range": [
+        1069,
+        3072
+      ],
+      "all_samples_after_control1_nonzero": true,
+      "observed_startup_delay_until_nonzero_depth_s": 0.03999999910593033,
+      "interpretation": "Exactly two startup observations have zero valid pixels although camera frame/time advances. Fromcontrol2 onward every sample has nonzero depth. This is consistent with render/sensor initialization latency, but counts/hashes alone do not establish whether initial rawpixels were zeros, far misses or clipped values.",
+      "limitations": [
+        "Coverage is whole-image valid-pixel count, not frontal-region readiness.",
+        "This model ignored depth, so good walking does not establish camera navigation.",
+        "No simulator step/render occurred in this local audit.",
+        "Later fullvalidity does not establish that a specific obstacle was sensed."
+      ],
+      "audit_sha256": "4d3441520c171a9d795453c6c239ef4dd4f3c6cf5943eb4845ea38f6c0e3f731",
+      "zero_valid_control_indices": [
+        0,
+        1
+      ]
+    }
+  },
+  "camera_r4": {
+    "source_audit_sha256": "e1b5cf4344292ffa77f0096657aab23c3dcde408b0146df0dadd2dbcaeab4eef",
+    "integrity_checks_passed": true,
+    "controls": 200,
+    "extra_render_pumps": 200,
+    "solver_calls_during_capture": 0,
+    "clear_first_unknown_frontal_control": 9,
+    "clear_max_current_pose_floor_median_error_m": 6.646174602331634e-07,
+    "both_cases_passed": false,
+    "limitations": [
+      "Only15 fixed near-floor rays per image are checked; other objects may occlude them.",
+      "No full-image alignment or measured GPU timestamp claim.",
+      "Clear-case80percent frontal validity guard failed and latched zero command."
+    ]
+  },
+  "camera_r5": {
+    "status": "prepared_independently_reviewed_not_run",
+    "tests": 73,
+    "payload_files": 39,
+    "physical_camera_offset_head_local_m": [
+      0.0155,
+      -9.13778e-05,
+      -0.08748
+    ],
+    "pitch_head_y_degrees": 125,
+    "pixel_center_offset": 0.5,
+    "frontal_valid_fraction": 0.8,
+    "hardware_calibrated": false,
+    "dynamic_lower_body_occlusion_validated": false
+  },
+  "scene_still": {
+    "source_audit_sha256": "66e87133362f7b40bb371217e5306763c78cb430472ca1068dd9b975e4f3cd93",
+    "sha256": "97d8fecba4e2e9693e121b41ba81a1ba467420f08d5a67ad2ca0172abbba2705",
+    "native_audit_passed": false,
+    "gates_passed": 34,
+    "gates_total": 36,
+    "physics_advanced": false,
+    "skill_claim": false
+  },
+  "foundation_comparison": {
+    "official_velstand_native_status": "Submitted; result pending at snapshot",
+    "promoted": false
+  }
+}

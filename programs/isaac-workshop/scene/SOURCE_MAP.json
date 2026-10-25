@@ -1,0 +1,206 @@
+{
+  "schema": "authored-workshop-layer-snapshot-v1",
+  "source_revision": "r11-integration plus cabinet-clearance-r1 override",
+  "files": [
+    {
+      "file": "Assets/BenchMicroDuck/bench_microduck.usda",
+      "source_sha256": "1121de62c96a163f796a813568a7d8d59c40c105659fafd85cf4ad4ec879b727",
+      "public_sha256": "ea51ec2959a5fb3cdc023f13e8f860a2c0a0519e1ad6c1458949cee2aa6039e6",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Assets/Materials/WorkshopMaterials.usda",
+      "source_sha256": "6aed11874162dcf23e64d6c7e174d9e1d1c156ba6505e92694b0a7d12d171596",
+      "public_sha256": "1b0e94820736e8a67d9f346f6ac3afda713a3d92911ff7bc5a42f4f036acede2",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Assets/MicroDuckDock/microduck_dock.usda",
+      "source_sha256": "1d6033586ff17d868a58c28e9b34262cc5b6012f5e07aa1789a30830ce8f124e",
+      "public_sha256": "65198bd5be1c14285669a7acd13379187d2571958835f1e094f668d8cef92f8b",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/appearance.usda",
+      "source_sha256": "ebdaa96a6e5e8b183f6522d07a33609afd851fcc1e396cae81953d4779d85ece",
+      "public_sha256": "ebdaa96a6e5e8b183f6522d07a33609afd851fcc1e396cae81953d4779d85ece",
+      "change": "exact authored layer bytes"
+    },
+    {
+      "file": "Scenes/Layers/inspection_static.usda",
+      "source_sha256": "545fc39e15634151561722c642228529867320238161aeae11fdb63fc159d18d",
+      "public_sha256": "3e8c9a64d7f926d087f5e53eea8acb0582725eca2946ad1bd77ea9940d1a42d6",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/layout.usda",
+      "source_sha256": "05d1ff4a28c25bd5b6c07d3531d205056d2bc16ddab90cc2cc71332e599aeb39",
+      "public_sha256": "05d1ff4a28c25bd5b6c07d3531d205056d2bc16ddab90cc2cc71332e599aeb39",
+      "change": "exact authored layer bytes"
+    },
+    {
+      "file": "Scenes/Layers/portability.usda",
+      "source_sha256": "44332f4f1c2299d037c5081d51e6542a616f388d3d15edb50e7c36ad95f50a42",
+      "public_sha256": "d54bac9965de8f9811cf3981eb57d0aa639bc7f535a4d020da4c4ab8cbf09aa5",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/simulation.usda",
+      "source_sha256": "14b4c779fc80fd72421394515fdae83004aeda3dd639b55b3d80a1c4bada685c",
+      "public_sha256": "14b4c779fc80fd72421394515fdae83004aeda3dd639b55b3d80a1c4bada685c",
+      "change": "exact authored layer bytes"
+    },
+    {
+      "file": "Scenes/Layers/workshop_background_fill.usda",
+      "source_sha256": "4ed1342c790edf7affcbeb2e030b621a3bb176b148fdccc2908e5f373c403109",
+      "public_sha256": "cb27adade4a382146bd388b88f517c13e1431cc83a423a1108573473c86eb922",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_bench_details.usda",
+      "source_sha256": "6f2c45099e0dac107d0838f00089c966843ab4227b8ba50e85b5b3f7595b2946",
+      "public_sha256": "2d50c0a8cb964d859502c2d0f4a25f7592f9bf2b38299313fdec8bd9430ba829",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_bright_workshop.usda",
+      "source_sha256": "b27cfa57c1a495ca567ec721f116542be75a1e5ed27d04776b91086a7c1f5ffa",
+      "public_sha256": "2144144e1a0927f8028bfe84e5459507d5e2c36080d2d14eefabbcaf9d313947",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_cameras.usda",
+      "source_sha256": "95cfb640b1725b4ad6880d5936294c3ec6be47602ced1f651771e9aec8275c8d",
+      "public_sha256": "04fca77ae78feb13074db3e6bfb32518b981864afc51e3c4246d43611093650a",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_central_crew_r10.usda",
+      "source_sha256": "2dbc6b85fb147537bd26cb7edae052bf8b3d2fc238580f198fce2849ef4a1426",
+      "public_sha256": "bc0daad7e1afa63e02196ec88b6a65f34e32581781c30446b0514b14873caf8a",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_detail_camera.usda",
+      "source_sha256": "788dd6fb62a41acafa8aaf9349a854a94b31dbcca685993a24ca37e576349d3b",
+      "public_sha256": "13af06e66c557c77f3ed199bc1bac9184a2f497645045907c4308dffa31b0164",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_dock_fill.usda",
+      "source_sha256": "c7b3586779431e7bf26d8e2c8133b7798d188379523c775dbb79e201a656c676",
+      "public_sha256": "136454e603787b27a1684279aee2e004cea742f894b66060cdd94e46d21fc67f",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_dressing.usda",
+      "source_sha256": "7cece9b0b7b194a37ed0e09fbeeb77e35d38bf74148a64b4b4f2c8ee9608b13f",
+      "public_sha256": "09ae4b6409feaf12d1c2fd608681d8388e20fec2328739291a459532cdb35b1b",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_dressing_r7.usda",
+      "source_sha256": "dc54ad6f6575dc5e79cd9fc37f259586af360ea0b9bc7795a24125d48c24fbef",
+      "public_sha256": "bfcc9d0c38d9e515021178ecaaadc7857cdac7fc2f69d370bdf677abafbe2632",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_duck_crew_r9.usda",
+      "source_sha256": "e3e319ab1d13cbf5c7edb32100c03450a022756da7ca250e3785b572f61b7313",
+      "public_sha256": "b57b66bea9d01b581247b6bbb2e0e3e7e6ba616acc37f5364312f95c358467e3",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_furniture_scale_r7.usda",
+      "source_sha256": "5ad05e2570e6ffed7117ef2fc8ff4062da47e0c36c8d189b7c6dcaa7d190e23b",
+      "public_sha256": "f702ae0797e48c67c173d3e4858823a82a1bdc69e42488bc5097a4a3ee85315d",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_layout_refinements.usda",
+      "source_sha256": "e927a5254aacde3466348e6da3512515eb5d592da520e6a9392a832e865d1c75",
+      "public_sha256": "be21528cc73031305085dc09c0015f4979b4cc8bbec140a140ab3a640528be10",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_lighting.usda",
+      "source_sha256": "bae9a31845ba968cbfc549c60ba9c60a83bbebe887b12169202b29ada89cb767",
+      "public_sha256": "f9731672f18dff22eace38016d7af81452688f297d5505a37ba09c5232c9dd1f",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_material_bindings.usda",
+      "source_sha256": "ca3755f2af644369308c92c07b0f253a2a883e9d37fbb47777ef49525129d780",
+      "public_sha256": "02703dc711ed77cc57b325dbe20f1db95437cfc95fe173e9a2a9f207fba52f28",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_paint_station_r11.usda",
+      "source_sha256": "b3ca42032d6b82cd6c4ad6f4d86aa2b730a92b15261fb7eedf8abf1e6abd1669",
+      "public_sha256": "abe32f063153dfb8f8d95db903169e23b6e3420f4327f2db887ea769742a5007",
+      "change": "Operator sourceReferenceRoot metadata replaced by external placeholder; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_perimeter_layout_r9.usda",
+      "source_sha256": "331aaf72f9fdd2d4e3b915f2874e23f6db9f8f7996c27da02ab264b9d4c3e9c1",
+      "public_sha256": "d24fc9e3cd8c73238bffc60528abfbd75e82ee4cab89efdea098a4ceda506465",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_perimeter_refinement_r10.usda",
+      "source_sha256": "157e84261229e8ff75680095c6d7708fdce2e6782100b798cfda4daf25aedcb0",
+      "public_sha256": "a6b7f5c17e8ca4368d9fad23ba4fc4b950a790016d45df3de28c4208bcb33415",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_robots.usda",
+      "source_sha256": "c9800e14260cc9f744d4d341c0cf6bd054e2178b790846ef7bfc64d92f088e08",
+      "public_sha256": "6e973c1451051e217407c6ef05f988200c5026535dd269ec15fa7df57c476a4d",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_string_detail_camera.usda",
+      "source_sha256": "541ffc070cc4aeca137f020c3d09507139ae92542029d02c0e905e51e6ba0f16",
+      "public_sha256": "54a46a0e3e1557fcecd6017da084e02ab0f5612987b1bdaf1cfaa6108e155c06",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_toy_dressing_r8.usda",
+      "source_sha256": "c2209e400b047a959af0319488e0da9618d877498849277c362727017ca4d926",
+      "public_sha256": "da82efaba3cc880e4f6729e3097485e60e1e49daa5cde99a7b657383cefa435e",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_toy_presentation_r8.usda",
+      "source_sha256": "9552fdac445171b716f9b4d38be8785fec0304d1870a10e32b8c7f573236b017",
+      "public_sha256": "5abe6019a7bb9e5ab37a5131df226be4317c616182a9da3961885af5e5907445",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/Layers/workshop_toymaker_canopy_r10.usda",
+      "source_sha256": "cb561378ae9769d8b754431d9a1b933bacc9d28e7be7905df980e7cdace022ef",
+      "public_sha256": "65c12122d6cb069d41bac009ac366794b5ecbf9dd7f961c408c972fbc3d1efc9",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/workshop_base.usda",
+      "source_sha256": "abf16dc205340e583468a3deb4204f97dfdcdf1b2c945bff262009ebd923f521",
+      "public_sha256": "cd2bab1b144e86f2a0c9b5ca6a77609e7507a2e02536d34acf76fc355dc84101",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "Scenes/workshop_custom.usda",
+      "source_sha256": "5dbaa56bc3db6ecc1b4ba2a1e8da5d6cfe1b36654ba9158615330744cfa3b441",
+      "public_sha256": "a9d6fd10804b2875a551013eb0e2894574903bfbd635c0f4599e4ff652620f06",
+      "change": "exact authored layer bytes; normalize trailing blank lines"
+    },
+    {
+      "file": "cabinet-clearance/workshop_cabinet_clearance.usda",
+      "source_sha256": "31c45cb7f58293942ad392df892af0bbec65f31b7e5cac936bdd9423c084fe0e",
+      "public_sha256": "f8c248adec0b6746c38e8acb7f732a8ccd72f19c651b38dea18b9fd7168ea8ff",
+      "change": "exact authored layer bytes; compose as strongest cabinet override in provisioned runtime; normalize trailing blank lines"
+    }
+  ],
+  "source_assets_included": false,
+  "complete_external_dependency_resolution_verified": false
+}

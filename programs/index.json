@@ -1,0 +1,41 @@
+{
+  "schema": "microduck-program-index-v1",
+  "snapshot_date": "2026-10-25",
+  "current_focus": "isaac-workshop",
+  "status_is_live": false,
+  "programs": [
+    {
+      "id": "isaac-workshop",
+      "path": "programs/isaac-workshop",
+      "status": "active-research",
+      "morphology": "barefoot",
+      "goal": "Robust walking and camera-based workshop navigation",
+      "qualified_autonomy": false
+    },
+    {
+      "id": "arena",
+      "path": "programs/arena",
+      "status": "competition-research",
+      "morphology": "task-specific",
+      "metric_scope": "Per-task Arena contract; no pooled score"
+    },
+    {
+      "id": "duckwing",
+      "path": "programs/duckwing",
+      "status": "retained-baseline",
+      "morphology": "roller",
+      "recommended_release": "releases/v89",
+      "frozen_speed_benchmark": "releases/v80"
+    },
+    {
+      "id": "laguna-seca",
+      "path": "programs/laguna-seca",
+      "status": "research-release",
+      "morphology": "roller",
+      "release": "releases/v90-laguna",
+      "general_purpose_replacement": false
+    }
+  ],
+  "public_artifact_policy": "Portable source, tests, curated inference releases and scrubbed evidence. Private raw training state and licensed source assets are stored separately.",
+  "historical_paths_preserved": true
+}

@@ -1,0 +1,77 @@
+#usda 1.0
+(
+    customLayerData = {
+        string nativeVisualAcceptance = "pending"
+        string physicsQualification = "none"
+        string scope = "Additive source-referenced bookcase and optics display; no existing prim edits."
+        string sourceRootSha256 = "2835372847e721014a05a4a62625c59542591165f0a1e478b1cd56dc5594ce7b"
+    }
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def Xform "WorkshopDressingR7"
+    {
+        def Xform "ReferenceBookcase"
+        {
+            matrix4d xformOp:transform = ( (0.16000693669149033, -0.343135983064436, 0, 0), (0.343135983064436, 0.16000693669149033, 0, 0), (0, 0, 0.3786086669147862, 0), (98.81632165644666, -1190.5655975538032, 3.1135400120598224, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def Xform "Shelf"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/BookShelfA>
+                )
+                {
+                }
+            }
+
+            def Xform "Books"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (2.323999999999984, -253.95293249999997, 201.585025, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/Books/BooksShelf>
+                )
+                {
+                }
+            }
+
+            def Xform "Cradle"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/NewtonsCradle>
+                )
+                {
+                }
+            }
+        }
+
+        def Xform "OpticsStation"
+        {
+            matrix4d xformOp:transform = ( (0.49735789418699616, 0, 0, 0), (0, 0.49735789418699616, 0, 0), (0, 0, 0.49735789418699616, 0), (374.26849267213254, -737.6169856979203, 3.7785572975764716, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def Xform "Telescope"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/Telescope>
+                )
+                {
+                }
+            }
+        }
+    }
+}

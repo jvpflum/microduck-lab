@@ -1,0 +1,44 @@
+#usda 1.0
+(
+    customLayerData = {
+        bool nativeAppearanceVerified = 0
+        bool physicalFixtureGeometryAdded = 0
+        string purpose = "Additive background readability refinement; existing R5 scene and lighting preserved."
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def "WorkshopBackgroundFill"
+    {
+        def RectLight "WindowSideStorageFill" (
+            prepend apiSchemas = ["ShapingAPI"]
+            customData = {
+                bool addsPhysicalFixture = 0
+                string calibration = "Uncalibrated artistic preview intensity; native brightness and spill pending."
+                string purpose = "Soft window-side fill for the existing visible cabinet and boxes."
+            }
+        )
+        {
+            color3f inputs:color = (1, 1, 1)
+            float inputs:colorTemperature = 5200
+            float inputs:diffuse = 1
+            bool inputs:enableColorTemperature = 1
+            float inputs:exposure = 0
+            float inputs:height = 120
+            float inputs:intensity = 1800
+            bool inputs:normalize = 0
+            float inputs:shaping:cone:angle = 48
+            float inputs:shaping:cone:softness = 0.5
+            float inputs:specular = 1
+            float inputs:width = 160
+            custom int omni:rtx:usdluxVersion = 2505
+            custom bool visibleInPrimaryRay = 0
+            matrix4d xformOp:transform = ( (0.9449860734402584, 0.3271105638831664, -1.3877787807814463e-17, 0), (-0.1397437613782304, 0.4037041995371101, 0.9041540800283798, -0), (0.2957583509553487, -0.8544130138710073, 0.42720650693550366, 0), (379.99999999999994, -1239.9999999999998, 439.99999999999994, 0.9999999999999999) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

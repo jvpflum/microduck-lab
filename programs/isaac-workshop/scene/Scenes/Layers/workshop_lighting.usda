@@ -1,0 +1,116 @@
+#usda 1.0
+(
+    customLayerData = {
+        bool nativeAppearanceVerified = 0
+        bool physicalFixtureGeometryAdded = 0
+        string purpose = "Bounded additive task-light preview after native84dc7 bench duck was underlit."
+        bool sourceLightingChanged = 0
+        int usdLuxBehavior = 2505
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def "WorkshopLighting"
+    {
+        def RectLight "BenchWarmKey" (
+            prepend apiSchemas = ["ShapingAPI"]
+            customData = {
+                bool addsPhysicalFixture = 0
+                string calibration = "Uncalibrated artistic preview setting; native brightness/appearance pending."
+                string role = "Warm focused task key for bench duck; clear of route and source geometry."
+            }
+        )
+        {
+            color3f inputs:color = (1, 1, 1)
+            float inputs:colorTemperature = 3500
+            float inputs:diffuse = 1
+            bool inputs:enableColorTemperature = 1
+            float inputs:exposure = 0
+            float inputs:height = 24
+            float inputs:intensity = 18000
+            bool inputs:normalize = 0
+            float inputs:shaping:cone:angle = 55
+            float inputs:shaping:cone:softness = 0.5
+            float inputs:specular = 1
+            float inputs:width = 32
+            custom int omni:rtx:usdluxVersion = 2505
+            custom bool visibleInPrimaryRay = 0
+            matrix4d xformOp:transform = ( (0.7878071663224362, -0.615921966397541, -2.775557561562892e-17, 0), (0.42975261028438944, 0.5496835712939864, 0.7163523332852647, 0), (-0.4412171377505269, -0.5643475017739297, 0.6977387294659493, 0), (-423.00000000000006, -1105, 206.99999999999994, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def RectLight "WorkshopSoftFill" (
+            customData = {
+                bool addsPhysicalFixture = 0
+                string calibration = "Uncalibrated artistic preview setting; native brightness/appearance pending."
+                string role = "Weaker broad neutral fill for bench/tool foreground; preserves source window key."
+            }
+        )
+        {
+            color3f inputs:color = (1, 1, 1)
+            float inputs:colorTemperature = 4800
+            float inputs:diffuse = 1
+            bool inputs:enableColorTemperature = 1
+            float inputs:exposure = 0
+            float inputs:height = 60
+            float inputs:intensity = 1200
+            bool inputs:normalize = 0
+            float inputs:specular = 1
+            float inputs:width = 80
+            custom int omni:rtx:usdluxVersion = 2505
+            custom bool visibleInPrimaryRay = 0
+            matrix4d xformOp:transform = ( (0.7071067811865476, -0.7071067811865476, 0, 0), (0.25160980414135625, 0.25160980414135625, 0.9345507010964661, 0), (-0.6608271381079535, -0.6608271381079535, 0.35582999744274413, 0), (-560.0000000000001, -1240, 240, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def RectLight "DockAmberAccent" (
+            customData = {
+                bool addsPhysicalFixture = 0
+                string calibration = "Uncalibrated artistic preview setting; native brightness/appearance pending."
+                string role = "Subtle small-area decorative dock spill; no robot-status connection."
+            }
+        )
+        {
+            color3f inputs:color = (1, 0.28, 0.035)
+            float inputs:diffuse = 1
+            bool inputs:enableColorTemperature = 0
+            float inputs:exposure = 0
+            float inputs:height = 0.28
+            float inputs:intensity = 2500
+            bool inputs:normalize = 0
+            float inputs:specular = 1
+            float inputs:width = 4.8
+            custom int omni:rtx:usdluxVersion = 2505
+            custom bool visibleInPrimaryRay = 0
+            matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 2.220446049250313e-16, -1, 0), (0, 1, 2.220446049250313e-16, 0), (-76, -409.94, 14.45414400710467, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def RectLight "DockCyanAccent" (
+            customData = {
+                bool addsPhysicalFixture = 0
+                string calibration = "Uncalibrated artistic preview setting; native brightness/appearance pending."
+                string role = "Subtle small-area decorative dock spill; no robot-status connection."
+            }
+        )
+        {
+            color3f inputs:color = (0.035, 0.55, 1)
+            float inputs:diffuse = 1
+            bool inputs:enableColorTemperature = 0
+            float inputs:exposure = 0
+            float inputs:height = 0.28
+            float inputs:intensity = 2500
+            bool inputs:normalize = 0
+            float inputs:specular = 1
+            float inputs:width = 4.8
+            custom int omni:rtx:usdluxVersion = 2505
+            custom bool visibleInPrimaryRay = 0
+            matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 2.220446049250313e-16, -1, 0), (0, 1, 2.220446049250313e-16, 0), (-64, -409.94, 14.45414400710467, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

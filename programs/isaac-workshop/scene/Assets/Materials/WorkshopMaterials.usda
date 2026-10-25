@@ -1,0 +1,132 @@
+#usda 1.0
+(
+    defaultPrim = "WorkshopMaterials"
+    metersPerUnit = 0.01
+    upAxis = "Z"
+)
+
+def Xform "WorkshopMaterials" (
+    customData = {
+        string scope = "Appearance library; runtime MDL compilation unverified"
+    }
+    kind = "component"
+)
+{
+    def Material "brushed_hardware" (
+        customData = {
+            string sourceSha256 = "bef97935ffe58be4f63900d74fc51498b8481437dc187d493294a7355a5e8008"
+        }
+    )
+    {
+        token outputs:mdl:displacement.connect = </WorkshopMaterials/brushed_hardware/Shader.outputs:out>
+        token outputs:mdl:surface.connect = </WorkshopMaterials/brushed_hardware/Shader.outputs:out>
+        token outputs:mdl:volume.connect = </WorkshopMaterials/brushed_hardware/Shader.outputs:out>
+
+        def Shader "Shader"
+        {
+            uniform token info:implementationSource = "sourceAsset"
+            uniform asset info:mdl:sourceAsset = @../../../materials-review/authored/Materials/vMaterials_2/Metal/Aluminum_Brushed.mdl@
+            uniform token info:mdl:sourceAsset:subIdentifier = "Aluminum_Brushed_Light_Brushing"
+            bool inputs:enable_round_corners = 0
+            token outputs:out
+        }
+    }
+
+    def Material "anodized_trim" (
+        customData = {
+            string sourceSha256 = "329a441ccce01b1dc763b890a17ea4edf82e5d927e9fe6d727c524fec20be2ed"
+        }
+    )
+    {
+        token outputs:mdl:displacement.connect = </WorkshopMaterials/anodized_trim/Shader.outputs:out>
+        token outputs:mdl:surface.connect = </WorkshopMaterials/anodized_trim/Shader.outputs:out>
+        token outputs:mdl:volume.connect = </WorkshopMaterials/anodized_trim/Shader.outputs:out>
+
+        def Shader "Shader"
+        {
+            uniform token info:implementationSource = "sourceAsset"
+            uniform asset info:mdl:sourceAsset = @../../../materials-review/authored/Materials/vMaterials_2/Metal/Aluminum_Anodized.mdl@
+            uniform token info:mdl:sourceAsset:subIdentifier = "Aluminum_Anodized_Silver"
+            bool inputs:roundcorners_enable = 0
+            token outputs:out
+        }
+    }
+
+    def Material "painted_equipment" (
+        customData = {
+            string sourceSha256 = "86a1f3e4c5c1336077a07037d5a7d9abbdb6e50789d31e0f7dd3e32310b93263"
+        }
+    )
+    {
+        token outputs:mdl:displacement.connect = </WorkshopMaterials/painted_equipment/Shader.outputs:out>
+        token outputs:mdl:surface.connect = </WorkshopMaterials/painted_equipment/Shader.outputs:out>
+        token outputs:mdl:volume.connect = </WorkshopMaterials/painted_equipment/Shader.outputs:out>
+
+        def Shader "Shader"
+        {
+            uniform token info:implementationSource = "sourceAsset"
+            uniform asset info:mdl:sourceAsset = @../../../materials-review/authored/Materials/vMaterials_2/Paint/Hammer_Paint.mdl@
+            uniform token info:mdl:sourceAsset:subIdentifier = "Hammer_Paint_Anthracite"
+            bool inputs:roundcorners_enable = 0
+            token outputs:out
+        }
+    }
+
+    def Material "matte_paint_alternative" (
+        customData = {
+            string sourceSha256 = "2fa7bc835cd597cda8a9b17b8b232bf7b4fcc46b954eea2bbe4e9461ed3dcd48"
+        }
+    )
+    {
+        token outputs:mdl:displacement.connect = </WorkshopMaterials/matte_paint_alternative/Shader.outputs:out>
+        token outputs:mdl:surface.connect = </WorkshopMaterials/matte_paint_alternative/Shader.outputs:out>
+        token outputs:mdl:volume.connect = </WorkshopMaterials/matte_paint_alternative/Shader.outputs:out>
+
+        def Shader "Shader"
+        {
+            uniform token info:implementationSource = "sourceAsset"
+            uniform asset info:mdl:sourceAsset = @../../../materials-review/authored/Materials/vMaterials_2/Paint/Paint_Eggshell.mdl@
+            uniform token info:mdl:sourceAsset:subIdentifier = "Paint_Eggshell_Teal"
+            token outputs:out
+        }
+    }
+
+    def Material "rubber_pads" (
+        customData = {
+            string sourceSha256 = "605733827b168cfb1219cf9a0615b11380c4813d5eb058601bcb60b64557f47f"
+        }
+    )
+    {
+        token outputs:mdl:displacement.connect = </WorkshopMaterials/rubber_pads/Shader.outputs:out>
+        token outputs:mdl:surface.connect = </WorkshopMaterials/rubber_pads/Shader.outputs:out>
+        token outputs:mdl:volume.connect = </WorkshopMaterials/rubber_pads/Shader.outputs:out>
+
+        def Shader "Shader"
+        {
+            uniform token info:implementationSource = "sourceAsset"
+            uniform asset info:mdl:sourceAsset = @../../../materials-review/authored/Materials/vMaterials_2/Other/Rubber/Caoutchouc.mdl@
+            uniform token info:mdl:sourceAsset:subIdentifier = "Rubber_Black_Matte"
+            bool inputs:enable_round_corners = 0
+            token outputs:out
+        }
+    }
+
+    def Material "instrument_glass" (
+        customData = {
+            string sourceSha256 = "392357f7a655db15a172bb4f27597c4e58a55632bf8c0bae0dcceb561bdf36f6"
+        }
+    )
+    {
+        token outputs:mdl:displacement.connect = </WorkshopMaterials/instrument_glass/Shader.outputs:out>
+        token outputs:mdl:surface.connect = </WorkshopMaterials/instrument_glass/Shader.outputs:out>
+        token outputs:mdl:volume.connect = </WorkshopMaterials/instrument_glass/Shader.outputs:out>
+
+        def Shader "Shader"
+        {
+            uniform token info:implementationSource = "sourceAsset"
+            uniform asset info:mdl:sourceAsset = @../../../materials-review/authored/Materials/vMaterials_2/Glass/Glass_Clear.mdl@
+            uniform token info:mdl:sourceAsset:subIdentifier = "Glass_Clear"
+            token outputs:out
+        }
+    }
+}

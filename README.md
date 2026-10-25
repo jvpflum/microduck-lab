@@ -5,6 +5,33 @@ the research loop; the local dashboard shows jobs, measured results and simulato
 links. Ray schedules compute across GPU machines, and MinIO stores private
 artifacts.
 
+## Current focus: autonomous walking in the inventor workshop
+
+The active research program is **barefoot MicroDuck walking and camera navigation
+in Isaac Sim, Isaac Lab, Newton and Omniverse**. The custom attic workshop is built;
+robust turning, recovery and autonomous visual navigation are still being qualified.
+We are comparing retained native walkers with community foundations before further
+adaptation. See the [current program](programs/isaac-workshop/) for source, tests,
+measured limitations and next steps.
+
+## MicroDuck programs
+
+This repository is the shared home for the work. Each program keeps its own robot
+configuration, training code, evidence and promotion rules; results are not pooled
+across racing, skating and barefoot walking.
+
+| Program | Scope | Entry point |
+| --- | --- | --- |
+| **Isaac workshop — active** | Barefoot walking, recovery, real-camera navigation; RTX scene | [Current work](programs/isaac-workshop/) |
+| MicroDuck Arena | Competition tasks, sprint and early policy experiments | [Arena](programs/arena/) |
+| DuckWing | Roller locomotion, braking and standalone tricks; V89 remains recommended | [DuckWing](programs/duckwing/) |
+| Laguna Seca | Learned course navigation over retained V89 locomotion | [Laguna](programs/laguna-seca/) |
+| Historical experiments | Transfer failures and exploratory continuations | [Research ledger](research/) |
+
+[Program map and contribution rules](programs/README.md). Existing release paths and
+DuckWing training interfaces remain stable. The detailed DuckWing reference below
+is retained for existing users.
+
 ## DuckWing V89
 
 **V89 is the recommended DuckWing roller-skating model for Pollen MicroDuck.**

@@ -1,0 +1,39 @@
+#usda 1.0
+(
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+over "Root"
+{
+    over "WorkshopBackgroundFill"
+    {
+        over "WindowSideStorageFill"
+        {
+            float inputs:intensity = 12000
+            float inputs:shaping:cone:angle = 65
+        }
+    }
+
+    over "WorkshopLighting"
+    {
+        over "WorkshopSoftFill"
+        {
+            float inputs:intensity = 6000
+        }
+
+        over "BenchWarmKey"
+        {
+            float inputs:intensity = 13500
+        }
+    }
+
+    over "WorkshopDockFill"
+    {
+        over "DockNeutralFill"
+        {
+            float inputs:intensity = 18000
+        }
+    }
+}

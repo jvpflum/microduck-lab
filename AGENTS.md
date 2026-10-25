@@ -1,7 +1,11 @@
 # Coding-agent instructions
 
 This repository is an agent-first robotics RL workbench and the reproducible
-system of record for DuckWing MicroDuck roller-skating research. Read
+system of record for MicroDuck research across Arena, DuckWing roller skating,
+Laguna Seca and Isaac workshop walking. The active program is identified in
+`programs/index.json`; start with its program README and keep program-specific
+code and evidence separate. DuckWing release and benchmark rules below remain
+in force for that program. Read
 `README.md`, `docs/AGENTIC_RL_PLATFORM.md`, and the relevant capability/release
 notes before changing training or evaluation code.
 

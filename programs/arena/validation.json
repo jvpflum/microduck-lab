@@ -1,0 +1,41 @@
+{
+  "schema": "arena-publication-validation-v1",
+  "reviewed_on": "2026-10-25",
+  "tests": {
+    "executed": 16,
+    "passed": 12,
+    "skipped": 4,
+    "skip_reason": "Torch and RSL are absent from the local publication-test Python; the four actor/ONNX numerical tests remain unexecuted here."
+  },
+  "checks": {
+    "local_environment_contracts_pass": true,
+    "primitive_rng_roundtrip_and_malformed_rejection_pass": true,
+    "all_torch_loads_weights_only_true": true,
+    "original_environment_and_original_tests_byte_identical": true,
+    "original_cpu_judge_wrapper_byte_identical": true,
+    "only_original_trainer_function_changed": "checkpoint",
+    "training_math_and_export_functions_ast_identical": true,
+    "both_cli_help_commands_pass": true,
+    "markdown_targets_checked": true,
+    "public_privacy_scan_findings": 0,
+    "git_diff_check_pass": true
+  },
+  "native_gpu_replay_for_public_packaging": false,
+  "live_leaderboard_refreshed": false,
+  "entry_submitted": false,
+  "release_modified": false,
+  "files": {
+    "README.md": "c94d7a17698de96123c8069a6ce496b35d9f9d1768243af12b5ac1410f76aaa2",
+    "SOURCE_MAP.md": "b1abbd0603c65aca6bcc19ec169ed77a0a146328aee4664f8d95fbbe35269a05",
+    "evidence-inventory.json": "6fd525a99e91419d28f4004e29db7595013d95a15d3aa6c361c757c7b1c89424",
+    "fresh-sprint/README.md": "8129f5046afb5a315445b94e8cd469a22b1f7de5b20cf96d0380c1721752358f",
+    "fresh-sprint/checkpoint_state.py": "32476b76e965f07344bc78ff5dc917a0a0d41cc72b4e24d5ecebcc06b16fe733",
+    "fresh-sprint/env.py": "9b85148e3f8fa5930df408dc5a0e6978cb5a435811d5c01efdfb8bc81fbf32f0",
+    "fresh-sprint/evaluate_entry.py": "dc8179d9c72d90fec783386101e2dd42aa4da73060f52356eeb03a56168cf932",
+    "fresh-sprint/source-manifest.json": "a2e59d38b354f4aeb6a1dd7a280f539e50cbafe8c4e6484c5821bc1c82254b4f",
+    "fresh-sprint/test_checkpoint_state.py": "64091d02fa560df2fcd396a6d8ea422893686f6151665609471d62f23149e65c",
+    "fresh-sprint/test_env.py": "ddb5edcfabac28b42dea74d072b484e08ec43a162e3c8e281bcc972464eedf66",
+    "fresh-sprint/test_train.py": "8a9a29eb2acf1a7e77642dbac2c282d2e9fc011503235f92a7204a4e99d69ac5",
+    "fresh-sprint/train.py": "ad8c41467d8f6836ff8f81774f8f5678104732d4308922d076cfb47d671119cc"
+  }
+}

@@ -1,0 +1,80 @@
+#usda 1.0
+(
+    customLayerData = {
+        string lightingValues = "No new light prims or light value overrides. Source practical bulb emission retained."
+        string nativeVisualAcceptance = "pending"
+        string scope = "Five acquired source props on repair table; visual-only, original dressing/camera/duck unchanged."
+        string sourceEntrySha256 = "52230f58ec1396833017bb4d0c4530a3bf43baffd2a7837ec872436d9d66029b"
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def Xform "WorkshopBenchDetails" (
+        kind = "group"
+    )
+    {
+        def Xform "Pliers"
+        {
+            matrix4d xformOp:transform = ( (0.9063077870366499, 0.42261826174069944, 0, 0), (-9.384010496231708e-17, 2.0124075451303235e-16, 1, 0), (0.42261826174069944, -0.9063077870366499, 2.220446049250313e-16, 0), (-393.07441284546644, -1077.306571791606, 126.0729194927789, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_pilers/SM_pilers.usd@</SM_pilers>
+            )
+            {
+            }
+        }
+
+        def Xform "BoxCutter"
+        {
+            matrix4d xformOp:transform = ( (0.9396926207859084, -0.34202014332566877, 0, 0), (7.59437276011507e-17, 2.086536767333743e-16, 1, 0), (-0.34202014332566877, -0.9396926207859084, 2.220446049250313e-16, 0), (-369.0017799655955, -1084.2706180044981, 125.33552676921856, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_boxcutter/SM_boxcutter.usd@</SM_boxcutter>
+            )
+            {
+            }
+        }
+
+        def Xform "Battery9V"
+        {
+            matrix4d xformOp:transform = ( (0.9659258262890683, 0.25881904510252074, 0, 0), (-5.746937261686308e-17, 2.144786184852406e-16, 1, 0), (0.25881904510252074, -0.9659258262890683, 2.220446049250313e-16, 0), (-379.01862642641385, -1087.0540699923622, 125.32151550537121, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_battery_9v/SM_battery_9v.usd@</SM_battery_9v>
+            )
+            {
+            }
+        }
+
+        def Xform "PaperTape"
+        {
+            matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 2.220446049250313e-16, 1, 0), (0, -1, 2.220446049250313e-16, 0), (-360.00645792484283, -1077.9504348635674, 125.08373368268978, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_duct_tape_paper_roll/SM_duct_tape_paper_roll.usd@</SM_duct_tape_paper_roll>
+            )
+            {
+            }
+        }
+
+        def Xform "PracticalLamp"
+        {
+            matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-365, -1013.0000038146973, 125.32201749568951, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def "Asset" (
+                prepend references = @../../../source-review/authored/Samples/OldAttic/Props/table_light.usd@</Root>
+            )
+            {
+            }
+        }
+    }
+}

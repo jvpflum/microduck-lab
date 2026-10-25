@@ -1,0 +1,37 @@
+#usda 1.0
+(
+    customLayerData = {
+        string purpose = "Optional third view; existing cameras and all lighting unchanged."
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def "WorkshopCameras"
+    {
+        def Camera "StringMaterialDetail" (
+            customData = {
+                bool nativeAppearanceVerified = 0
+                string purpose = "Representative lower hanging string and complete star material inspection."
+                bool qualifiesAllNineStrings = 0
+                string subjectString = "/Root/Geometry/Stars/stars_09/Stars/Star/String/String"
+            }
+        )
+        {
+            float2 clippingRange = (1, 100000)
+            float focalLength = 50
+            float focusDistance = 81.55695
+            float fStop = 0
+            float horizontalAperture = 36
+            float horizontalApertureOffset = 0
+            token projection = "perspective"
+            float verticalAperture = 20.25
+            float verticalApertureOffset = 0
+            matrix4d xformOp:transform = ( (0.1944024517613124, 0.9809218555772882, 0, 0), (-0.13230190285348628, 0.026220044075038158, 0.9908626119649734, -0), (0.9719587919508405, -0.19262612112460883, 0.13487506889692502, 0), (-475, -879.9999999999999, 217, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

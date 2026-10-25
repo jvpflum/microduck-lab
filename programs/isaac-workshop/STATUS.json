@@ -1,0 +1,18 @@
+{
+  "schema": "isaac-workshop-status-v1",
+  "snapshot_date": "2026-10-25",
+  "active_objective": "Robust barefoot locomotion and camera-dependent autonomy in the inventor workshop",
+  "robust_locomotion_qualified": false,
+  "visual_navigation_qualified": false,
+  "training_candidate_promoted": false,
+  "native_foundation_comparison": "Official velstand paired comparison submitted; pending result at snapshot",
+  "camera_r5": "Source/delivery reviewed; held until foundation comparison",
+  "next_steps": [
+    "Audit exact paired foundation trajectories and action/command contracts",
+    "Integrate rounded locomotion curriculum with source-seated recovery and balanced actual exposure",
+    "Evaluate source-reviewed physical camera mounting without weakening unknown-depth stop",
+    "Learn and qualify visual bypass on held-out geometry, starts and goals",
+    "Expand admitted collision domain beyond bounded aisle"
+  ],
+  "public_bundle": "Authored kernels/integration hooks/tests plus curated evidence and two rendered media artifacts; no launch transport or licensed source assets"
+}

@@ -1,0 +1,218 @@
+{
+  "schema": "microduck-arena-public-evidence-v1",
+  "compiled_on": "2026-10-25",
+  "scope": "Curated historical local CPU-judge evidence; not a current leaderboard fetch or a competition submission. Raw operator receipts and trainable policies are excluded.",
+  "official_source_revision": "221dc512f64aad0814251062df0511543ab2b3b4",
+  "methods": {
+    "judge": "Pinned unmodified Arena runner, Linux x86_64 CPU",
+    "runtime": {
+      "python": "3.12",
+      "numpy": "2.4.1",
+      "mujoco": "3.10.0",
+      "onnxruntime": "1.24.4"
+    },
+    "roller_selection": "18 speeds from 0.3 to 2.0 m/s, top 3 finalists, official seeds 1..5",
+    "failure_penalty_s": 40.0,
+    "golden_reference": {
+      "mean_finish_time_s": 9.404,
+      "finishes": 5,
+      "starts": 5
+    },
+    "gpu_training_cpu_trajectory_equivalence": false
+  },
+  "records": [
+    {
+      "id": "v80-driving-arena-rehearsal",
+      "rig": "rollers",
+      "candidate": "Historical V80 driving export and published V80 driving export",
+      "mean_finish_time_s": 32.78,
+      "finishes": 1,
+      "starts": 5,
+      "selected_command_vx_m_s": 0.3,
+      "successful_trial_s": 3.9,
+      "per_start_outcomes": [
+        "fall",
+        "timeout",
+        "timeout",
+        "finish",
+        "timeout"
+      ],
+      "readiness_passed": false,
+      "source_receipt_sha256": "dc954cdfc8671c5732ab605bd7a24d50e2d5c16451c97ef1323d1f571ec9dd36"
+    },
+    {
+      "id": "gyro-feedback-selection",
+      "rig": "rollers",
+      "candidate": "Frozen V89-equivalent driving component with internal gyro feedback 0.32 s",
+      "mean_finish_time_s": 2.604,
+      "finishes": 5,
+      "starts": 5,
+      "selected_command_vx_m_s": 1.1,
+      "heldout": {
+        "finishes": 10,
+        "starts": 20,
+        "falls": 10,
+        "successful_mean_s": 2.614,
+        "penalized_mean_s": 21.307,
+        "selection_seeds_reused": false
+      },
+      "robustness_passed": false,
+      "source_receipt_sha256": "7eed839ca1fade636d0b70f3e8d37e5e643c768fd5a4f368e73402832dbdf9fe"
+    },
+    {
+      "id": "fresh-ppo-parent-2000",
+      "rig": "rollers",
+      "candidate": "Own fresh PPO iteration 2000",
+      "mean_finish_time_s": 2.68,
+      "finishes": 5,
+      "starts": 5,
+      "selected_command_vx_m_s": 0.8,
+      "inference_artifact_sha256": "4e25d72762ad39440f2256abd7b86acdc586fdecbf3cdb7ff9a44c3b393b13ef",
+      "source_receipt_sha256": "c5b5b118e17921dd5bcfc3b6695b639b36d4f1e15d56cdcc0e2ea21848769f9b"
+    },
+    {
+      "id": "fresh-ppo-continuation-2500",
+      "rig": "rollers",
+      "additional_updates": 500,
+      "additional_transitions": 49152000,
+      "terminal_state": "FAILED",
+      "starting_parent_score_s": 2.68,
+      "iteration_2250_score_s": 2.864,
+      "iteration_2250_finishes": 5,
+      "iteration_2500_judged": false,
+      "failure": {
+        "kind": "normalized CUDA versus ONNX absolute parity",
+        "observed_max_abs": 2.288818359375e-05,
+        "required_max_abs": 2e-05
+      },
+      "source_receipt_sha256": "5c46fb0b375e94ea462f7636466038e589461c2ccf52b476c0e007d978337fc2"
+    },
+    {
+      "id": "upright-progress-smoke",
+      "rig": "rollers",
+      "completed_updates": 5,
+      "worlds": 64,
+      "transitions": 7680,
+      "pipeline_passed": true,
+      "parent_score_s": 2.68,
+      "final_score_s": 3.076,
+      "final_finishes": 5,
+      "final_starts": 5,
+      "performance_improved": false,
+      "source_receipt_sha256": "8871faad48ac2e223ee0ddb6828a01e7a31bebd3643b3add4fcdcde31468030b"
+    }
+  ],
+  "event_snapshot": [
+    {
+      "id": "sprint-2m",
+      "source_sha256": "d91a26f4f1354e73fa6ca710cf940d12a1afb3a5739b4c8d97d3e5830fae4f3e",
+      "rig": "legs",
+      "metric": "mean_finish_time",
+      "time_limit_s": 50.0,
+      "course": {
+        "kind": "lane",
+        "length_m": 2.0,
+        "width_m": 0.8,
+        "wall_height_m": 0.15,
+        "slope_deg": 0.0
+      },
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sweep": {
+        "lo": 0.2,
+        "hi": 1.2,
+        "step": 0.05,
+        "finalists": 3
+      },
+      "our_result_in_this_inventory": false
+    },
+    {
+      "id": "roller-sprint-2m",
+      "source_sha256": "af5f8107acae4215ad96d9a652e07379572a6f5e961eb3c813b55c96be86fa4d",
+      "rig": "rollers",
+      "metric": "mean_finish_time",
+      "time_limit_s": 40.0,
+      "course": {
+        "kind": "lane",
+        "length_m": 2.0,
+        "width_m": 0.8,
+        "wall_height_m": 0.15,
+        "slope_deg": 0.0
+      },
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sweep": {
+        "lo": 0.3,
+        "hi": 2.0,
+        "step": 0.1,
+        "finalists": 3
+      },
+      "our_result_in_this_inventory": true
+    },
+    {
+      "id": "hill-climb-1m5",
+      "source_sha256": "67e014054e979fdb1c26d297f4dfbfcba22263c3b5ec0f5bb7241e69e2460db3",
+      "rig": "legs",
+      "metric": "mean_finish_time",
+      "time_limit_s": 60.0,
+      "course": {
+        "kind": "lane",
+        "length_m": 1.5,
+        "width_m": 0.8,
+        "wall_height_m": 0.15,
+        "slope_deg": 8.0
+      },
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sweep": {
+        "lo": 0.15,
+        "hi": 1.0,
+        "step": 0.05,
+        "finalists": 3
+      },
+      "our_result_in_this_inventory": false
+    },
+    {
+      "id": "got-a-talent",
+      "source_sha256": "18d974c6c7c0228d3956e641d534be6b223502579991c0e2ef226fa97fed23ee",
+      "rig": "legs",
+      "metric": "votes",
+      "time_limit_s": 20.0,
+      "course": {
+        "kind": "stage"
+      },
+      "seeds": [
+        1
+      ],
+      "sweep": null,
+      "our_result_in_this_inventory": false
+    }
+  ],
+  "reported_unverified": [
+    {
+      "time_s": 1.648,
+      "classification": "user-reported",
+      "raw_receipt_verified_in_this_review": false,
+      "used_for_ranking_or_record_claim": false
+    }
+  ],
+  "entry_submitted_by_these_campaigns": false,
+  "new_release_promoted": false,
+  "protected_releases_modified": false,
+  "olympic_aggregate_result": null
+}

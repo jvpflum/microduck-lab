@@ -1,5 +1,8 @@
 # Research ledger
 
+**Active program:** [Isaac workshop walking and camera navigation](../programs/isaac-workshop/).
+The entries below preserve historical results; dated pending rows are not live job status.
+
 This section records work that has not earned a new general-purpose model.
 V89 remains the recommended skating/braking model; standalone 180, 360 and 720
 degree turns retain their separate published evidence.

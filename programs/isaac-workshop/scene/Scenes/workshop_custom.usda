@@ -1,0 +1,101 @@
+#usda 1.0
+(
+    customLayerData = {
+        dictionary audioSettings = {
+            double dopplerLimit = 2
+            double dopplerScale = 1
+            string enableDistanceDelay = "off"
+            string enableDoppler = "off"
+            double nonSpatialTimeScale = 1
+            double spatialTimeScale = 1
+            double speedOfSound = 340
+        }
+        dictionary cameraSettings = {
+            dictionary Front = {
+                double radius = 500
+                double3 target = (0, 0, 0)
+            }
+            dictionary Perspective = {
+                double3 position = (-870.0712904315487, -1390.4469569584148, 224.96392404192446)
+                double3 target = (-454.59818035759577, -635.4739242700534, 138.95337399824908)
+            }
+            dictionary Right = {
+                double radius = 500
+                double3 target = (0, 0, 0)
+            }
+            dictionary Top = {
+                double radius = 500
+                double3 target = (0, 0, 0)
+            }
+            string boundCamera = "/Root/WorkshopCameras/TwoDuckOverview"
+        }
+        bool nativeRenderVerified = 0
+        bool nativeSimulationVerified = 0
+        dictionary renderSettings = {
+            int "rtx:directLighting:domeLight:denoisingTechnique" = 1
+            bool "rtx:directLighting:domeLight:enabledInReflections" = 1
+            bool "rtx:fog:enabled" = 1
+            float3 "rtx:fog:fogColor" = (0.38818568, 0.34890935, 0.30628997)
+            double "rtx:fog:fogColorIntensity" = 0.5
+            bool "rtx:fog:fogDistanceBased:enabled" = 1
+            double "rtx:fog:fogDistanceDensity" = 0.10000000149011612
+            double "rtx:fog:fogStartDist" = 1000
+            double "rtx:fog:fogStartHeight" = 0
+            bool "rtx:fog:fogZup:enabled" = 1
+            bool "rtx:indirectDiffuse:enabled" = 1
+            double "rtx:indirectDiffuse:scalingFactor" = 7
+            bool "rtx:pathtracing:ptfog:ZUp" = 1
+            double "rtx:pathtracing:ptfog:asymmetry" = -0.699999988079071
+            double "rtx:pathtracing:ptfog:density" = 0.550000011920929
+            bool "rtx:pathtracing:ptfog:enabled" = 1
+            int "rtx:pathtracing:ptfog:maxBounces" = 2
+            bool "rtx:pathtracing:svgf:enabled" = 1
+            int "rtx:post:aa:op" = 3
+            bool "rtx:post:colorcorr:enabled" = 1
+            int "rtx:post:dlss:execMode" = 1
+            double "rtx:post:lensDistortion:cameraFocalLength" = 18.14756202697754
+            bool "rtx:post:lensFlares:enabled" = 1
+            double "rtx:post:lensFlares:flareScale" = 0.10000000149011612
+            double "rtx:post:tonemap:fNumber" = 3.799999952316284
+            bool "rtx:reflections:sampledLighting:enabled" = 1
+            string "rtx:rendermode" = "PathTracing"
+            float3 "rtx:sceneDb:ambientLightColor" = (0.174, 0.112, 0.1)
+            double "rtx:sceneDb:ambientLightIntensity" = 0.10000000149011612
+            double "rtx:translucency:reflectionCutoff" = 0.20000000298023224
+        }
+        string workshopProfile = "inspection_static"
+    }
+    defaultPrim = "Root"
+    endTimeCode = 100
+    metersPerUnit = 0.009999999776482582
+    startTimeCode = 0
+    subLayers = [
+        @Layers/workshop_paint_station_r11.usda@,
+        @Layers/workshop_toy_presentation_r8.usda@,
+        @Layers/inspection_static.usda@,
+        @Layers/workshop_cameras.usda@,
+        @Layers/workshop_central_crew_r10.usda@,
+        @Layers/workshop_perimeter_refinement_r10.usda@,
+        @Layers/workshop_toymaker_canopy_r10.usda@,
+        @Layers/workshop_duck_crew_r9.usda@,
+        @Layers/workshop_perimeter_layout_r9.usda@,
+        @Layers/workshop_toy_dressing_r8.usda@,
+        @Layers/workshop_furniture_scale_r7.usda@,
+        @Layers/workshop_dressing_r7.usda@,
+        @Layers/workshop_bright_workshop.usda@,
+        @Layers/workshop_background_fill.usda@,
+        @Layers/workshop_string_detail_camera.usda@,
+        @Layers/workshop_material_bindings.usda@,
+        @Layers/workshop_bench_details.usda@,
+        @Layers/workshop_dock_fill.usda@,
+        @Layers/workshop_lighting.usda@,
+        @Layers/workshop_layout_refinements.usda@,
+        @Layers/workshop_detail_camera.usda@,
+        @Layers/workshop_robots.usda@,
+        @Layers/portability.usda@,
+        @Layers/workshop_dressing.usda@,
+        @workshop_base.usda@
+    ]
+    timeCodesPerSecond = 30
+    upAxis = "Z"
+)

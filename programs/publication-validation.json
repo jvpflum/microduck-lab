@@ -1,0 +1,23 @@
+{
+  "schema": "microduck-publication-validation-v1",
+  "date": "2026-10-25",
+  "scope": "Program organization and portable research snapshot; no new policy promotion",
+  "checks": {
+    "isaac_cpu_tests_passed": 98,
+    "arena_cpu_tests_run": 16,
+    "arena_cpu_tests_passed": 12,
+    "arena_optional_numerical_tests_skipped": 4,
+    "authored_usd_layers_parsed": 33,
+    "protected_release_checksums_verified": 36,
+    "markdown_local_links_missing": 0,
+    "public_privacy_findings": 0,
+    "git_diff_whitespace_errors": 0
+  },
+  "limits": [
+    "Full make preflight/test entry points were blocked by the local Xcode license setup. Direct shell entry points were blocked by missing upstream submodules in the isolated publication worktree. No system licensing or runtime install was changed.",
+    "Arena optional numerical actor/export tests require the pinned Torch/RSL runtime; that runtime was absent in the publication CPU environment.",
+    "Published scene references require separately acquired NVIDIA and robot assets. Source-layer parsing is not a complete native render or physics replay.",
+    "Portable tests do not replace native trial evidence or demonstrate robust walking or visual navigation."
+  ],
+  "preservation": "Existing release source/model paths and checksums unchanged; private checkpoints, credentials, compute endpoints and licensed source packs excluded."
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "arena-portable-source-snapshot-v1",
+  "prepared_on": "2026-10-25",
+  "original_source_sha256": {
+    "train.py": "bc5a354be0b803113a7133453f1cbd8ee5eb7b452df2545a576589fcfd50d260",
+    "env.py": "9b85148e3f8fa5930df408dc5a0e6978cb5a435811d5c01efdfb8bc81fbf32f0",
+    "test_train.py": "8a9a29eb2acf1a7e77642dbac2c282d2e9fc011503235f92a7204a4e99d69ac5",
+    "test_env.py": "ddb5edcfabac28b42dea74d072b484e08ec43a162e3c8e281bcc972464eedf66",
+    "evaluate_entry.py": "dc8179d9c72d90fec783386101e2dd42aa4da73060f52356eeb03a56168cf932"
+  },
+  "public_source_sha256": {
+    "checkpoint_state.py": "32476b76e965f07344bc78ff5dc917a0a0d41cc72b4e24d5ecebcc06b16fe733",
+    "env.py": "9b85148e3f8fa5930df408dc5a0e6978cb5a435811d5c01efdfb8bc81fbf32f0",
+    "evaluate_entry.py": "dc8179d9c72d90fec783386101e2dd42aa4da73060f52356eeb03a56168cf932",
+    "test_checkpoint_state.py": "64091d02fa560df2fcd396a6d8ea422893686f6151665609471d62f23149e65c",
+    "test_env.py": "ddb5edcfabac28b42dea74d072b484e08ec43a162e3c8e281bcc972464eedf66",
+    "test_train.py": "8a9a29eb2acf1a7e77642dbac2c282d2e9fc011503235f92a7204a4e99d69ac5",
+    "train.py": "ad8c41467d8f6836ff8f81774f8f5678104732d4308922d076cfb47d671119cc"
+  },
+  "adaptation": "train.py now encodes NumPy RNG state as validated primitives and reloads its own newly saved checkpoint with weights_only=True. No external checkpoint loading or unsafe compatibility fallback. Training/environment math unchanged; native checkpoint execution of this public packaging change remains untested.",
+  "excluded": [
+    "raw checkpoints and ONNX policies",
+    "operator launchers and authentication",
+    "raw run receipts and private source paths"
+  ],
+  "native_training_rerun_for_public_copy": false
+}

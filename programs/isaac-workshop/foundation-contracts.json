@@ -1,0 +1,389 @@
+{
+  "schema": "barefoot-foundation-public-contracts-v1",
+  "source_registry_sha256": "d3d3003f4e9ce12b3fe340468fce48881c89bd73f69531513de021747852f6f1",
+  "source_parity_receipt_sha256": "72123af378ead39cbf70077d2a3af031b6f5c16f3a7fcbd22aebd8c7d4aa12c8",
+  "candidates": {
+    "arena-alpha": {
+      "id": "arena-alpha",
+      "origin": "upstream",
+      "morphology": "barefoot",
+      "format": "onnx-mlp",
+      "joint_names": [
+        "left_hip_yaw",
+        "left_hip_roll",
+        "left_hip_pitch",
+        "left_knee",
+        "left_ankle",
+        "neck_pitch",
+        "head_pitch",
+        "head_yaw",
+        "head_roll",
+        "right_hip_yaw",
+        "right_hip_roll",
+        "right_hip_pitch",
+        "right_knee",
+        "right_ankle"
+      ],
+      "observation_slots": [
+        {
+          "name": "base_ang_vel",
+          "start": 0,
+          "stop": 3
+        },
+        {
+          "name": "projected_gravity",
+          "start": 3,
+          "stop": 6
+        },
+        {
+          "name": "joint_pos",
+          "start": 6,
+          "stop": 20
+        },
+        {
+          "name": "joint_vel",
+          "start": 20,
+          "stop": 34
+        },
+        {
+          "name": "actions",
+          "start": 34,
+          "stop": 48
+        },
+        {
+          "name": "command",
+          "start": 48,
+          "stop": 51
+        },
+        {
+          "name": "head_command",
+          "start": 51,
+          "stop": 55
+        },
+        {
+          "name": "body_command",
+          "start": 55,
+          "stop": 61
+        }
+      ],
+      "action_scale": 1.0,
+      "default_pose_rounded_metadata_rad": [
+        0.0,
+        -0.087,
+        -0.458,
+        -0.005,
+        0.453,
+        0.349,
+        0.349,
+        0.0,
+        0.0,
+        0.0,
+        0.087,
+        0.458,
+        0.005,
+        -0.453
+      ],
+      "normalization": {
+        "kind": "embedded-exact-sub-div",
+        "mean_sha256": "a2a7d0aacbf570c68e1dea6047d1b12ab37a9d3f09627022021de6324015ca9c",
+        "divisor_sha256": "88356def3479d3f32dc65f71d6b571613ea6a1c4662ee5f4f99c78e5d1febb5c",
+        "external_normalization_allowed": false
+      },
+      "command_semantics": "twist vx,vy,yaw_rate; head4/body6; zero means stand",
+      "training": {
+        "source": "Arena bundled BEST_alpha_walking; do not relabel user-trained",
+        "revision": "221dc512f64aad0814251062df0511543ab2b3b4"
+      },
+      "source_native_differences": [
+        "Reference Arena runner performs reset servo drive and an extra fifth servo drive after each control; native evaluator performs four solved servo steps. This is not proof of every candidate training-runtime chronology.",
+        "Native backlash encoder includes active+passive joint positions/velocities and calibration bias; source model-specific encoder/noise/reset chronology requires explicit comparison.",
+        "Native IMU uses misalignment/lag; Arena source runner reads exact trunk gyro/gravity.",
+        "Default pose metadata is rounded to3 decimals; source Arena constants and native defaults differ by small finite amounts.",
+        "Current target is full-body10collider asset. Candidate-specific source collision geometry is not yet independently bound; no geometry parity claim."
+      ],
+      "native_training_admitted": false,
+      "native_transfer_qualified": false,
+      "numerical_replay_admitted": true,
+      "artifact": {
+        "url": "https://huggingface.co/spaces/pollen-robotics/microduck-arena/resolve/221dc512f64aad0814251062df0511543ab2b3b4/arena/assets/policies/BEST_alpha_walking.onnx",
+        "sha256": "e36332d383997d51401897734cd3e79cf5038406feddb18b4d57ecfb141daa6c",
+        "bytes": 793705,
+        "redistributed": false
+      },
+      "recorded_cpu_comparison": {
+        "onnx_full_checker_passed": true,
+        "samples": 600,
+        "numpy_ort_parity_passed": true,
+        "max_absolute_error": 7.748603820800781e-07,
+        "numpy_repeat_exact": true,
+        "all_finite": true
+      }
+    },
+    "official-velstand": {
+      "id": "official-velstand",
+      "origin": "upstream",
+      "morphology": "barefoot",
+      "format": "onnx-mlp",
+      "joint_names": [
+        "left_hip_yaw",
+        "left_hip_roll",
+        "left_hip_pitch",
+        "left_knee",
+        "left_ankle",
+        "neck_pitch",
+        "head_pitch",
+        "head_yaw",
+        "head_roll",
+        "right_hip_yaw",
+        "right_hip_roll",
+        "right_hip_pitch",
+        "right_knee",
+        "right_ankle"
+      ],
+      "observation_slots": [
+        {
+          "name": "base_ang_vel",
+          "start": 0,
+          "stop": 3
+        },
+        {
+          "name": "projected_gravity",
+          "start": 3,
+          "stop": 6
+        },
+        {
+          "name": "joint_pos",
+          "start": 6,
+          "stop": 20
+        },
+        {
+          "name": "joint_vel",
+          "start": 20,
+          "stop": 34
+        },
+        {
+          "name": "actions",
+          "start": 34,
+          "stop": 48
+        },
+        {
+          "name": "command",
+          "start": 48,
+          "stop": 51
+        },
+        {
+          "name": "head_command",
+          "start": 51,
+          "stop": 55
+        },
+        {
+          "name": "body_command",
+          "start": 55,
+          "stop": 61
+        }
+      ],
+      "action_scale": 1.0,
+      "default_pose_rounded_metadata_rad": [
+        0.0,
+        -0.087,
+        -0.458,
+        -0.005,
+        0.453,
+        0.349,
+        0.349,
+        0.0,
+        0.0,
+        0.0,
+        0.087,
+        0.458,
+        0.005,
+        -0.453
+      ],
+      "normalization": {
+        "kind": "embedded-exact-sub-div",
+        "mean_sha256": "fea17c302c8fa1c787cac1d89cd5644e20f89130b375b837873253430e1913bb",
+        "divisor_sha256": "dbd8796ad31ab92cf0b64a8d066388e0f115d52ed7b5e064e6878c20ef66c783",
+        "external_normalization_allowed": false
+      },
+      "command_semantics": "twist vx,vy,yaw_rate; head4/body6; zero means stand",
+      "training": {
+        "task_id": "Mjlab-VelStand-Rough-Backlash-MicroDuck",
+        "repo": "pollen-robotics/microduck_rl",
+        "commit": "3750776",
+        "branch": "improve_standup_velstand",
+        "dirty": false,
+        "run": "pollen-robotics/mjlab_microduck/0045i2si",
+        "checkpoint": 2749,
+        "exported": "2026-10-12T00:00:00Z"
+      },
+      "source_native_differences": [
+        "Reference Arena runner performs reset servo drive and an extra fifth servo drive after each control; native evaluator performs four solved servo steps. This is not proof of every candidate training-runtime chronology.",
+        "Native backlash encoder includes active+passive joint positions/velocities and calibration bias; source model-specific encoder/noise/reset chronology requires explicit comparison.",
+        "Native IMU uses misalignment/lag; Arena source runner reads exact trunk gyro/gravity.",
+        "Default pose metadata is rounded to3 decimals; source Arena constants and native defaults differ by small finite amounts.",
+        "Current target is full-body10collider asset. Candidate-specific source collision geometry is not yet independently bound; no geometry parity claim."
+      ],
+      "native_training_admitted": false,
+      "native_transfer_qualified": false,
+      "numerical_replay_admitted": true,
+      "artifact": {
+        "url": "https://huggingface.co/pollen-robotics/microduck-policies/resolve/665ae4eb20bfe13bca1ef4ea6d4bb6b4a096e448/velstand.onnx",
+        "sha256": "2fc7f8ee6acd7d0d3f66a99927b5d5a56589aeed02ec714de329b252d5ccf492",
+        "bytes": 793705,
+        "redistributed": false
+      },
+      "recorded_cpu_comparison": {
+        "onnx_full_checker_passed": true,
+        "samples": 600,
+        "numpy_ort_parity_passed": true,
+        "max_absolute_error": 1.1920928955078125e-06,
+        "numpy_repeat_exact": true,
+        "all_finite": true
+      }
+    },
+    "academy-walk": {
+      "id": "academy-walk",
+      "origin": "community",
+      "morphology": "barefoot",
+      "format": "onnx-mlp",
+      "joint_names": [
+        "left_hip_yaw",
+        "left_hip_roll",
+        "left_hip_pitch",
+        "left_knee",
+        "left_ankle",
+        "neck_pitch",
+        "head_pitch",
+        "head_yaw",
+        "head_roll",
+        "right_hip_yaw",
+        "right_hip_roll",
+        "right_hip_pitch",
+        "right_knee",
+        "right_ankle"
+      ],
+      "observation_slots": [
+        {
+          "name": "base_ang_vel",
+          "start": 0,
+          "stop": 3
+        },
+        {
+          "name": "projected_gravity",
+          "start": 3,
+          "stop": 6
+        },
+        {
+          "name": "joint_pos",
+          "start": 6,
+          "stop": 20
+        },
+        {
+          "name": "joint_vel",
+          "start": 20,
+          "stop": 34
+        },
+        {
+          "name": "actions",
+          "start": 34,
+          "stop": 48
+        },
+        {
+          "name": "command",
+          "start": 48,
+          "stop": 51
+        },
+        {
+          "name": "head_command",
+          "start": 51,
+          "stop": 55
+        },
+        {
+          "name": "body_command",
+          "start": 55,
+          "stop": 61
+        }
+      ],
+      "action_scale": 1.0,
+      "default_pose_rounded_metadata_rad": [
+        0.0,
+        -0.087,
+        -0.458,
+        -0.005,
+        0.453,
+        0.349,
+        0.349,
+        0.0,
+        0.0,
+        0.0,
+        0.087,
+        0.458,
+        0.005,
+        -0.453
+      ],
+      "normalization": {
+        "kind": "embedded-exact-sub-div",
+        "mean_sha256": "b11e32bac3aac51734c3344fe5b18b03646eb0338ed4cce94da2902d6ce5dceb",
+        "divisor_sha256": "e6fae2907505d64e25d7cd1263f12420a7525d3ef664cf4e0f5e69542a533a5b",
+        "external_normalization_allowed": false
+      },
+      "command_semantics": "twist vx,vy,yaw_rate; head4/body6; zero means stand",
+      "training": {
+        "repo": "pollen-robotics/microduck_rl",
+        "commit": "2b25a48",
+        "task": "Mjlab-Velocity-Flat-MicroDuck",
+        "iterations": 2999,
+        "num_envs": 4096,
+        "source_file": "policy.onnx",
+        "trained_by": "microduck-academy (spikes/base_moves)"
+      },
+      "source_native_differences": [
+        "Reference Arena runner performs reset servo drive and an extra fifth servo drive after each control; native evaluator performs four solved servo steps. This is not proof of every candidate training-runtime chronology.",
+        "Native backlash encoder includes active+passive joint positions/velocities and calibration bias; source model-specific encoder/noise/reset chronology requires explicit comparison.",
+        "Native IMU uses misalignment/lag; Arena source runner reads exact trunk gyro/gravity.",
+        "Default pose metadata is rounded to3 decimals; source Arena constants and native defaults differ by small finite amounts.",
+        "Current target is full-body10collider asset. Candidate-specific source collision geometry is not yet independently bound; no geometry parity claim."
+      ],
+      "native_training_admitted": false,
+      "native_transfer_qualified": false,
+      "numerical_replay_admitted": true,
+      "artifact": {
+        "url": "https://huggingface.co/tfrere/microduck-move-base-walk/resolve/86c8e485f0adbc6ce6c72a03d1de582d2bb6b2ca/policy.onnx",
+        "sha256": "8896c18bc2dc4f084f798e04c2bcfeef92ee1202904a0a5e30ed8e2134eced22",
+        "bytes": 793764,
+        "redistributed": false
+      },
+      "recorded_cpu_comparison": {
+        "onnx_full_checker_passed": true,
+        "samples": 600,
+        "numpy_ort_parity_passed": true,
+        "max_absolute_error": 5.364418029785156e-07,
+        "numpy_repeat_exact": true,
+        "all_finite": true
+      }
+    }
+  },
+  "cpu_parity_limits": [
+    "Identical numerical vectors are supplied; these are native teacher-visited states, not candidate closed-loop rollouts.",
+    "Distinct source sensor/reset/actuator chronology remains explicit. Network replay is not walking or turning quality."
+  ],
+  "native_baselines": {
+    "upstream50000": {
+      "bytes": 4843463,
+      "sha256": "26c1c9f8667a17c593fe142312b5ab590a49edad4e280be238ea3157122327e3",
+      "redistributed": false
+    },
+    "own5000": {
+      "bytes": 4843381,
+      "sha256": "f3d8d4dc156c3fe329d2e7a268a59c54a96ae65c8975195d609c93bed159d9e2",
+      "redistributed": false
+    }
+  },
+  "rejected_substitutions": [
+    "V89/V90/V91 and 2.680 Arena sprint parent are rollers, not interchangeable barefoot walkers.",
+    "Known own5000 is native Isaac training, not a recovered legacy MuJoCo champion."
+  ],
+  "native_comparison_status": "Pending at publication snapshot; no candidate promoted",
+  "private_inventory_or_absence_claims_included": false,
+  "raw_observations_or_model_bytes_included": false
+}

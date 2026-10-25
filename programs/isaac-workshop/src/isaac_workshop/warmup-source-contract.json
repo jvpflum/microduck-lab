@@ -1,0 +1,35 @@
+{
+  "source_commit": "b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e",
+  "sources": {
+    "camera": {
+      "path": "source/isaaclab/isaaclab/sensors/camera/camera.py",
+      "normalized_text_sha256": "8846b05d8cfafc06902c0b8fdadeeb2db4c7d037e31afef67ccaf2325e720dcd",
+      "public_source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e/source/isaaclab/isaaclab/sensors/camera/camera.py"
+    },
+    "sensor_base": {
+      "path": "source/isaaclab/isaaclab/sensors/sensor_base.py",
+      "normalized_text_sha256": "078b6560b3c29e2706c2176d274437cd016b4df69c08ae47e4763aa2a351ffdb",
+      "public_source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e/source/isaaclab/isaaclab/sensors/sensor_base.py"
+    },
+    "render_context": {
+      "path": "source/isaaclab/isaaclab/renderers/render_context.py",
+      "normalized_text_sha256": "4ed158a5824c10b32675d4ecdc0fdad1b54a13c82162bc4f1aa4269786ddb97c",
+      "public_source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e/source/isaaclab/isaaclab/renderers/render_context.py"
+    },
+    "rtx_renderer": {
+      "path": "source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py",
+      "normalized_text_sha256": "bd394079cbe187277ad7d56c45a7d28e917ceb0f71d9754473ba49097b5e5743",
+      "public_source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer.py"
+    },
+    "rtx_utils": {
+      "path": "source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer_utils.py",
+      "normalized_text_sha256": "2b8d7ac93095e2457459687bb96830abeac30b641d7b43a2084a9f4ce97ac887",
+      "public_source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e/source/isaaclab_physx/isaaclab_physx/renderers/isaac_rtx_renderer_utils.py"
+    },
+    "kit_visualizer": {
+      "path": "source/isaaclab_visualizers/isaaclab_visualizers/kit/kit_visualizer.py",
+      "normalized_text_sha256": "c6ae7897c4f7135450a2dd6e22025892a6d8bc4d059474f7766129b4f524e8bd",
+      "public_source": "https://raw.githubusercontent.com/isaac-sim/IsaacLab/b03345bbf2c9a54eb03f9bd823ae19c0ca3a014e/source/isaaclab_visualizers/isaaclab_visualizers/kit/kit_visualizer.py"
+    }
+  }
+}

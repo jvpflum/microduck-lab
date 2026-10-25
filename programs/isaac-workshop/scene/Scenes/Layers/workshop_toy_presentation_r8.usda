@@ -1,0 +1,49 @@
+#usda 1.0
+(
+    customLayerData = {
+        bool nativeAppearanceVerified = 0
+        string purpose = "Wider toy-workshop view and broad warm fill after R7 remained dark and floor-heavy"
+        bool sourceAssetsModified = 0
+    }
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    over "WorkshopCameras"
+    {
+        over "TwoDuckOverview"
+        {
+            float focalLength = 21
+            custom matrix4d xformOp:transform = ( (0.6991176319238787, -0.7150066690130578, 0, 0), (0.20164317741482865, 0.19716221791672134, 0.9594097606488123, 0), (-0.6859843771801222, -0.6707402799094528, 0.28201579950738354, 0), (-570, -1400.0000000000002, 260, 1.0000000000000002) )
+        }
+    }
+
+    def "WorkshopToyLighting"
+    {
+        def RectLight "SoftWindowBounce" (
+            customData = {
+                bool photometricallyCalibrated = 0
+                bool physicalFixture = 0
+                string purpose = "Soft warm frontal fill for readable toy and bookshelf faces"
+            }
+        )
+        {
+            color3f inputs:color = (1, 1, 1)
+            float inputs:colorTemperature = 4500
+            float inputs:diffuse = 1
+            bool inputs:enableColorTemperature = 1
+            float inputs:exposure = 0
+            float inputs:height = 160
+            float inputs:intensity = 6000
+            bool inputs:normalize = 0
+            float inputs:specular = 1
+            float inputs:width = 220
+            custom int omni:rtx:usdluxVersion = 2505
+            custom bool visibleInPrimaryRay = 0
+            matrix4d xformOp:transform = ( (0.4978675185533155, -0.8672530968348077, -1.387778780781446e-17, 0), (0.20311373406819708, 0.11660232881692795, 0.9721875888671605, 0), (-0.8431326971494096, -0.48402062243762406, 0.23420352698594712, 0), (-500.00000000000006, -1300.0000000000002, 240, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

@@ -1,0 +1,26 @@
+#usda 1.0
+
+over "Root"
+{
+    over "Geometry"
+    {
+        over "Blanket_Fort"
+        {
+            over "sheet_large"
+            {
+                over "Looks"
+                {
+                    over "blanket_fort_mat_inst_8"
+                    {
+                        over "blanket_fort_mat_inst_8"
+                        {
+                            custom asset inputs:diffuse_texture = @../../../source-review/authored/Samples/OldAttic/Materials/Textures/blanket_fort_Material__288_BaseColor.png@
+                            custom asset inputs:normalmap_texture = @../../../source-review/authored/Samples/OldAttic/Materials/Textures/blanket_fort_Material__288_Normal.png@
+                            custom asset inputs:ORM_texture = @../../../source-review/authored/Samples/OldAttic/Materials/Textures/blanket_fort_Material__288_OcclusionRoughnessMetallic.png@
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,2026 @@
+#usda 1.0
+(
+    customLayerData = {
+        string color_story = "Warm paintedwood, teal, coral, golden accents with authored source toy textures."
+        string nativeVisualAcceptance = "pending"
+        string physicsQualification = "none"
+        string profile = "toy-workshop-r8"
+        bool source_preserving = 1
+    }
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+over "Root"
+{
+    def Xform "ToyWorkshopR8"
+    {
+        def "BuilderVillage"
+        {
+            def Xform "RockingHorse"
+            {
+                matrix4d xformOp:transform = ( (1.137240779587729, 0.30472274849027237, 0, 0), (-0.30472274849027237, 1.137240779587729, 0, 0), (0, 0, 1.1773582904981692, 0), (-290.99996840887417, -1111.9994816414624, 3.111419810226355, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/horse.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "TeddyMechanic"
+            {
+                matrix4d xformOp:transform = ( (1.215474481538598, -0.5667850590334247, 0, 0), (0.5667850590334247, 1.215474481538598, 0, 0), (0, 0, 1.341127703992072, 0), (-175.7456688662286, -1181.460142774631, 3.4476430362318937, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/bear.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "PatternBall"
+            {
+                matrix4d xformOp:transform = ( (1.1074930931917666, 0.7754750123680635, 0, 0), (-0.7754750123680635, 1.1074930931917666, 0, 0), (0, 0, 1.3519994253973318, 0), (-287.95678048347366, -1034.973754366064, 11.6246473705919, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/ball.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "StarBall"
+            {
+                matrix4d xformOp:transform = ( (1.5208255062873894, 0, 0, 0), (0, 1.5208255062873894, 0, 0), (0, 0, 1.5208255062873894, 0), (30.925404818312643, -602.7929819492372, -3.365079793917558, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/star_ball.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "CastleA"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 3.0554583394209947, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Xform "Tier0_0"
+                {
+                    matrix4d xformOp:transform = ( (2.034932799147833, 0, 0, 0), (0, 2.034932799147833, 0, 0), (0, 0, 2.034932799147833, 0), (-298.49996894938965, -1200, 4.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier0_1"
+                {
+                    matrix4d xformOp:transform = ( (2.034917441578394, 0, 0, 0), (0, 2.034917441578394, 0, 0), (0, 0, 2.034917441578394, 0), (-289, -1199.999984474812, 4.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_b.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier0_2"
+                {
+                    matrix4d xformOp:transform = ( (2.034933457334561, 0, 0, 0), (0, 2.034933457334561, 0, 0), (0, 0, 2.034933457334561, 0), (-279.5, -1200.0000310506205, 4.500000485165944, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_c.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier1_0"
+                {
+                    matrix4d xformOp:transform = ( (2.0349332379389375, 0, 0, 0), (0, 2.0349332379389375, 0, 0), (0, 0, 2.0349332379389375, 0), (-293.75, -1200, 13.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_d.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier1_1"
+                {
+                    matrix4d xformOp:transform = ( (2.0349332379389375, 0, 0, 0), (0, 2.0349332379389375, 0, 0), (0, 0, 2.0349332379389375, 0), (-284.2500155253085, -1199.999968949383, 13.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_e.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier2_0"
+                {
+                    matrix4d xformOp:transform = ( (2.034932799147833, 0, 0, 0), (0, 2.034932799147833, 0, 0), (0, 0, 2.034932799147833, 0), (-288.99996894938965, -1200, 22.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                    )
+                    {
+                    }
+                }
+            }
+
+            def Xform "CastleB"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 3.0617204782830565, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Xform "Tier0_0"
+                {
+                    matrix4d xformOp:transform = ( (2.034932799147833, 0, 0, 0), (0, 2.034932799147833, 0, 0), (0, 0, 2.034932799147833, 0), (-241.49996894938965, -1220, 4.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier0_1"
+                {
+                    matrix4d xformOp:transform = ( (2.034917441578394, 0, 0, 0), (0, 2.034917441578394, 0, 0), (0, 0, 2.034917441578394, 0), (-232, -1219.999984474812, 4.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_b.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier0_2"
+                {
+                    matrix4d xformOp:transform = ( (2.034933457334561, 0, 0, 0), (0, 2.034933457334561, 0, 0), (0, 0, 2.034933457334561, 0), (-222.5, -1220.0000310506205, 4.500000485165944, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_c.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier1_0"
+                {
+                    matrix4d xformOp:transform = ( (2.0349332379389375, 0, 0, 0), (0, 2.0349332379389375, 0, 0), (0, 0, 2.0349332379389375, 0), (-236.75, -1220, 13.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_d.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier1_1"
+                {
+                    matrix4d xformOp:transform = ( (2.0349332379389375, 0, 0, 0), (0, 2.0349332379389375, 0, 0), (0, 0, 2.0349332379389375, 0), (-227.25001552530853, -1219.999968949383, 13.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_e.usd@
+                    )
+                    {
+                    }
+                }
+
+                def Xform "Tier2_0"
+                {
+                    matrix4d xformOp:transform = ( (2.034932799147833, 0, 0, 0), (0, 2.034932799147833, 0, 0), (0, 0, 2.034932799147833, 0), (-231.99996894938965, -1220, 22.5, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    over "Asset" (
+                        references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                    )
+                    {
+                    }
+                }
+            }
+
+            def Xform "LooseBlock0"
+            {
+                matrix4d xformOp:transform = ( (1.0023150452294864, 1.0748512920910755, 0, 0), (-1.0748512920910755, 1.0023150452294864, 0, 0), (0, 0, 1.4696736882734351, 0), (-303.99998470588616, -1171.9999917995353, 6.307829150549006, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock1"
+            {
+                matrix4d xformOp:transform = ( (0.8478822673243311, 1.468575165842438, 0, 0), (-1.468575165842438, 0.8478822673243311, 0, 0), (0, 0, 1.6957645346486618, 0), (-270, -1163, 7.36388962783891, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_b.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock2"
+            {
+                matrix4d xformOp:transform = ( (1.9031779789893966, 0.2674742217543803, 0, 0), (-0.2674742217543803, 1.9031779789893966, 0, 0), (0, 0, 1.9218815985937518, 0), (-248, -1140.0000040813327, 7.401115767626422, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_c.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock3"
+            {
+                matrix4d xformOp:transform = ( (1.3720588845660415, 0.5266840597357125, 0, 0), (-0.5266840597357125, 1.3720588845660415, 0, 0), (0, 0, 1.4696740051781216, 0), (-223, -1130.9999959817196, 6.405695787710734, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_d.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock4"
+            {
+                matrix4d xformOp:transform = ( (1.4058634265770564, 0.9482668547435023, 0, 0), (-0.9482668547435023, 1.4058634265770564, 0, 0), (0, 0, 1.695777698282448, 0), (-210, -1097.9999892741132, 6.896897494699987, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_e.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock5"
+            {
+                matrix4d xformOp:transform = ( (1.3107196745308671, 1.4055747665806373, 0, 0), (-1.4055747665806373, 1.3107196745308671, 0, 0), (0, 0, 1.9218809769729537, 0), (-282.00001072368445, -1085, 7.3561551673266266, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_f.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock6"
+            {
+                matrix4d xformOp:transform = ( (0.7348368441367177, 1.2727747493183668, 0, 0), (-1.2727747493183668, 0.7348368441367177, 0, 0), (0, 0, 1.4696736882734351, 0), (-303.9999887872796, -1003.9999902894992, 6.38439310363007, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock7"
+            {
+                matrix4d xformOp:transform = ( (1.6792614707669782, 0.2360048087851567, 0, 0), (-0.2360048087851567, 1.6792614707669782, 0, 0), (0, 0, 1.6957645346486618, 0), (-280, -982.9999871882517, 6.903582560091557, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_b.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock8"
+            {
+                matrix4d xformOp:transform = ( (1.7942310424922787, 0.6887407677568868, 0, 0), (-0.6887407677568868, 1.7942310424922787, 0, 0), (0, 0, 1.9218815985937518, 0), (-194, -995.0000105093501, 7.35893402876017, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_c.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LooseBlock9"
+            {
+                matrix4d xformOp:transform = ( (1.2184149697001156, 0.8218312741110354, 0, 0), (-0.8218312741110354, 1.2184149697001156, 0, 0), (0, 0, 1.4696740051781216, 0), (-156, -1061.9999937299249, 6.23693275492727, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_d.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "SteppingPad0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-181, -1110, 3.9740571873689987, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "PaintedWood" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/coral>
+                    point3f[] points = [(-12, -11.75, -0.75), (-11.75, -12, -0.75), (-11.75, -11.75, -1), (-12, -11.75, 0.75), (-11.75, -12, 0.75), (-11.75, -11.75, 1), (-12, 11.75, -0.75), (-11.75, 12, -0.75), (-11.75, 11.75, -1), (-12, 11.75, 0.75), (-11.75, 12, 0.75), (-11.75, 11.75, 1), (12, -11.75, -0.75), (11.75, -12, -0.75), (11.75, -11.75, -1), (12, -11.75, 0.75), (11.75, -12, 0.75), (11.75, -11.75, 1), (12, 11.75, -0.75), (11.75, 12, -0.75), (11.75, 11.75, -1), (12, 11.75, 0.75), (11.75, 12, 0.75), (11.75, 11.75, 1)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "SteppingPad1"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-181, -1074, 4.481436694427611, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "PaintedWood" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                    point3f[] points = [(-12, -11.75, -1.25), (-11.75, -12, -1.25), (-11.75, -11.75, -1.5), (-12, -11.75, 1.25), (-11.75, -12, 1.25), (-11.75, -11.75, 1.5), (-12, 11.75, -1.25), (-11.75, 12, -1.25), (-11.75, 11.75, -1.5), (-12, 11.75, 1.25), (-11.75, 12, 1.25), (-11.75, 11.75, 1.5), (12, -11.75, -1.25), (11.75, -12, -1.25), (11.75, -11.75, -1.5), (12, -11.75, 1.25), (11.75, -12, 1.25), (11.75, -11.75, 1.5), (12, 11.75, -1.25), (11.75, 12, -1.25), (11.75, 11.75, -1.5), (12, 11.75, 1.25), (11.75, 12, 1.25), (11.75, 11.75, 1.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "SteppingPad2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-181, -1038, 4.988691075262011, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "PaintedWood" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-12, -11.75, -1.75), (-11.75, -12, -1.75), (-11.75, -11.75, -2), (-12, -11.75, 1.75), (-11.75, -12, 1.75), (-11.75, -11.75, 2), (-12, 11.75, -1.75), (-11.75, 12, -1.75), (-11.75, 11.75, -2), (-12, 11.75, 1.75), (-11.75, 12, 1.75), (-11.75, 11.75, 2), (12, -11.75, -1.75), (11.75, -12, -1.75), (11.75, -11.75, -2), (12, -11.75, 1.75), (11.75, -12, 1.75), (11.75, -11.75, 2), (12, 11.75, -1.75), (11.75, 12, -1.75), (11.75, 11.75, -2), (12, 11.75, 1.75), (11.75, 12, 1.75), (11.75, 11.75, 2)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "BalanceBridge"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-238, -1052, 3.244449112594882, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "PaintedRamp" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [6, 6, 4, 4, 4, 4, 4, 4]
+                    int[] faceVertexIndices = [5, 4, 3, 2, 1, 0, 6, 7, 8, 9, 10, 11, 0, 1, 7, 6, 1, 2, 8, 7, 2, 3, 9, 8, 3, 4, 10, 9, 4, 5, 11, 10, 5, 0, 6, 11]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                    point3f[] points = [(-15, -38, 0), (-15, 38, 0), (-15, 37.7, 0.05), (-15, 8, 4), (-15, -8, 4), (-15, -37.7, 0.05), (15, -38, 0), (15, 38, 0), (15, 37.7, 0.05), (15, 8, 4), (15, -8, 4), (15, -37.7, 0.05)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+        }
+
+        def "Looks"
+        {
+            def Material "coral"
+            {
+                token outputs:surface.connect = </Root/ToyWorkshopR8/Looks/coral/Surface.outputs:surface>
+
+                def Shader "Surface"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.62, 0.14, 0.08)
+                    float inputs:metallic = 0
+                    float inputs:roughness = 0.43
+                    token outputs:surface
+                }
+            }
+
+            def Material "teal"
+            {
+                token outputs:surface.connect = </Root/ToyWorkshopR8/Looks/teal/Surface.outputs:surface>
+
+                def Shader "Surface"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.055, 0.38, 0.39)
+                    float inputs:metallic = 0
+                    float inputs:roughness = 0.43
+                    token outputs:surface
+                }
+            }
+
+            def Material "gold"
+            {
+                token outputs:surface.connect = </Root/ToyWorkshopR8/Looks/gold/Surface.outputs:surface>
+
+                def Shader "Surface"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.72, 0.43, 0.075)
+                    float inputs:metallic = 0
+                    float inputs:roughness = 0.43
+                    token outputs:surface
+                }
+            }
+
+            def Material "cream"
+            {
+                token outputs:surface.connect = </Root/ToyWorkshopR8/Looks/cream/Surface.outputs:surface>
+
+                def Shader "Surface"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.73, 0.67, 0.48)
+                    float inputs:metallic = 0
+                    float inputs:roughness = 0.43
+                    token outputs:surface
+                }
+            }
+
+            def Material "wood"
+            {
+                token outputs:surface.connect = </Root/ToyWorkshopR8/Looks/wood/Surface.outputs:surface>
+
+                def Shader "Surface"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.3, 0.16, 0.075)
+                    float inputs:metallic = 0
+                    float inputs:roughness = 0.43
+                    token outputs:surface
+                }
+            }
+
+            def Material "blue"
+            {
+                token outputs:surface.connect = </Root/ToyWorkshopR8/Looks/blue/Surface.outputs:surface>
+
+                def Shader "Surface"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.075, 0.22, 0.43)
+                    float inputs:metallic = 0
+                    float inputs:roughness = 0.43
+                    token outputs:surface
+                }
+            }
+
+            def Material "WarmBulb"
+            {
+                token outputs:surface.connect = </Root/ToyWorkshopR8/Looks/WarmBulb/Surface.outputs:surface>
+
+                def Shader "Surface"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    color3f inputs:diffuseColor = (0.9, 0.64, 0.24)
+                    color3f inputs:emissiveColor = (4, 1.55, 0.26)
+                    float inputs:roughness = 0.22
+                    token outputs:surface
+                }
+            }
+        }
+
+        def "ToyParade"
+        {
+            def Xform "ParadeBear"
+            {
+                matrix4d xformOp:transform = ( (1.5014684771947389, -0.7001462493942306, 0, 0), (0.7001462493942306, 1.5014684771947389, 0, 0), (0, 0, 1.6566871637549125, 0), (65.78476198877641, -1234.3331175451324, 3.529194419944694, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/bear.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "SmallBear"
+            {
+                matrix4d xformOp:transform = ( (0.565617094961348, -0.8077849267483145, 0, 0), (0.8077849267483145, 0.565617094961348, 0, 0), (0, 0, 0.9861233117588765, 0), (116.4449380347693, -1254.6479576025424, 4.060250044698749, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/bear.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "RockingHorse"
+            {
+                matrix4d xformOp:transform = ( (0.947700649656441, 0.25393562374189366, 0, 0), (-0.25393562374189366, 0.947700649656441, 0, 0), (0, 0, 0.9811319087484744, 0), (126.00002632593821, -1185.9995680345519, 4.029935395938145, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/horse.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "PatternBall"
+            {
+                matrix4d xformOp:transform = ( (1.441561890949033, 0.6722113494539351, 0, 0), (-0.6722113494539351, 1.441561890949033, 0, 0), (0, 0, 1.5905875592909786, 0), (17.964722315314795, -1184.9667662090744, 13.239104423562933, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/ball.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "StarBall"
+            {
+                matrix4d xformOp:transform = ( (1.4121951129811474, 0, 0, 0), (0, 1.4121951129811474, 0, 0), (0, 0, 1.4121951129811474, 0), (174.43073304557603, -889.2363403814345, -2.9849286207483576, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/star_ball.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock0"
+            {
+                matrix4d xformOp:transform = ( (1.6997434090261618, 0.6186560067756856, 0, 0), (-0.6186560067756856, 1.6997434090261618, 0, 0), (0, 0, 1.808829154798074, 0), (12.00002593602614, -1299.9999693440031, 6.890345848701764, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock1"
+            {
+                matrix4d xformOp:transform = ( (1.9138538675549983, 0.9751572521326114, 0, 0), (-0.9751572521326114, 1.9138538675549983, 0, 0), (0, 0, 2.1479684105549715, 0), (34, -1299.9999853984539, 8.1243085336647, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_b.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock2"
+            {
+                matrix4d xformOp:transform = ( (2.481082342087423, 0.17349417835151162, 0, 0), (-0.17349417835151162, 2.481082342087423, 0, 0), (0, 0, 2.4871408922977967, 0), (56, -1300.000002647311, 8.307406352282568, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_c.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock3"
+            {
+                matrix4d xformOp:transform = ( (1.7755962514329195, 0.34514094825730496, 0, 0), (-0.34514094825730496, 1.7755962514329195, 0, 0), (0, 0, 1.8088295448346112, 0), (78, -1299.9999973667836, 7.013042511432254, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_d.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock4"
+            {
+                matrix4d xformOp:transform = ( (2.042855211510058, 0.6637638947716576, 0, 0), (-0.6637638947716576, 2.042855211510058, 0, 0), (0, 0, 2.147985084491101, 0), (100, -1299.9999844142517, 8.532486375388032, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_e.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock5"
+            {
+                matrix4d xformOp:transform = ( (2.2541144290670725, 1.0511108206316584, 0, 0), (-1.0511108206316584, 2.2541144290670725, 0, 0), (0, 0, 2.4871400878473517, 0), (121.99999198066085, -1300, 9.3271448747439, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_f.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock6"
+            {
+                matrix4d xformOp:transform = ( (1.807727264949899, 0.06312722712326299, 0, 0), (-0.06312722712326299, 1.807727264949899, 0, 0), (0, 0, 1.808829154798074, 0), (12.000027583729018, -1279.9999719346486, 6.887263842384833, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock7"
+            {
+                matrix4d xformOp:transform = ( (2.1215233550718153, 0.3360162892284819, 0, 0), (-0.3360162892284819, 2.1215233550718153, 0, 0), (0, 0, 2.1479684105549715, 0), (34, -1279.9999838140614, 8.1503669745865, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_b.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock8"
+            {
+                matrix4d xformOp:transform = ( (2.390793272167724, 0.6855489390972965, 0, 0), (-0.6855489390972965, 2.390793272167724, 0, 0), (0, 0, 2.4871408922977967, 0), (56, -1280.0000104606468, 8.303824139068576, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_c.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock9"
+            {
+                matrix4d xformOp:transform = ( (1.665036375088428, 0.7067660092979671, 0, 0), (-0.7067660092979671, 1.665036375088428, 0, 0), (0, 0, 1.8088295448346112, 0), (78, -1279.9999946078033, 6.993982324741829, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_d.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock10"
+            {
+                matrix4d xformOp:transform = ( (2.147985084491101, 0, 0, 0), (0, 2.147985084491101, 0, 0), (0, 0, 2.147985084491101, 0), (99.99998361217435, -1279.9999672243487, 8.485427381862577, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_e.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "LetterBlock11"
+            {
+                matrix4d xformOp:transform = ( (2.4686013227857484, 0.3031061294625777, 0, 0), (-0.3031061294625777, 2.4686013227857484, 0, 0), (0, 0, 2.4871400878473517, 0), (121.99999768748376, -1280, 9.290644640037627, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_f.usd@
+                )
+                {
+                }
+            }
+        }
+
+        def Xform "StorymakerDisplay"
+        {
+            matrix4d xformOp:transform = ( (0.9396926207859084, -0.34202014332566877, 0, 0), (0.34202014332566877, 0.9396926207859084, 0, 0), (0, 0, 1, 0), (50.68404028665134, -946.6268646252817, 3.648814160972716, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            def Xform "BackPanel"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 82, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/cream>
+                    point3f[] points = [(-66, -1.5, -79.5), (-65.5, -2, -79.5), (-65.5, -1.5, -80), (-66, -1.5, 79.5), (-65.5, -2, 79.5), (-65.5, -1.5, 80), (-66, 1.5, -79.5), (-65.5, 2, -79.5), (-65.5, 1.5, -80), (-66, 1.5, 79.5), (-65.5, 2, 79.5), (-65.5, 1.5, 80), (66, -1.5, -79.5), (65.5, -2, -79.5), (65.5, -1.5, -80), (66, -1.5, 79.5), (65.5, -2, 79.5), (65.5, -1.5, 80), (66, 1.5, -79.5), (65.5, 2, -79.5), (65.5, 1.5, -80), (66, 1.5, 79.5), (65.5, 2, 79.5), (65.5, 1.5, 80)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Post0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-59, 0, 84, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                    point3f[] points = [(-2.5, -2.5, -83.5), (-2, -3, -83.5), (-2, -2.5, -84), (-2.5, -2.5, 83.5), (-2, -3, 83.5), (-2, -2.5, 84), (-2.5, 2.5, -83.5), (-2, 3, -83.5), (-2, 2.5, -84), (-2.5, 2.5, 83.5), (-2, 3, 83.5), (-2, 2.5, 84), (2.5, -2.5, -83.5), (2, -3, -83.5), (2, -2.5, -84), (2.5, -2.5, 83.5), (2, -3, 83.5), (2, -2.5, 84), (2.5, 2.5, -83.5), (2, 3, -83.5), (2, 2.5, -84), (2.5, 2.5, 83.5), (2, 3, 83.5), (2, 2.5, 84)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Foot0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-59, -2, 3, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                    point3f[] points = [(-12, -19.4, -2.4), (-11.4, -20, -2.4), (-11.4, -19.4, -3), (-12, -19.4, 2.4), (-11.4, -20, 2.4), (-11.4, -19.4, 3), (-12, 19.4, -2.4), (-11.4, 20, -2.4), (-11.4, 19.4, -3), (-12, 19.4, 2.4), (-11.4, 20, 2.4), (-11.4, 19.4, 3), (12, -19.4, -2.4), (11.4, -20, -2.4), (11.4, -19.4, -3), (12, -19.4, 2.4), (11.4, -20, 2.4), (11.4, -19.4, 3), (12, 19.4, -2.4), (11.4, 20, -2.4), (11.4, 19.4, -3), (12, 19.4, 2.4), (11.4, 20, 2.4), (11.4, 19.4, 3)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Post2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (59, 0, 84, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                    point3f[] points = [(-2.5, -2.5, -83.5), (-2, -3, -83.5), (-2, -2.5, -84), (-2.5, -2.5, 83.5), (-2, -3, 83.5), (-2, -2.5, 84), (-2.5, 2.5, -83.5), (-2, 3, -83.5), (-2, 2.5, -84), (-2.5, 2.5, 83.5), (-2, 3, 83.5), (-2, 2.5, 84), (2.5, -2.5, -83.5), (2, -3, -83.5), (2, -2.5, -84), (2.5, -2.5, 83.5), (2, -3, 83.5), (2, -2.5, 84), (2.5, 2.5, -83.5), (2, 3, -83.5), (2, 2.5, -84), (2.5, 2.5, 83.5), (2, 3, 83.5), (2, 2.5, 84)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Foot2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (59, -2, 3, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                    point3f[] points = [(-12, -19.4, -2.4), (-11.4, -20, -2.4), (-11.4, -19.4, -3), (-12, -19.4, 2.4), (-11.4, -20, 2.4), (-11.4, -19.4, 3), (-12, 19.4, -2.4), (-11.4, 20, -2.4), (-11.4, 19.4, -3), (-12, 19.4, 2.4), (-11.4, 20, 2.4), (-11.4, 19.4, 3), (12, -19.4, -2.4), (11.4, -20, -2.4), (11.4, -19.4, -3), (12, -19.4, 2.4), (11.4, -20, 2.4), (11.4, -19.4, 3), (12, 19.4, -2.4), (11.4, 20, -2.4), (11.4, 19.4, -3), (12, 19.4, 2.4), (11.4, 20, 2.4), (11.4, 19.4, 3)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Shelf0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, -14, 34.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                    point3f[] points = [(-63, -13.65, -1.15), (-62.65, -14, -1.15), (-62.65, -13.65, -1.5), (-63, -13.65, 1.15), (-62.65, -14, 1.15), (-62.65, -13.65, 1.5), (-63, 13.65, -1.15), (-62.65, 14, -1.15), (-62.65, 13.65, -1.5), (-63, 13.65, 1.15), (-62.65, 14, 1.15), (-62.65, 13.65, 1.5), (63, -13.65, -1.15), (62.65, -14, -1.15), (62.65, -13.65, -1.5), (63, -13.65, 1.15), (62.65, -14, 1.15), (62.65, -13.65, 1.5), (63, 13.65, -1.15), (62.65, 14, -1.15), (62.65, 13.65, -1.5), (63, 13.65, 1.15), (62.65, 14, 1.15), (62.65, 13.65, 1.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Bracket0_0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-53, -11, 31, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-2.5, -13.2, -3.2), (-2.2, -13.5, -3.2), (-2.2, -13.2, -3.5), (-2.5, -13.2, 3.2), (-2.2, -13.5, 3.2), (-2.2, -13.2, 3.5), (-2.5, 13.2, -3.2), (-2.2, 13.5, -3.2), (-2.2, 13.2, -3.5), (-2.5, 13.2, 3.2), (-2.2, 13.5, 3.2), (-2.2, 13.2, 3.5), (2.5, -13.2, -3.2), (2.2, -13.5, -3.2), (2.2, -13.2, -3.5), (2.5, -13.2, 3.2), (2.2, -13.5, 3.2), (2.2, -13.2, 3.5), (2.5, 13.2, -3.2), (2.2, 13.5, -3.2), (2.2, 13.2, -3.5), (2.5, 13.2, 3.2), (2.2, 13.5, 3.2), (2.2, 13.2, 3.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Bracket0_2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (53, -11, 31, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-2.5, -13.2, -3.2), (-2.2, -13.5, -3.2), (-2.2, -13.2, -3.5), (-2.5, -13.2, 3.2), (-2.2, -13.5, 3.2), (-2.2, -13.2, 3.5), (-2.5, 13.2, -3.2), (-2.2, 13.5, -3.2), (-2.2, 13.2, -3.5), (-2.5, 13.2, 3.2), (-2.2, 13.5, 3.2), (-2.2, 13.2, 3.5), (2.5, -13.2, -3.2), (2.2, -13.5, -3.2), (2.2, -13.2, -3.5), (2.5, -13.2, 3.2), (2.2, -13.5, 3.2), (2.2, -13.2, 3.5), (2.5, 13.2, -3.2), (2.2, 13.5, -3.2), (2.2, 13.2, -3.5), (2.5, 13.2, 3.2), (2.2, 13.5, 3.2), (2.2, 13.2, 3.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Shelf1"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, -14, 89.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                    point3f[] points = [(-63, -13.65, -1.15), (-62.65, -14, -1.15), (-62.65, -13.65, -1.5), (-63, -13.65, 1.15), (-62.65, -14, 1.15), (-62.65, -13.65, 1.5), (-63, 13.65, -1.15), (-62.65, 14, -1.15), (-62.65, 13.65, -1.5), (-63, 13.65, 1.15), (-62.65, 14, 1.15), (-62.65, 13.65, 1.5), (63, -13.65, -1.15), (62.65, -14, -1.15), (62.65, -13.65, -1.5), (63, -13.65, 1.15), (62.65, -14, 1.15), (62.65, -13.65, 1.5), (63, 13.65, -1.15), (62.65, 14, -1.15), (62.65, 13.65, -1.5), (63, 13.65, 1.15), (62.65, 14, 1.15), (62.65, 13.65, 1.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Bracket1_0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-53, -11, 86, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-2.5, -13.2, -3.2), (-2.2, -13.5, -3.2), (-2.2, -13.2, -3.5), (-2.5, -13.2, 3.2), (-2.2, -13.5, 3.2), (-2.2, -13.2, 3.5), (-2.5, 13.2, -3.2), (-2.2, 13.5, -3.2), (-2.2, 13.2, -3.5), (-2.5, 13.2, 3.2), (-2.2, 13.5, 3.2), (-2.2, 13.2, 3.5), (2.5, -13.2, -3.2), (2.2, -13.5, -3.2), (2.2, -13.2, -3.5), (2.5, -13.2, 3.2), (2.2, -13.5, 3.2), (2.2, -13.2, 3.5), (2.5, 13.2, -3.2), (2.2, 13.5, -3.2), (2.2, 13.2, -3.5), (2.5, 13.2, 3.2), (2.2, 13.5, 3.2), (2.2, 13.2, 3.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Bracket1_2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (53, -11, 86, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-2.5, -13.2, -3.2), (-2.2, -13.5, -3.2), (-2.2, -13.2, -3.5), (-2.5, -13.2, 3.2), (-2.2, -13.5, 3.2), (-2.2, -13.2, 3.5), (-2.5, 13.2, -3.2), (-2.2, 13.5, -3.2), (-2.2, 13.2, -3.5), (-2.5, 13.2, 3.2), (-2.2, 13.5, 3.2), (-2.2, 13.2, 3.5), (2.5, -13.2, -3.2), (2.2, -13.5, -3.2), (2.2, -13.2, -3.5), (2.5, -13.2, 3.2), (2.2, -13.5, 3.2), (2.2, -13.2, 3.5), (2.5, 13.2, -3.2), (2.2, 13.5, -3.2), (2.2, 13.2, -3.5), (2.5, 13.2, 3.2), (2.2, 13.5, 3.2), (2.2, 13.2, 3.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Shelf2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, -14, 144.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                    point3f[] points = [(-63, -13.65, -1.15), (-62.65, -14, -1.15), (-62.65, -13.65, -1.5), (-63, -13.65, 1.15), (-62.65, -14, 1.15), (-62.65, -13.65, 1.5), (-63, 13.65, -1.15), (-62.65, 14, -1.15), (-62.65, 13.65, -1.5), (-63, 13.65, 1.15), (-62.65, 14, 1.15), (-62.65, 13.65, 1.5), (63, -13.65, -1.15), (62.65, -14, -1.15), (62.65, -13.65, -1.5), (63, -13.65, 1.15), (62.65, -14, 1.15), (62.65, -13.65, 1.5), (63, 13.65, -1.15), (62.65, 14, -1.15), (62.65, 13.65, -1.5), (63, 13.65, 1.15), (62.65, 14, 1.15), (62.65, 13.65, 1.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Bracket2_0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-53, -11, 141, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-2.5, -13.2, -3.2), (-2.2, -13.5, -3.2), (-2.2, -13.2, -3.5), (-2.5, -13.2, 3.2), (-2.2, -13.5, 3.2), (-2.2, -13.2, 3.5), (-2.5, 13.2, -3.2), (-2.2, 13.5, -3.2), (-2.2, 13.2, -3.5), (-2.5, 13.2, 3.2), (-2.2, 13.5, 3.2), (-2.2, 13.2, 3.5), (2.5, -13.2, -3.2), (2.2, -13.5, -3.2), (2.2, -13.2, -3.5), (2.5, -13.2, 3.2), (2.2, -13.5, 3.2), (2.2, -13.2, 3.5), (2.5, 13.2, -3.2), (2.2, 13.5, -3.2), (2.2, 13.2, -3.5), (2.5, 13.2, 3.2), (2.2, 13.5, 3.2), (2.2, 13.2, 3.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Bracket2_2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (53, -11, 141, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-2.5, -13.2, -3.2), (-2.2, -13.5, -3.2), (-2.2, -13.2, -3.5), (-2.5, -13.2, 3.2), (-2.2, -13.5, 3.2), (-2.2, -13.2, 3.5), (-2.5, 13.2, -3.2), (-2.2, 13.5, -3.2), (-2.2, 13.2, -3.5), (-2.5, 13.2, 3.2), (-2.2, 13.5, 3.2), (-2.2, 13.2, 3.5), (2.5, -13.2, -3.2), (2.2, -13.5, -3.2), (2.2, -13.2, -3.5), (2.5, -13.2, 3.2), (2.2, -13.5, 3.2), (2.2, -13.2, 3.5), (2.5, 13.2, -3.2), (2.2, 13.5, -3.2), (2.2, 13.2, -3.5), (2.5, 13.2, 3.2), (2.2, 13.5, 3.2), (2.2, 13.2, 3.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "Shelf0_Teddy"
+            {
+                matrix4d xformOp:transform = ( (0.9525219747336052, -0.2552274939027678, 0, 0), (0.2552274939027678, 0.9525219747336052, 0, 0), (0, 0, 0.9861233117588765, 0), (-41.73770741851465, -13.997777729042419, 36.36129089825156, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/bear.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf0_Horse"
+            {
+                matrix4d xformOp:transform = ( (0.6867923361239321, 0, 0, 0), (0, 0.6867923361239321, 0, 0), (0, 0, 0.6867923361239321, 0), (0.00044538382393266573, -14.046938215232835, 36.011669178995085, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/horse.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf0_Ball"
+            {
+                matrix4d xformOp:transform = ( (1.113411291503685, 0, 0, 0), (0, 1.113411291503685, 0, 0), (0, 0, 1.113411291503685, 0), (45, -14, 43, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/ball.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf1_Book0"
+            {
+                matrix4d xformOp:transform = ( (1.1979994345380274, 0, 0, 0), (0, 1.1979994345380274, 0, 0), (0, 0, 1.1979994345380274, 0), (-50.00000457000517, -13.999997714997416, 98.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookA.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf1_Book1"
+            {
+                matrix4d xformOp:transform = ( (1.258571106214022, 0, 0, 0), (0, 1.258571106214022, 0, 0), (0, 0, 1.258571106214022, 0), (-46.00000960213551, -14, 99, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookB.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf1_Book2"
+            {
+                matrix4d xformOp:transform = ( (1.1979994345380274, 0, 0, 0), (0, 1.1979994345380274, 0, 0), (0, 0, 1.1979994345380274, 0), (-42.00000457000517, -13.999997714997416, 98.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookA.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf1_Book3"
+            {
+                matrix4d xformOp:transform = ( (1.258571106214022, 0, 0, 0), (0, 1.258571106214022, 0, 0), (0, 0, 1.258571106214022, 0), (-38.00000960213551, -14, 99, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookB.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf1_Book4"
+            {
+                matrix4d xformOp:transform = ( (1.1979994345380274, 0, 0, 0), (0, 1.1979994345380274, 0, 0), (0, 0, 1.1979994345380274, 0), (-34.00000457000517, -13.999997714997416, 98.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookA.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf1_Horse"
+            {
+                matrix4d xformOp:transform = ( (0.6132074429677965, 0, 0, 0), (0, 0.6132074429677965, 0, 0), (0, 0, 0.6132074429677965, 0), (7.000397664128512, -14.041909120743604, 91.01041890981703, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/horse.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf1_Teddy"
+            {
+                matrix4d xformOp:transform = ( (0.8546048569046704, -0.15068989411679026, 0, 0), (0.15068989411679026, 0.8546048569046704, 0, 0), (0, 0, 0.8677885143478113, 0), (43.90794529499143, -14.21745352039018, 91.31793599046138, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/bear.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Book0"
+            {
+                matrix4d xformOp:transform = ( (1.1181328055688255, 0, 0, 0), (0, 1.1181328055688255, 0, 0), (0, 0, 1.1181328055688255, 0), (-51.000004265338156, -13.999997867330922, 153, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookA.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Book1"
+            {
+                matrix4d xformOp:transform = ( (1.1799104120756456, 0, 0, 0), (0, 1.1799104120756456, 0, 0), (0, 0, 1.1799104120756456, 0), (-47.000009002002045, -14, 153.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookB.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Book2"
+            {
+                matrix4d xformOp:transform = ( (1.2778660635072292, 0, 0, 0), (0, 1.2778660635072292, 0, 0), (0, 0, 1.2778660635072292, 0), (-43.00000487467218, -13.99999756266391, 154, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookA.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Book3"
+            {
+                matrix4d xformOp:transform = ( (1.1012497179372693, 0, 0, 0), (0, 1.1012497179372693, 0, 0), (0, 0, 1.1012497179372693, 0), (-39.00000840186858, -14, 153, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookB.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Book4"
+            {
+                matrix4d xformOp:transform = ( (1.1979994345380274, 0, 0, 0), (0, 1.1979994345380274, 0, 0), (0, 0, 1.1979994345380274, 0), (-35.00000457000517, -13.999997714997416, 153.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookA.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Book5"
+            {
+                matrix4d xformOp:transform = ( (1.258571106214022, 0, 0, 0), (0, 1.258571106214022, 0, 0), (0, 0, 1.258571106214022, 0), (-31.000009602135513, -14, 154, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/BookB.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Block0"
+            {
+                matrix4d xformOp:transform = ( (1.5827255104483147, 0, 0, 0), (0, 1.5827255104483147, 0, 0), (0, 0, 1.5827255104483147, 0), (-16.999975849525292, -14, 149.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_a.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Block1"
+            {
+                matrix4d xformOp:transform = ( (1.5827135656720843, 0, 0, 0), (0, 1.5827135656720843, 0, 0), (0, 0, 1.5827135656720843, 0), (-6, -13.999987924853777, 149.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_b.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Block2"
+            {
+                matrix4d xformOp:transform = ( (1.582726022371325, 0, 0, 0), (0, 1.582726022371325, 0, 0), (0, 0, 1.582726022371325, 0), (5, -14.000024150482519, 149.50000037735128, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_c.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Block3"
+            {
+                matrix4d xformOp:transform = ( (1.582725851730285, 0, 0, 0), (0, 1.582725851730285, 0, 0), (0, 0, 1.582725851730285, 0), (16, -14, 149.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_d.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Block4"
+            {
+                matrix4d xformOp:transform = ( (1.582725851730285, 0, 0, 0), (0, 1.582725851730285, 0, 0), (0, 0, 1.582725851730285, 0), (26.999987924760042, -13.999975849520084, 149.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_e.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_Block5"
+            {
+                matrix4d xformOp:transform = ( (1.5827255104483147, 0, 0, 0), (0, 1.5827255104483147, 0, 0), (0, 0, 1.5827255104483147, 0), (38, -14, 149.5, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/block_f.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "Shelf2_StarBall"
+            {
+                matrix4d xformOp:transform = ( (1.0863039330624211, 0, 0, 0), (0, 1.0863039330624211, 0, 0), (0, 0, 1.0863039330624211, 0), (187.94671772736618, 280.4335843219735, 141.49450959004244, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/star_ball.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "InspirationLeft"
+            {
+                matrix4d xformOp:transform = ( (0.7604101928916046, 0, 0, 0), (0, 0.7604101928916046, 0, 0), (0, 0, 0.7604101928916046, 0), (-32, -3.054744274856214, 118.99998839706126, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/PictureFrameA.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "InspirationLeftMount0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-39, -2.015, 132, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                    point3f[] points = [(-1, -0.01, -0.995), (-0.995, -0.015, -0.995), (-0.995, -0.01, -1), (-1, -0.01, 0.995), (-0.995, -0.015, 0.995), (-0.995, -0.01, 1), (-1, 0.01, -0.995), (-0.995, 0.015, -0.995), (-0.995, 0.01, -1), (-1, 0.01, 0.995), (-0.995, 0.015, 0.995), (-0.995, 0.01, 1), (1, -0.01, -0.995), (0.995, -0.015, -0.995), (0.995, -0.01, -1), (1, -0.01, 0.995), (0.995, -0.015, 0.995), (0.995, -0.01, 1), (1, 0.01, -0.995), (0.995, 0.015, -0.995), (0.995, 0.01, -1), (1, 0.01, 0.995), (0.995, 0.015, 0.995), (0.995, 0.01, 1)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "InspirationLeftMount1"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-25, -2.015, 132, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                    point3f[] points = [(-1, -0.01, -0.995), (-0.995, -0.015, -0.995), (-0.995, -0.01, -1), (-1, -0.01, 0.995), (-0.995, -0.015, 0.995), (-0.995, -0.01, 1), (-1, 0.01, -0.995), (-0.995, 0.015, -0.995), (-0.995, 0.01, -1), (-1, 0.01, 0.995), (-0.995, 0.015, 0.995), (-0.995, 0.01, 1), (1, -0.01, -0.995), (0.995, -0.015, -0.995), (0.995, -0.01, -1), (1, -0.01, 0.995), (0.995, -0.015, 0.995), (0.995, -0.01, 1), (1, 0.01, -0.995), (0.995, 0.015, -0.995), (0.995, 0.01, -1), (1, 0.01, 0.995), (0.995, 0.015, 0.995), (0.995, 0.01, 1)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "InspirationRight"
+            {
+                matrix4d xformOp:transform = ( (0.7302448958456913, 0, 0, 0), (0, 0.7302448958456913, 0, 0), (0, 0, 0.7302448958456913, 0), (29, -3.0136962080241516, 120.00001114265282, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/PictureFrameB.usd@
+                )
+                {
+                }
+            }
+
+            def Xform "InspirationRightMount0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (22, -2.015, 134, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                    point3f[] points = [(-1, -0.01, -0.995), (-0.995, -0.015, -0.995), (-0.995, -0.01, -1), (-1, -0.01, 0.995), (-0.995, -0.015, 0.995), (-0.995, -0.01, 1), (-1, 0.01, -0.995), (-0.995, 0.015, -0.995), (-0.995, 0.01, -1), (-1, 0.01, 0.995), (-0.995, 0.015, 0.995), (-0.995, 0.01, 1), (1, -0.01, -0.995), (0.995, -0.015, -0.995), (0.995, -0.01, -1), (1, -0.01, 0.995), (0.995, -0.015, 0.995), (0.995, -0.01, 1), (1, 0.01, -0.995), (0.995, 0.015, -0.995), (0.995, 0.01, -1), (1, 0.01, 0.995), (0.995, 0.015, 0.995), (0.995, 0.01, 1)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Xform "InspirationRightMount1"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (36, -2.015, 134, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                    point3f[] points = [(-1, -0.01, -0.995), (-0.995, -0.015, -0.995), (-0.995, -0.01, -1), (-1, -0.01, 0.995), (-0.995, -0.015, 0.995), (-0.995, -0.01, 1), (-1, 0.01, -0.995), (-0.995, 0.015, -0.995), (-0.995, 0.01, -1), (-1, 0.01, 0.995), (-0.995, 0.015, 0.995), (-0.995, 0.01, 1), (1, -0.01, -0.995), (0.995, -0.015, -0.995), (0.995, -0.01, -1), (1, -0.01, 0.995), (0.995, -0.015, 0.995), (0.995, -0.01, 1), (1, 0.01, -0.995), (0.995, 0.015, -0.995), (0.995, 0.01, -1), (1, 0.01, 0.995), (0.995, 0.015, 0.995), (0.995, 0.01, 1)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def "BridgePlan"
+            {
+                def Xform "Board"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, -2.7, 65, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/blue>
+                        point3f[] points = [(-45, -0.36, -19.26), (-44.76, -0.6, -19.26), (-44.76, -0.36, -19.5), (-45, -0.36, 19.26), (-44.76, -0.6, 19.26), (-44.76, -0.36, 19.5), (-45, 0.36, -19.26), (-44.76, 0.6, -19.26), (-44.76, 0.36, -19.5), (-45, 0.36, 19.26), (-44.76, 0.6, 19.26), (-44.76, 0.36, 19.5), (45, -0.36, -19.26), (44.76, -0.6, -19.26), (44.76, -0.36, -19.5), (45, -0.36, 19.26), (44.76, -0.6, 19.26), (44.76, -0.36, 19.5), (45, 0.36, -19.26), (44.76, 0.6, -19.26), (44.76, 0.36, -19.5), (45, 0.36, 19.26), (44.76, 0.6, 19.26), (44.76, 0.36, 19.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Tower0"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-28, -3.65, 61, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                        point3f[] points = [(-7.5, -0.21, -9.86), (-7.36, -0.35, -9.86), (-7.36, -0.21, -10), (-7.5, -0.21, 9.86), (-7.36, -0.35, 9.86), (-7.36, -0.21, 10), (-7.5, 0.21, -9.86), (-7.36, 0.35, -9.86), (-7.36, 0.21, -10), (-7.5, 0.21, 9.86), (-7.36, 0.35, 9.86), (-7.36, 0.21, 10), (7.5, -0.21, -9.86), (7.36, -0.35, -9.86), (7.36, -0.21, -10), (7.5, -0.21, 9.86), (7.36, -0.35, 9.86), (7.36, -0.21, 10), (7.5, 0.21, -9.86), (7.36, 0.35, -9.86), (7.36, 0.21, -10), (7.5, 0.21, 9.86), (7.36, 0.35, 9.86), (7.36, 0.21, 10)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Tower0Tile0"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-28, -4.1, 57, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/coral>
+                        point3f[] points = [(-5.5, -0.09, -2.44), (-5.44, -0.15, -2.44), (-5.44, -0.09, -2.5), (-5.5, -0.09, 2.44), (-5.44, -0.15, 2.44), (-5.44, -0.09, 2.5), (-5.5, 0.09, -2.44), (-5.44, 0.15, -2.44), (-5.44, 0.09, -2.5), (-5.5, 0.09, 2.44), (-5.44, 0.15, 2.44), (-5.44, 0.09, 2.5), (5.5, -0.09, -2.44), (5.44, -0.15, -2.44), (5.44, -0.09, -2.5), (5.5, -0.09, 2.44), (5.44, -0.15, 2.44), (5.44, -0.09, 2.5), (5.5, 0.09, -2.44), (5.44, 0.15, -2.44), (5.44, 0.09, -2.5), (5.5, 0.09, 2.44), (5.44, 0.15, 2.44), (5.44, 0.09, 2.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Tower0Tile1"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-28, -4.1, 65, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/coral>
+                        point3f[] points = [(-5.5, -0.09, -2.44), (-5.44, -0.15, -2.44), (-5.44, -0.09, -2.5), (-5.5, -0.09, 2.44), (-5.44, -0.15, 2.44), (-5.44, -0.09, 2.5), (-5.5, 0.09, -2.44), (-5.44, 0.15, -2.44), (-5.44, 0.09, -2.5), (-5.5, 0.09, 2.44), (-5.44, 0.15, 2.44), (-5.44, 0.09, 2.5), (5.5, -0.09, -2.44), (5.44, -0.15, -2.44), (5.44, -0.09, -2.5), (5.5, -0.09, 2.44), (5.44, -0.15, 2.44), (5.44, -0.09, 2.5), (5.5, 0.09, -2.44), (5.44, 0.15, -2.44), (5.44, 0.09, -2.5), (5.5, 0.09, 2.44), (5.44, 0.15, 2.44), (5.44, 0.09, 2.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Tower2"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (28, -3.65, 61, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                        point3f[] points = [(-7.5, -0.21, -9.86), (-7.36, -0.35, -9.86), (-7.36, -0.21, -10), (-7.5, -0.21, 9.86), (-7.36, -0.35, 9.86), (-7.36, -0.21, 10), (-7.5, 0.21, -9.86), (-7.36, 0.35, -9.86), (-7.36, 0.21, -10), (-7.5, 0.21, 9.86), (-7.36, 0.35, 9.86), (-7.36, 0.21, 10), (7.5, -0.21, -9.86), (7.36, -0.35, -9.86), (7.36, -0.21, -10), (7.5, -0.21, 9.86), (7.36, -0.35, 9.86), (7.36, -0.21, 10), (7.5, 0.21, -9.86), (7.36, 0.35, -9.86), (7.36, 0.21, -10), (7.5, 0.21, 9.86), (7.36, 0.35, 9.86), (7.36, 0.21, 10)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Tower2Tile0"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (28, -4.1, 57, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/coral>
+                        point3f[] points = [(-5.5, -0.09, -2.44), (-5.44, -0.15, -2.44), (-5.44, -0.09, -2.5), (-5.5, -0.09, 2.44), (-5.44, -0.15, 2.44), (-5.44, -0.09, 2.5), (-5.5, 0.09, -2.44), (-5.44, 0.15, -2.44), (-5.44, 0.09, -2.5), (-5.5, 0.09, 2.44), (-5.44, 0.15, 2.44), (-5.44, 0.09, 2.5), (5.5, -0.09, -2.44), (5.44, -0.15, -2.44), (5.44, -0.09, -2.5), (5.5, -0.09, 2.44), (5.44, -0.15, 2.44), (5.44, -0.09, 2.5), (5.5, 0.09, -2.44), (5.44, 0.15, -2.44), (5.44, 0.09, -2.5), (5.5, 0.09, 2.44), (5.44, 0.15, 2.44), (5.44, 0.09, 2.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Tower2Tile1"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (28, -4.1, 65, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/coral>
+                        point3f[] points = [(-5.5, -0.09, -2.44), (-5.44, -0.15, -2.44), (-5.44, -0.09, -2.5), (-5.5, -0.09, 2.44), (-5.44, -0.15, 2.44), (-5.44, -0.09, 2.5), (-5.5, 0.09, -2.44), (-5.44, 0.15, -2.44), (-5.44, 0.09, -2.5), (-5.5, 0.09, 2.44), (-5.44, 0.15, 2.44), (-5.44, 0.09, 2.5), (5.5, -0.09, -2.44), (5.44, -0.15, -2.44), (5.44, -0.09, -2.5), (5.5, -0.09, 2.44), (5.44, -0.15, 2.44), (5.44, -0.09, 2.5), (5.5, 0.09, -2.44), (5.44, 0.15, -2.44), (5.44, 0.09, -2.5), (5.5, 0.09, 2.44), (5.44, 0.15, 2.44), (5.44, 0.09, 2.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Span"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, -3.8, 72, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/cream>
+                        point3f[] points = [(-24, -0.24, -2.34), (-23.84, -0.4, -2.34), (-23.84, -0.24, -2.5), (-24, -0.24, 2.34), (-23.84, -0.4, 2.34), (-23.84, -0.24, 2.5), (-24, 0.24, -2.34), (-23.84, 0.4, -2.34), (-23.84, 0.24, -2.5), (-24, 0.24, 2.34), (-23.84, 0.4, 2.34), (-23.84, 0.24, 2.5), (24, -0.24, -2.34), (23.84, -0.4, -2.34), (23.84, -0.24, -2.5), (24, -0.24, 2.34), (23.84, -0.4, 2.34), (23.84, -0.24, 2.5), (24, 0.24, -2.34), (23.84, 0.4, -2.34), (23.84, 0.24, -2.5), (24, 0.24, 2.34), (23.84, 0.4, 2.34), (23.84, 0.24, 2.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Step0"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-18, -3.75, 51, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                        point3f[] points = [(-3, -0.25, -1.4), (-2.9, -0.35, -1.4), (-2.9, -0.25, -1.5), (-3, -0.25, 1.4), (-2.9, -0.35, 1.4), (-2.9, -0.25, 1.5), (-3, 0.25, -1.4), (-2.9, 0.35, -1.4), (-2.9, 0.25, -1.5), (-3, 0.25, 1.4), (-2.9, 0.35, 1.4), (-2.9, 0.25, 1.5), (3, -0.25, -1.4), (2.9, -0.35, -1.4), (2.9, -0.25, -1.5), (3, -0.25, 1.4), (2.9, -0.35, 1.4), (2.9, -0.25, 1.5), (3, 0.25, -1.4), (2.9, 0.35, -1.4), (2.9, 0.25, -1.5), (3, 0.25, 1.4), (2.9, 0.35, 1.4), (2.9, 0.25, 1.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Step1"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-9, -3.75, 52, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                        point3f[] points = [(-3, -0.25, -1.4), (-2.9, -0.35, -1.4), (-2.9, -0.25, -1.5), (-3, -0.25, 1.4), (-2.9, -0.35, 1.4), (-2.9, -0.25, 1.5), (-3, 0.25, -1.4), (-2.9, 0.35, -1.4), (-2.9, 0.25, -1.5), (-3, 0.25, 1.4), (-2.9, 0.35, 1.4), (-2.9, 0.25, 1.5), (3, -0.25, -1.4), (2.9, -0.35, -1.4), (2.9, -0.25, -1.5), (3, -0.25, 1.4), (2.9, -0.35, 1.4), (2.9, -0.25, 1.5), (3, 0.25, -1.4), (2.9, 0.35, -1.4), (2.9, 0.25, -1.5), (3, 0.25, 1.4), (2.9, 0.35, 1.4), (2.9, 0.25, 1.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Step2"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, -3.75, 51, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                        point3f[] points = [(-3, -0.25, -1.4), (-2.9, -0.35, -1.4), (-2.9, -0.25, -1.5), (-3, -0.25, 1.4), (-2.9, -0.35, 1.4), (-2.9, -0.25, 1.5), (-3, 0.25, -1.4), (-2.9, 0.35, -1.4), (-2.9, 0.25, -1.5), (-3, 0.25, 1.4), (-2.9, 0.35, 1.4), (-2.9, 0.25, 1.5), (3, -0.25, -1.4), (2.9, -0.35, -1.4), (2.9, -0.25, -1.5), (3, -0.25, 1.4), (2.9, -0.35, 1.4), (2.9, -0.25, 1.5), (3, 0.25, -1.4), (2.9, 0.35, -1.4), (2.9, 0.25, -1.5), (3, 0.25, 1.4), (2.9, 0.35, 1.4), (2.9, 0.25, 1.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Step3"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (9, -3.75, 52, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                        point3f[] points = [(-3, -0.25, -1.4), (-2.9, -0.35, -1.4), (-2.9, -0.25, -1.5), (-3, -0.25, 1.4), (-2.9, -0.35, 1.4), (-2.9, -0.25, 1.5), (-3, 0.25, -1.4), (-2.9, 0.35, -1.4), (-2.9, 0.25, -1.5), (-3, 0.25, 1.4), (-2.9, 0.35, 1.4), (-2.9, 0.25, 1.5), (3, -0.25, -1.4), (2.9, -0.35, -1.4), (2.9, -0.25, -1.5), (3, -0.25, 1.4), (2.9, -0.35, 1.4), (2.9, -0.25, 1.5), (3, 0.25, -1.4), (2.9, 0.35, -1.4), (2.9, 0.25, -1.5), (3, 0.25, 1.4), (2.9, 0.35, 1.4), (2.9, 0.25, 1.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "Step4"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (18, -3.75, 51, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/teal>
+                        point3f[] points = [(-3, -0.25, -1.4), (-2.9, -0.35, -1.4), (-2.9, -0.25, -1.5), (-3, -0.25, 1.4), (-2.9, -0.35, 1.4), (-2.9, -0.25, 1.5), (-3, 0.25, -1.4), (-2.9, 0.35, -1.4), (-2.9, 0.25, -1.5), (-3, 0.25, 1.4), (-2.9, 0.35, 1.4), (-2.9, 0.25, 1.5), (3, -0.25, -1.4), (2.9, -0.35, -1.4), (2.9, -0.25, -1.5), (3, -0.25, 1.4), (2.9, -0.35, 1.4), (2.9, -0.25, 1.5), (3, 0.25, -1.4), (2.9, 0.35, -1.4), (2.9, 0.25, -1.5), (3, 0.25, 1.4), (2.9, 0.35, 1.4), (2.9, 0.25, 1.5)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+            }
+
+            def Mesh "FairyCord" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [10, 10, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+                int[] faceVertexIndices = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 10, 11, 1, 0, 11, 12, 2, 1, 2, 3, 13, 12, 3, 4, 14, 13, 4, 5, 15, 14, 5, 6, 16, 15, 6, 7, 17, 16, 7, 8, 18, 17, 18, 19, 9, 8, 19, 10, 0, 9, 20, 21, 11, 10, 21, 22, 12, 11, 12, 13, 23, 22, 13, 14, 24, 23, 14, 15, 25, 24, 15, 16, 26, 25, 16, 17, 27, 26, 17, 18, 28, 27, 28, 29, 19, 18, 29, 20, 10, 19, 30, 31, 21, 20, 31, 32, 22, 21, 22, 23, 33, 32, 23, 24, 34, 33, 24, 25, 35, 34, 25, 26, 36, 35, 26, 27, 37, 36, 27, 28, 38, 37, 38, 39, 29, 28, 39, 30, 20, 29, 40, 41, 31, 30, 41, 42, 32, 31, 32, 33, 43, 42, 33, 34, 44, 43, 34, 35, 45, 44, 35, 36, 46, 45, 36, 37, 47, 46, 37, 38, 48, 47, 48, 49, 39, 38, 49, 40, 30, 39, 50, 51, 41, 40, 51, 52, 42, 41, 42, 43, 53, 52, 43, 44, 54, 53, 44, 45, 55, 54, 45, 46, 56, 55, 46, 47, 57, 56, 47, 48, 58, 57, 58, 59, 49, 48, 59, 50, 40, 49, 60, 61, 51, 50, 61, 62, 52, 51, 52, 53, 63, 62, 53, 54, 64, 63, 54, 55, 65, 64, 55, 56, 66, 65, 56, 57, 67, 66, 57, 58, 68, 67, 68, 69, 59, 58, 69, 60, 50, 59, 70, 71, 61, 60, 71, 72, 62, 61, 62, 63, 73, 72, 63, 64, 74, 73, 64, 65, 75, 74, 65, 66, 76, 75, 66, 67, 77, 76, 67, 68, 78, 77, 78, 79, 69, 68, 79, 70, 60, 69, 80, 81, 71, 70, 81, 82, 72, 71, 72, 73, 83, 82, 73, 74, 84, 83, 74, 75, 85, 84, 75, 76, 86, 85, 76, 77, 87, 86, 77, 78, 88, 87, 88, 89, 79, 78, 89, 80, 70, 79, 90, 91, 81, 80, 91, 92, 82, 81, 82, 83, 93, 92, 83, 84, 94, 93, 84, 85, 95, 94, 85, 86, 96, 95, 86, 87, 97, 96, 87, 88, 98, 97, 98, 99, 89, 88, 99, 90, 80, 89, 100, 101, 91, 90, 101, 102, 92, 91, 92, 93, 103, 102, 93, 94, 104, 103, 94, 95, 105, 104, 95, 96, 106, 105, 96, 97, 107, 106, 97, 98, 108, 107, 108, 109, 99, 98, 109, 100, 90, 99, 110, 111, 101, 100, 111, 112, 102, 101, 102, 103, 113, 112, 103, 104, 114, 113, 104, 105, 115, 114, 105, 106, 116, 115, 106, 107, 117, 116, 107, 108, 118, 117, 118, 119, 109, 108, 119, 110, 100, 109, 120, 121, 111, 110, 121, 122, 112, 111, 112, 113, 123, 122, 113, 114, 124, 123, 114, 115, 125, 124, 115, 116, 126, 125, 116, 117, 127, 126, 117, 118, 128, 127, 128, 129, 119, 118, 129, 120, 110, 119, 130, 131, 121, 120, 131, 132, 122, 121, 122, 123, 133, 132, 123, 124, 134, 133, 124, 125, 135, 134, 125, 126, 136, 135, 126, 127, 137, 136, 127, 128, 138, 137, 138, 139, 129, 128, 139, 130, 120, 129, 140, 141, 131, 130, 141, 142, 132, 131, 132, 133, 143, 142, 133, 134, 144, 143, 134, 135, 145, 144, 135, 136, 146, 145, 136, 137, 147, 146, 137, 138, 148, 147, 148, 149, 139, 138, 149, 140, 130, 139, 150, 151, 141, 140, 151, 152, 142, 141, 142, 143, 153, 152, 143, 144, 154, 153, 144, 145, 155, 154, 145, 146, 156, 155, 146, 147, 157, 156, 147, 148, 158, 157, 158, 159, 149, 148, 159, 150, 140, 149, 160, 161, 151, 150, 161, 162, 152, 151, 152, 153, 163, 162, 153, 154, 164, 163, 154, 155, 165, 164, 155, 156, 166, 165, 156, 157, 167, 166, 157, 158, 168, 167, 168, 169, 159, 158, 169, 160, 150, 159, 170, 171, 161, 160, 171, 172, 162, 161, 162, 163, 173, 172, 163, 164, 174, 173, 164, 165, 175, 174, 165, 166, 176, 175, 166, 167, 177, 176, 167, 168, 178, 177, 178, 179, 169, 168, 179, 170, 160, 169, 180, 181, 171, 170, 181, 182, 172, 171, 172, 173, 183, 182, 173, 174, 184, 183, 174, 175, 185, 184, 175, 176, 186, 185, 176, 177, 187, 186, 177, 178, 188, 187, 188, 189, 179, 178, 189, 180, 170, 179, 190, 191, 181, 180, 191, 192, 182, 181, 182, 183, 193, 192, 183, 184, 194, 193, 184, 185, 195, 194, 185, 186, 196, 195, 186, 187, 197, 196, 187, 188, 198, 197, 198, 199, 189, 188, 199, 190, 180, 189, 200, 201, 191, 190, 201, 202, 192, 191, 192, 193, 203, 202, 193, 194, 204, 203, 194, 195, 205, 204, 195, 196, 206, 205, 196, 197, 207, 206, 197, 198, 208, 207, 208, 209, 199, 198, 209, 200, 190, 199, 210, 211, 201, 200, 211, 212, 202, 201, 202, 203, 213, 212, 203, 204, 214, 213, 204, 205, 215, 214, 205, 206, 216, 215, 206, 207, 217, 216, 207, 208, 218, 217, 218, 219, 209, 208, 219, 210, 200, 209, 220, 221, 211, 210, 221, 222, 212, 211, 212, 213, 223, 222, 213, 214, 224, 223, 214, 215, 225, 224, 215, 216, 226, 225, 216, 217, 227, 226, 217, 218, 228, 227, 228, 229, 219, 218, 229, 220, 210, 219, 230, 231, 221, 220, 231, 232, 222, 221, 222, 223, 233, 232, 223, 224, 234, 233, 224, 225, 235, 234, 225, 226, 236, 235, 226, 227, 237, 236, 227, 228, 238, 237, 238, 239, 229, 228, 239, 230, 220, 229, 240, 241, 231, 230, 241, 242, 232, 231, 232, 233, 243, 242, 233, 234, 244, 243, 234, 235, 245, 244, 235, 236, 246, 245, 236, 237, 247, 246, 237, 238, 248, 247, 248, 249, 239, 238, 249, 240, 230, 239]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                point3f[] points = [(-58.97483, -4, 167.158), (-58.979637, -4.0940456, 167.12784), (-58.99222, -4.152169, 167.04883), (-59.00778, -4.152169, 166.95117), (-59.020363, -4.0940456, 166.87216), (-59.02517, -4, 166.842), (-59.020363, -3.9059544, 166.87216), (-59.00778, -3.847831, 166.95117), (-58.99222, -3.847831, 167.04883), (-58.979637, -3.9059544, 167.12784), (-54.058376, -4, 166.37488), (-54.06314, -4.0940456, 166.3447), (-54.075623, -4.152169, 166.26569), (-54.091045, -4.152169, 166.168), (-54.103523, -4.0940456, 166.08899), (-54.10829, -4, 166.0588), (-54.103523, -3.9059544, 166.08899), (-54.091045, -3.847831, 166.168), (-54.075623, -3.847831, 166.26569), (-54.06314, -3.9059544, 166.3447), (-49.142334, -4, 165.60522), (-49.146984, -4.0940456, 165.57503), (-49.15915, -4.152169, 165.49596), (-49.174187, -4.152169, 165.39822), (-49.18635, -4.0940456, 165.31915), (-49.190998, -4, 165.28894), (-49.18635, -3.9059544, 165.31915), (-49.174187, -3.847831, 165.39822), (-49.15915, -3.847831, 165.49596), (-49.146984, -3.9059544, 165.57503), (-44.226704, -4, 164.8622), (-44.231155, -4.0940456, 164.83197), (-44.2428, -4.152169, 164.75282), (-44.2572, -4.152169, 164.65498), (-44.268845, -4.0940456, 164.57584), (-44.273296, -4, 164.54561), (-44.268845, -3.9059544, 164.57584), (-44.2572, -3.847831, 164.65498), (-44.2428, -3.847831, 164.75282), (-44.231155, -3.9059544, 164.83197), (-39.31147, -4, 164.1585), (-39.315643, -4.0940456, 164.12823), (-39.326576, -4.152169, 164.04898), (-39.340088, -4.152169, 163.95102), (-39.35102, -4.0940456, 163.87177), (-39.355198, -4, 163.8415), (-39.35102, -3.9059544, 163.87177), (-39.340088, -3.847831, 163.95102), (-39.326576, -3.847831, 164.04898), (-39.315643, -3.9059544, 164.12823), (-34.396606, -4, 163.50616), (-34.400436, -4.0940456, 163.47585), (-34.41047, -4.152169, 163.39648), (-34.422867, -4.152169, 163.29839), (-34.432896, -4.0940456, 163.21901), (-34.436726, -4, 163.18869), (-34.432896, -3.9059544, 163.21901), (-34.422867, -3.847831, 163.29839), (-34.41047, -3.847831, 163.39648), (-34.400436, -3.9059544, 163.47585), (-29.482092, -4, 162.91635), (-29.485512, -4.0940456, 162.88599), (-29.494467, -4.152169, 162.80649), (-29.505533, -4.152169, 162.70822), (-29.514488, -4.0940456, 162.62872), (-29.517908, -4, 162.59836), (-29.514488, -3.9059544, 162.62872), (-29.505533, -3.847831, 162.70822), (-29.494467, -3.847831, 162.80649), (-29.485512, -3.9059544, 162.88599), (-24.56789, -4, 162.39914), (-24.57084, -4.0940456, 162.36871), (-24.578562, -4.152169, 162.2891), (-24.588106, -4.152169, 162.19067), (-24.595827, -4.0940456, 162.11104), (-24.598776, -4, 162.08063), (-24.595827, -3.9059544, 162.11104), (-24.588106, -3.847831, 162.19067), (-24.578562, -3.847831, 162.2891), (-24.57084, -3.9059544, 162.36871), (-19.653963, -4, 161.96335), (-19.65639, -4.0940456, 161.93288), (-19.66274, -4.152169, 161.85313), (-19.670591, -4.152169, 161.75456), (-19.676943, -4.0940456, 161.67482), (-19.679369, -4, 161.64435), (-19.676943, -3.9059544, 161.67482), (-19.670591, -3.847831, 161.75456), (-19.66274, -3.847831, 161.85313), (-19.65639, -3.9059544, 161.93288), (-14.740265, -4, 161.61642), (-14.742125, -4.0940456, 161.58592), (-14.746992, -4.152169, 161.50607), (-14.753008, -4.152169, 161.40738), (-14.757875, -4.0940456, 161.32751), (-14.759735, -4, 161.29701), (-14.757875, -3.9059544, 161.32751), (-14.753008, -3.847831, 161.40738), (-14.746992, -3.847831, 161.50607), (-14.742125, -3.9059544, 161.58592), (-9.826743, -4, 161.3643), (-9.828001, -4.0940456, 161.33377), (-9.831297, -4.152169, 161.25385), (-9.83537, -4.152169, 161.15504), (-9.838665, -4.0940456, 161.07512), (-9.839924, -4, 161.04459), (-9.838665, -3.9059544, 161.07512), (-9.83537, -3.847831, 161.15504), (-9.831297, -3.847831, 161.25385), (-9.828001, -3.9059544, 161.33377), (-4.913341, -4, 161.2113), (-4.913976, -4.0940456, 161.18074), (-4.915639, -4.152169, 161.10077), (-4.9176946, -4.152169, 161.00189), (-4.9193573, -4.0940456, 160.92192), (-4.9199924, -4, 160.89137), (-4.9193573, -3.9059544, 160.92192), (-4.9176946, -3.847831, 161.00189), (-4.915639, -3.847831, 161.10077), (-4.913976, -3.9059544, 161.18074), (0, -4, 161.16), (0, -4.0940456, 161.12944), (0, -4.152169, 161.04944), (0, -4.152169, 160.95056), (0, -4.0940456, 160.87056), (0, -4, 160.84), (0, -3.9059544, 160.87056), (0, -3.847831, 160.95056), (0, -3.847831, 161.04944), (0, -3.9059544, 161.12944), (4.913341, -4, 161.2113), (4.913976, -4.0940456, 161.18074), (4.915639, -4.152169, 161.10077), (4.9176946, -4.152169, 161.00189), (4.9193573, -4.0940456, 160.92192), (4.9199924, -4, 160.89137), (4.9193573, -3.9059544, 160.92192), (4.9176946, -3.847831, 161.00189), (4.915639, -3.847831, 161.10077), (4.913976, -3.9059544, 161.18074), (9.826743, -4, 161.3643), (9.828001, -4.0940456, 161.33377), (9.831297, -4.152169, 161.25385), (9.83537, -4.152169, 161.15504), (9.838665, -4.0940456, 161.07512), (9.839924, -4, 161.04459), (9.838665, -3.9059544, 161.07512), (9.83537, -3.847831, 161.15504), (9.831297, -3.847831, 161.25385), (9.828001, -3.9059544, 161.33377), (14.740265, -4, 161.61642), (14.742125, -4.0940456, 161.58592), (14.746992, -4.152169, 161.50607), (14.753008, -4.152169, 161.40738), (14.757875, -4.0940456, 161.32751), (14.759735, -4, 161.29701), (14.757875, -3.9059544, 161.32751), (14.753008, -3.847831, 161.40738), (14.746992, -3.847831, 161.50607), (14.742125, -3.9059544, 161.58592), (19.653963, -4, 161.96335), (19.65639, -4.0940456, 161.93288), (19.66274, -4.152169, 161.85313), (19.670591, -4.152169, 161.75456), (19.676943, -4.0940456, 161.67482), (19.679369, -4, 161.64435), (19.676943, -3.9059544, 161.67482), (19.670591, -3.847831, 161.75456), (19.66274, -3.847831, 161.85313), (19.65639, -3.9059544, 161.93288), (24.56789, -4, 162.39914), (24.57084, -4.0940456, 162.36871), (24.578562, -4.152169, 162.2891), (24.588106, -4.152169, 162.19067), (24.595827, -4.0940456, 162.11104), (24.598776, -4, 162.08063), (24.595827, -3.9059544, 162.11104), (24.588106, -3.847831, 162.19067), (24.578562, -3.847831, 162.2891), (24.57084, -3.9059544, 162.36871), (29.482092, -4, 162.91635), (29.485512, -4.0940456, 162.88599), (29.494467, -4.152169, 162.80649), (29.505533, -4.152169, 162.70822), (29.514488, -4.0940456, 162.62872), (29.517908, -4, 162.59836), (29.514488, -3.9059544, 162.62872), (29.505533, -3.847831, 162.70822), (29.494467, -3.847831, 162.80649), (29.485512, -3.9059544, 162.88599), (34.396606, -4, 163.50616), (34.400436, -4.0940456, 163.47585), (34.41047, -4.152169, 163.39648), (34.422867, -4.152169, 163.29839), (34.432896, -4.0940456, 163.21901), (34.436726, -4, 163.18869), (34.432896, -3.9059544, 163.21901), (34.422867, -3.847831, 163.29839), (34.41047, -3.847831, 163.39648), (34.400436, -3.9059544, 163.47585), (39.31147, -4, 164.1585), (39.315643, -4.0940456, 164.12823), (39.326576, -4.152169, 164.04898), (39.340088, -4.152169, 163.95102), (39.35102, -4.0940456, 163.87177), (39.355198, -4, 163.8415), (39.35102, -3.9059544, 163.87177), (39.340088, -3.847831, 163.95102), (39.326576, -3.847831, 164.04898), (39.315643, -3.9059544, 164.12823), (44.226704, -4, 164.8622), (44.231155, -4.0940456, 164.83197), (44.2428, -4.152169, 164.75282), (44.2572, -4.152169, 164.65498), (44.268845, -4.0940456, 164.57584), (44.273296, -4, 164.54561), (44.268845, -3.9059544, 164.57584), (44.2572, -3.847831, 164.65498), (44.2428, -3.847831, 164.75282), (44.231155, -3.9059544, 164.83197), (49.142334, -4, 165.60522), (49.146984, -4.0940456, 165.57503), (49.15915, -4.152169, 165.49596), (49.174187, -4.152169, 165.39822), (49.18635, -4.0940456, 165.31915), (49.190998, -4, 165.28894), (49.18635, -3.9059544, 165.31915), (49.174187, -3.847831, 165.39822), (49.15915, -3.847831, 165.49596), (49.146984, -3.9059544, 165.57503), (54.058376, -4, 166.37488), (54.06314, -4.0940456, 166.3447), (54.075623, -4.152169, 166.26569), (54.091045, -4.152169, 166.168), (54.103523, -4.0940456, 166.08899), (54.10829, -4, 166.0588), (54.103523, -3.9059544, 166.08899), (54.091045, -3.847831, 166.168), (54.075623, -3.847831, 166.26569), (54.06314, -3.9059544, 166.3447), (58.97483, -4, 167.158), (58.979637, -4.0940456, 167.12784), (58.99222, -4.152169, 167.04883), (59.00778, -4.152169, 166.95117), (59.020363, -4.0940456, 166.87216), (59.02517, -4, 166.842), (59.020363, -3.9059544, 166.87216), (59.00778, -3.847831, 166.95117), (58.99222, -3.847831, 167.04883), (58.979637, -3.9059544, 167.12784)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def Xform "Socket0"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-54, -4, 165.7536468362977, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb0" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(-54, -4, 165.72365), (-53.72447, -4, 165.66884), (-53.74544, -3.8945584, 165.66884), (-53.80517, -3.8051693, 165.66884), (-53.894558, -3.7454417, 165.66884), (-54, -3.724468, 165.66884), (-54.105442, -3.7454417, 165.66884), (-54.19483, -3.8051693, 165.66884), (-54.25456, -3.8945584, 165.66884), (-54.27553, -4, 165.66884), (-54.25456, -4.1054416, 165.66884), (-54.19483, -4.1948304, 165.66884), (-54.105442, -4.2545586, 165.66884), (-54, -4.2755322, 165.66884), (-53.894558, -4.2545586, 165.66884), (-53.80517, -4.1948304, 165.66884), (-53.74544, -4.1054416, 165.66884), (-53.490883, -4, 165.51276), (-53.529636, -3.8051693, 165.51276), (-53.64, -3.64, 165.51276), (-53.80517, -3.5296373, 165.51276), (-54, -3.490883, 165.51276), (-54.19483, -3.5296373, 165.51276), (-54.36, -3.64, 165.51276), (-54.470364, -3.8051693, 165.51276), (-54.509117, -4, 165.51276), (-54.470364, -4.1948304, 165.51276), (-54.36, -4.36, 165.51276), (-54.19483, -4.4703627, 165.51276), (-54, -4.5091166, 165.51276), (-53.80517, -4.4703627, 165.51276), (-53.64, -4.36, 165.51276), (-53.529636, -4.1948304, 165.51276), (-53.33481, -4, 165.27917), (-53.38544, -3.7454417, 165.27917), (-53.529636, -3.5296373, 165.27917), (-53.74544, -3.3854415, 165.27917), (-54, -3.3348067, 165.27917), (-54.25456, -3.3854415, 165.27917), (-54.470364, -3.5296373, 165.27917), (-54.61456, -3.7454417, 165.27917), (-54.66519, -4, 165.27917), (-54.61456, -4.2545586, 165.27917), (-54.470364, -4.4703627, 165.27917), (-54.25456, -4.614558, 165.27917), (-54, -4.665193, 165.27917), (-53.74544, -4.614558, 165.27917), (-53.529636, -4.4703627, 165.27917), (-53.38544, -4.2545586, 165.27917), (-53.28, -4, 165.00365), (-53.33481, -3.724468, 165.00365), (-53.490883, -3.490883, 165.00365), (-53.72447, -3.3348067, 165.00365), (-54, -3.28, 165.00365), (-54.27553, -3.3348067, 165.00365), (-54.509117, -3.490883, 165.00365), (-54.66519, -3.724468, 165.00365), (-54.72, -4, 165.00365), (-54.66519, -4.2755322, 165.00365), (-54.509117, -4.5091166, 165.00365), (-54.27553, -4.665193, 165.00365), (-54, -4.72, 165.00365), (-53.72447, -4.665193, 165.00365), (-53.490883, -4.5091166, 165.00365), (-53.33481, -4.2755322, 165.00365), (-53.33481, -4, 164.72812), (-53.38544, -3.7454417, 164.72812), (-53.529636, -3.5296373, 164.72812), (-53.74544, -3.3854415, 164.72812), (-54, -3.3348067, 164.72812), (-54.25456, -3.3854415, 164.72812), (-54.470364, -3.5296373, 164.72812), (-54.61456, -3.7454417, 164.72812), (-54.66519, -4, 164.72812), (-54.61456, -4.2545586, 164.72812), (-54.470364, -4.4703627, 164.72812), (-54.25456, -4.614558, 164.72812), (-54, -4.665193, 164.72812), (-53.74544, -4.614558, 164.72812), (-53.529636, -4.4703627, 164.72812), (-53.38544, -4.2545586, 164.72812), (-53.490883, -4, 164.49454), (-53.529636, -3.8051693, 164.49454), (-53.64, -3.64, 164.49454), (-53.80517, -3.5296373, 164.49454), (-54, -3.490883, 164.49454), (-54.19483, -3.5296373, 164.49454), (-54.36, -3.64, 164.49454), (-54.470364, -3.8051693, 164.49454), (-54.509117, -4, 164.49454), (-54.470364, -4.1948304, 164.49454), (-54.36, -4.36, 164.49454), (-54.19483, -4.4703627, 164.49454), (-54, -4.5091166, 164.49454), (-53.80517, -4.4703627, 164.49454), (-53.64, -4.36, 164.49454), (-53.529636, -4.1948304, 164.49454), (-53.72447, -4, 164.33846), (-53.74544, -3.8945584, 164.33846), (-53.80517, -3.8051693, 164.33846), (-53.894558, -3.7454417, 164.33846), (-54, -3.724468, 164.33846), (-54.105442, -3.7454417, 164.33846), (-54.19483, -3.8051693, 164.33846), (-54.25456, -3.8945584, 164.33846), (-54.27553, -4, 164.33846), (-54.25456, -4.1054416, 164.33846), (-54.19483, -4.1948304, 164.33846), (-54.105442, -4.2545586, 164.33846), (-54, -4.2755322, 164.33846), (-53.894558, -4.2545586, 164.33846), (-53.80517, -4.1948304, 164.33846), (-53.74544, -4.1054416, 164.33846), (-54, -4, 164.28365)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical0"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (-54, -4, 165.0036468362977)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket1"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-40.5, -4, 163.71281850712745, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb1" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(-40.5, -4, 163.68282), (-40.22447, -4, 163.628), (-40.24544, -3.8945584, 163.628), (-40.30517, -3.8051693, 163.628), (-40.394558, -3.7454417, 163.628), (-40.5, -3.724468, 163.628), (-40.605442, -3.7454417, 163.628), (-40.69483, -3.8051693, 163.628), (-40.75456, -3.8945584, 163.628), (-40.77553, -4, 163.628), (-40.75456, -4.1054416, 163.628), (-40.69483, -4.1948304, 163.628), (-40.605442, -4.2545586, 163.628), (-40.5, -4.2755322, 163.628), (-40.394558, -4.2545586, 163.628), (-40.30517, -4.1948304, 163.628), (-40.24544, -4.1054416, 163.628), (-39.990883, -4, 163.47194), (-40.029636, -3.8051693, 163.47194), (-40.14, -3.64, 163.47194), (-40.30517, -3.5296373, 163.47194), (-40.5, -3.490883, 163.47194), (-40.69483, -3.5296373, 163.47194), (-40.86, -3.64, 163.47194), (-40.970364, -3.8051693, 163.47194), (-41.009117, -4, 163.47194), (-40.970364, -4.1948304, 163.47194), (-40.86, -4.36, 163.47194), (-40.69483, -4.4703627, 163.47194), (-40.5, -4.5091166, 163.47194), (-40.30517, -4.4703627, 163.47194), (-40.14, -4.36, 163.47194), (-40.029636, -4.1948304, 163.47194), (-39.83481, -4, 163.23836), (-39.88544, -3.7454417, 163.23836), (-40.029636, -3.5296373, 163.23836), (-40.24544, -3.3854415, 163.23836), (-40.5, -3.3348067, 163.23836), (-40.75456, -3.3854415, 163.23836), (-40.970364, -3.5296373, 163.23836), (-41.11456, -3.7454417, 163.23836), (-41.16519, -4, 163.23836), (-41.11456, -4.2545586, 163.23836), (-40.970364, -4.4703627, 163.23836), (-40.75456, -4.614558, 163.23836), (-40.5, -4.665193, 163.23836), (-40.24544, -4.614558, 163.23836), (-40.029636, -4.4703627, 163.23836), (-39.88544, -4.2545586, 163.23836), (-39.78, -4, 162.96281), (-39.83481, -3.724468, 162.96281), (-39.990883, -3.490883, 162.96281), (-40.22447, -3.3348067, 162.96281), (-40.5, -3.28, 162.96281), (-40.77553, -3.3348067, 162.96281), (-41.009117, -3.490883, 162.96281), (-41.16519, -3.724468, 162.96281), (-41.22, -4, 162.96281), (-41.16519, -4.2755322, 162.96281), (-41.009117, -4.5091166, 162.96281), (-40.77553, -4.665193, 162.96281), (-40.5, -4.72, 162.96281), (-40.22447, -4.665193, 162.96281), (-39.990883, -4.5091166, 162.96281), (-39.83481, -4.2755322, 162.96281), (-39.83481, -4, 162.68729), (-39.88544, -3.7454417, 162.68729), (-40.029636, -3.5296373, 162.68729), (-40.24544, -3.3854415, 162.68729), (-40.5, -3.3348067, 162.68729), (-40.75456, -3.3854415, 162.68729), (-40.970364, -3.5296373, 162.68729), (-41.11456, -3.7454417, 162.68729), (-41.16519, -4, 162.68729), (-41.11456, -4.2545586, 162.68729), (-40.970364, -4.4703627, 162.68729), (-40.75456, -4.614558, 162.68729), (-40.5, -4.665193, 162.68729), (-40.24544, -4.614558, 162.68729), (-40.029636, -4.4703627, 162.68729), (-39.88544, -4.2545586, 162.68729), (-39.990883, -4, 162.4537), (-40.029636, -3.8051693, 162.4537), (-40.14, -3.64, 162.4537), (-40.30517, -3.5296373, 162.4537), (-40.5, -3.490883, 162.4537), (-40.69483, -3.5296373, 162.4537), (-40.86, -3.64, 162.4537), (-40.970364, -3.8051693, 162.4537), (-41.009117, -4, 162.4537), (-40.970364, -4.1948304, 162.4537), (-40.86, -4.36, 162.4537), (-40.69483, -4.4703627, 162.4537), (-40.5, -4.5091166, 162.4537), (-40.30517, -4.4703627, 162.4537), (-40.14, -4.36, 162.4537), (-40.029636, -4.1948304, 162.4537), (-40.22447, -4, 162.29762), (-40.24544, -3.8945584, 162.29762), (-40.30517, -3.8051693, 162.29762), (-40.394558, -3.7454417, 162.29762), (-40.5, -3.724468, 162.29762), (-40.605442, -3.7454417, 162.29762), (-40.69483, -3.8051693, 162.29762), (-40.75456, -3.8945584, 162.29762), (-40.77553, -4, 162.29762), (-40.75456, -4.1054416, 162.29762), (-40.69483, -4.1948304, 162.29762), (-40.605442, -4.2545586, 162.29762), (-40.5, -4.2755322, 162.29762), (-40.394558, -4.2545586, 162.29762), (-40.30517, -4.1948304, 162.29762), (-40.24544, -4.1054416, 162.29762), (-40.5, -4, 162.24281)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical1"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (-40.5, -4, 162.96281850712745)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket2"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-27, -4, 162.03457538086317, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb2" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(-27, -4, 162.00458), (-26.724468, -4, 161.94977), (-26.745441, -3.8945584, 161.94977), (-26.80517, -3.8051693, 161.94977), (-26.894558, -3.7454417, 161.94977), (-27, -3.724468, 161.94977), (-27.105442, -3.7454417, 161.94977), (-27.19483, -3.8051693, 161.94977), (-27.254559, -3.8945584, 161.94977), (-27.275532, -4, 161.94977), (-27.254559, -4.1054416, 161.94977), (-27.19483, -4.1948304, 161.94977), (-27.105442, -4.2545586, 161.94977), (-27, -4.2755322, 161.94977), (-26.894558, -4.2545586, 161.94977), (-26.80517, -4.1948304, 161.94977), (-26.745441, -4.1054416, 161.94977), (-26.490883, -4, 161.79369), (-26.529636, -3.8051693, 161.79369), (-26.64, -3.64, 161.79369), (-26.80517, -3.5296373, 161.79369), (-27, -3.490883, 161.79369), (-27.19483, -3.5296373, 161.79369), (-27.36, -3.64, 161.79369), (-27.470364, -3.8051693, 161.79369), (-27.509117, -4, 161.79369), (-27.470364, -4.1948304, 161.79369), (-27.36, -4.36, 161.79369), (-27.19483, -4.4703627, 161.79369), (-27, -4.5091166, 161.79369), (-26.80517, -4.4703627, 161.79369), (-26.64, -4.36, 161.79369), (-26.529636, -4.1948304, 161.79369), (-26.334806, -4, 161.5601), (-26.38544, -3.7454417, 161.5601), (-26.529636, -3.5296373, 161.5601), (-26.745441, -3.3854415, 161.5601), (-27, -3.3348067, 161.5601), (-27.254559, -3.3854415, 161.5601), (-27.470364, -3.5296373, 161.5601), (-27.61456, -3.7454417, 161.5601), (-27.665194, -4, 161.5601), (-27.61456, -4.2545586, 161.5601), (-27.470364, -4.4703627, 161.5601), (-27.254559, -4.614558, 161.5601), (-27, -4.665193, 161.5601), (-26.745441, -4.614558, 161.5601), (-26.529636, -4.4703627, 161.5601), (-26.38544, -4.2545586, 161.5601), (-26.28, -4, 161.28458), (-26.334806, -3.724468, 161.28458), (-26.490883, -3.490883, 161.28458), (-26.724468, -3.3348067, 161.28458), (-27, -3.28, 161.28458), (-27.275532, -3.3348067, 161.28458), (-27.509117, -3.490883, 161.28458), (-27.665194, -3.724468, 161.28458), (-27.72, -4, 161.28458), (-27.665194, -4.2755322, 161.28458), (-27.509117, -4.5091166, 161.28458), (-27.275532, -4.665193, 161.28458), (-27, -4.72, 161.28458), (-26.724468, -4.665193, 161.28458), (-26.490883, -4.5091166, 161.28458), (-26.334806, -4.2755322, 161.28458), (-26.334806, -4, 161.00905), (-26.38544, -3.7454417, 161.00905), (-26.529636, -3.5296373, 161.00905), (-26.745441, -3.3854415, 161.00905), (-27, -3.3348067, 161.00905), (-27.254559, -3.3854415, 161.00905), (-27.470364, -3.5296373, 161.00905), (-27.61456, -3.7454417, 161.00905), (-27.665194, -4, 161.00905), (-27.61456, -4.2545586, 161.00905), (-27.470364, -4.4703627, 161.00905), (-27.254559, -4.614558, 161.00905), (-27, -4.665193, 161.00905), (-26.745441, -4.614558, 161.00905), (-26.529636, -4.4703627, 161.00905), (-26.38544, -4.2545586, 161.00905), (-26.490883, -4, 160.77545), (-26.529636, -3.8051693, 160.77545), (-26.64, -3.64, 160.77545), (-26.80517, -3.5296373, 160.77545), (-27, -3.490883, 160.77545), (-27.19483, -3.5296373, 160.77545), (-27.36, -3.64, 160.77545), (-27.470364, -3.8051693, 160.77545), (-27.509117, -4, 160.77545), (-27.470364, -4.1948304, 160.77545), (-27.36, -4.36, 160.77545), (-27.19483, -4.4703627, 160.77545), (-27, -4.5091166, 160.77545), (-26.80517, -4.4703627, 160.77545), (-26.64, -4.36, 160.77545), (-26.529636, -4.1948304, 160.77545), (-26.724468, -4, 160.61938), (-26.745441, -3.8945584, 160.61938), (-26.80517, -3.8051693, 160.61938), (-26.894558, -3.7454417, 160.61938), (-27, -3.724468, 160.61938), (-27.105442, -3.7454417, 160.61938), (-27.19483, -3.8051693, 160.61938), (-27.254559, -3.8945584, 160.61938), (-27.275532, -4, 160.61938), (-27.254559, -4.1054416, 160.61938), (-27.19483, -4.1948304, 160.61938), (-27.105442, -4.2545586, 160.61938), (-27, -4.2755322, 160.61938), (-26.894558, -4.2545586, 160.61938), (-26.80517, -4.1948304, 160.61938), (-26.745441, -4.1054416, 160.61938), (-27, -4, 160.56458)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical2"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (-27, -4, 161.28457538086317)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket3"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-13.5, -4, 160.9333930298257, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb3" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(-13.5, -4, 160.9034), (-13.224468, -4, 160.84859), (-13.245441, -3.8945584, 160.84859), (-13.305169, -3.8051693, 160.84859), (-13.394559, -3.7454417, 160.84859), (-13.5, -3.724468, 160.84859), (-13.605441, -3.7454417, 160.84859), (-13.694831, -3.8051693, 160.84859), (-13.754559, -3.8945584, 160.84859), (-13.775532, -4, 160.84859), (-13.754559, -4.1054416, 160.84859), (-13.694831, -4.1948304, 160.84859), (-13.605441, -4.2545586, 160.84859), (-13.5, -4.2755322, 160.84859), (-13.394559, -4.2545586, 160.84859), (-13.305169, -4.1948304, 160.84859), (-13.245441, -4.1054416, 160.84859), (-12.990883, -4, 160.6925), (-13.029637, -3.8051693, 160.6925), (-13.14, -3.64, 160.6925), (-13.305169, -3.5296373, 160.6925), (-13.5, -3.490883, 160.6925), (-13.694831, -3.5296373, 160.6925), (-13.86, -3.64, 160.6925), (-13.970363, -3.8051693, 160.6925), (-14.009117, -4, 160.6925), (-13.970363, -4.1948304, 160.6925), (-13.86, -4.36, 160.6925), (-13.694831, -4.4703627, 160.6925), (-13.5, -4.5091166, 160.6925), (-13.305169, -4.4703627, 160.6925), (-13.14, -4.36, 160.6925), (-13.029637, -4.1948304, 160.6925), (-12.834806, -4, 160.45892), (-12.885442, -3.7454417, 160.45892), (-13.029637, -3.5296373, 160.45892), (-13.245441, -3.3854415, 160.45892), (-13.5, -3.3348067, 160.45892), (-13.754559, -3.3854415, 160.45892), (-13.970363, -3.5296373, 160.45892), (-14.114558, -3.7454417, 160.45892), (-14.165194, -4, 160.45892), (-14.114558, -4.2545586, 160.45892), (-13.970363, -4.4703627, 160.45892), (-13.754559, -4.614558, 160.45892), (-13.5, -4.665193, 160.45892), (-13.245441, -4.614558, 160.45892), (-13.029637, -4.4703627, 160.45892), (-12.885442, -4.2545586, 160.45892), (-12.78, -4, 160.1834), (-12.834806, -3.724468, 160.1834), (-12.990883, -3.490883, 160.1834), (-13.224468, -3.3348067, 160.1834), (-13.5, -3.28, 160.1834), (-13.775532, -3.3348067, 160.1834), (-14.009117, -3.490883, 160.1834), (-14.165194, -3.724468, 160.1834), (-14.22, -4, 160.1834), (-14.165194, -4.2755322, 160.1834), (-14.009117, -4.5091166, 160.1834), (-13.775532, -4.665193, 160.1834), (-13.5, -4.72, 160.1834), (-13.224468, -4.665193, 160.1834), (-12.990883, -4.5091166, 160.1834), (-12.834806, -4.2755322, 160.1834), (-12.834806, -4, 159.90787), (-12.885442, -3.7454417, 159.90787), (-13.029637, -3.5296373, 159.90787), (-13.245441, -3.3854415, 159.90787), (-13.5, -3.3348067, 159.90787), (-13.754559, -3.3854415, 159.90787), (-13.970363, -3.5296373, 159.90787), (-14.114558, -3.7454417, 159.90787), (-14.165194, -4, 159.90787), (-14.114558, -4.2545586, 159.90787), (-13.970363, -4.4703627, 159.90787), (-13.754559, -4.614558, 159.90787), (-13.5, -4.665193, 159.90787), (-13.245441, -4.614558, 159.90787), (-13.029637, -4.4703627, 159.90787), (-12.885442, -4.2545586, 159.90787), (-12.990883, -4, 159.67427), (-13.029637, -3.8051693, 159.67427), (-13.14, -3.64, 159.67427), (-13.305169, -3.5296373, 159.67427), (-13.5, -3.490883, 159.67427), (-13.694831, -3.5296373, 159.67427), (-13.86, -3.64, 159.67427), (-13.970363, -3.8051693, 159.67427), (-14.009117, -4, 159.67427), (-13.970363, -4.1948304, 159.67427), (-13.86, -4.36, 159.67427), (-13.694831, -4.4703627, 159.67427), (-13.5, -4.5091166, 159.67427), (-13.305169, -4.4703627, 159.67427), (-13.14, -4.36, 159.67427), (-13.029637, -4.1948304, 159.67427), (-13.224468, -4, 159.5182), (-13.245441, -3.8945584, 159.5182), (-13.305169, -3.8051693, 159.5182), (-13.394559, -3.7454417, 159.5182), (-13.5, -3.724468, 159.5182), (-13.605441, -3.7454417, 159.5182), (-13.694831, -3.8051693, 159.5182), (-13.754559, -3.8945584, 159.5182), (-13.775532, -4, 159.5182), (-13.754559, -4.1054416, 159.5182), (-13.694831, -4.1948304, 159.5182), (-13.605441, -4.2545586, 159.5182), (-13.5, -4.2755322, 159.5182), (-13.394559, -4.2545586, 159.5182), (-13.305169, -4.1948304, 159.5182), (-13.245441, -4.1054416, 159.5182), (-13.5, -4, 159.4634)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical3"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (-13.5, -4, 160.1833930298257)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket4"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, -4, 160.55, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb4" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(0, -4, 160.52), (0.27553207, -4, 160.4652), (0.25455844, -3.8945584, 160.4652), (0.1948306, -3.8051693, 160.4652), (0.105441555, -3.7454417, 160.4652), (1.6871474e-17, -3.724468, 160.4652), (-0.105441555, -3.7454417, 160.4652), (-0.1948306, -3.8051693, 160.4652), (-0.25455844, -3.8945584, 160.4652), (-0.27553207, -4, 160.4652), (-0.25455844, -4.1054416, 160.4652), (-0.1948306, -4.1948304, 160.4652), (-0.105441555, -4.2545586, 160.4652), (-5.061442e-17, -4.2755322, 160.4652), (0.105441555, -4.2545586, 160.4652), (0.1948306, -4.1948304, 160.4652), (0.25455844, -4.1054416, 160.4652), (0.5091169, -4, 160.30911), (0.47036266, -3.8051693, 160.30911), (0.36, -3.64, 160.30911), (0.1948306, -3.5296373, 160.30911), (3.117442e-17, -3.490883, 160.30911), (-0.1948306, -3.5296373, 160.30911), (-0.36, -3.64, 160.30911), (-0.47036266, -3.8051693, 160.30911), (-0.5091169, -4, 160.30911), (-0.47036266, -4.1948304, 160.30911), (-0.36, -4.36, 160.30911), (-0.1948306, -4.4703627, 160.30911), (-9.352326e-17, -4.5091166, 160.30911), (0.1948306, -4.4703627, 160.30911), (0.36, -4.36, 160.30911), (0.47036266, -4.1948304, 160.30911), (0.66519326, -4, 160.07553), (0.61455846, -3.7454417, 160.07553), (0.47036266, -3.5296373, 160.07553), (0.25455844, -3.3854415, 160.07553), (4.073134e-17, -3.3348067, 160.07553), (-0.25455844, -3.3854415, 160.07553), (-0.47036266, -3.5296373, 160.07553), (-0.61455846, -3.7454417, 160.07553), (-0.66519326, -4, 160.07553), (-0.61455846, -4.2545586, 160.07553), (-0.47036266, -4.4703627, 160.07553), (-0.25455844, -4.614558, 160.07553), (-1.2219402e-16, -4.665193, 160.07553), (0.25455844, -4.614558, 160.07553), (0.47036266, -4.4703627, 160.07553), (0.61455846, -4.2545586, 160.07553), (0.72, -4, 159.8), (0.66519326, -3.724468, 159.8), (0.5091169, -3.490883, 159.8), (0.27553207, -3.3348067, 159.8), (4.4087284e-17, -3.28, 159.8), (-0.27553207, -3.3348067, 159.8), (-0.5091169, -3.490883, 159.8), (-0.66519326, -3.724468, 159.8), (-0.72, -4, 159.8), (-0.66519326, -4.2755322, 159.8), (-0.5091169, -4.5091166, 159.8), (-0.27553207, -4.665193, 159.8), (-1.3226185e-16, -4.72, 159.8), (0.27553207, -4.665193, 159.8), (0.5091169, -4.5091166, 159.8), (0.66519326, -4.2755322, 159.8), (0.66519326, -4, 159.52448), (0.61455846, -3.7454417, 159.52448), (0.47036266, -3.5296373, 159.52448), (0.25455844, -3.3854415, 159.52448), (4.073134e-17, -3.3348067, 159.52448), (-0.25455844, -3.3854415, 159.52448), (-0.47036266, -3.5296373, 159.52448), (-0.61455846, -3.7454417, 159.52448), (-0.66519326, -4, 159.52448), (-0.61455846, -4.2545586, 159.52448), (-0.47036266, -4.4703627, 159.52448), (-0.25455844, -4.614558, 159.52448), (-1.2219402e-16, -4.665193, 159.52448), (0.25455844, -4.614558, 159.52448), (0.47036266, -4.4703627, 159.52448), (0.61455846, -4.2545586, 159.52448), (0.5091169, -4, 159.29088), (0.47036266, -3.8051693, 159.29088), (0.36, -3.64, 159.29088), (0.1948306, -3.5296373, 159.29088), (3.117442e-17, -3.490883, 159.29088), (-0.1948306, -3.5296373, 159.29088), (-0.36, -3.64, 159.29088), (-0.47036266, -3.8051693, 159.29088), (-0.5091169, -4, 159.29088), (-0.47036266, -4.1948304, 159.29088), (-0.36, -4.36, 159.29088), (-0.1948306, -4.4703627, 159.29088), (-9.352326e-17, -4.5091166, 159.29088), (0.1948306, -4.4703627, 159.29088), (0.36, -4.36, 159.29088), (0.47036266, -4.1948304, 159.29088), (0.27553207, -4, 159.13481), (0.25455844, -3.8945584, 159.13481), (0.1948306, -3.8051693, 159.13481), (0.105441555, -3.7454417, 159.13481), (1.6871474e-17, -3.724468, 159.13481), (-0.105441555, -3.7454417, 159.13481), (-0.1948306, -3.8051693, 159.13481), (-0.25455844, -3.8945584, 159.13481), (-0.27553207, -4, 159.13481), (-0.25455844, -4.1054416, 159.13481), (-0.1948306, -4.1948304, 159.13481), (-0.105441555, -4.2545586, 159.13481), (-5.061442e-17, -4.2755322, 159.13481), (0.105441555, -4.2545586, 159.13481), (0.1948306, -4.1948304, 159.13481), (0.25455844, -4.1054416, 159.13481), (0, -4, 159.08)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical4"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (0, -4, 159.8)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket5"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (13.5, -4, 160.9333930298257, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb5" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(13.5, -4, 160.9034), (13.775532, -4, 160.84859), (13.754559, -3.8945584, 160.84859), (13.694831, -3.8051693, 160.84859), (13.605441, -3.7454417, 160.84859), (13.5, -3.724468, 160.84859), (13.394559, -3.7454417, 160.84859), (13.305169, -3.8051693, 160.84859), (13.245441, -3.8945584, 160.84859), (13.224468, -4, 160.84859), (13.245441, -4.1054416, 160.84859), (13.305169, -4.1948304, 160.84859), (13.394559, -4.2545586, 160.84859), (13.5, -4.2755322, 160.84859), (13.605441, -4.2545586, 160.84859), (13.694831, -4.1948304, 160.84859), (13.754559, -4.1054416, 160.84859), (14.009117, -4, 160.6925), (13.970363, -3.8051693, 160.6925), (13.86, -3.64, 160.6925), (13.694831, -3.5296373, 160.6925), (13.5, -3.490883, 160.6925), (13.305169, -3.5296373, 160.6925), (13.14, -3.64, 160.6925), (13.029637, -3.8051693, 160.6925), (12.990883, -4, 160.6925), (13.029637, -4.1948304, 160.6925), (13.14, -4.36, 160.6925), (13.305169, -4.4703627, 160.6925), (13.5, -4.5091166, 160.6925), (13.694831, -4.4703627, 160.6925), (13.86, -4.36, 160.6925), (13.970363, -4.1948304, 160.6925), (14.165194, -4, 160.45892), (14.114558, -3.7454417, 160.45892), (13.970363, -3.5296373, 160.45892), (13.754559, -3.3854415, 160.45892), (13.5, -3.3348067, 160.45892), (13.245441, -3.3854415, 160.45892), (13.029637, -3.5296373, 160.45892), (12.885442, -3.7454417, 160.45892), (12.834806, -4, 160.45892), (12.885442, -4.2545586, 160.45892), (13.029637, -4.4703627, 160.45892), (13.245441, -4.614558, 160.45892), (13.5, -4.665193, 160.45892), (13.754559, -4.614558, 160.45892), (13.970363, -4.4703627, 160.45892), (14.114558, -4.2545586, 160.45892), (14.22, -4, 160.1834), (14.165194, -3.724468, 160.1834), (14.009117, -3.490883, 160.1834), (13.775532, -3.3348067, 160.1834), (13.5, -3.28, 160.1834), (13.224468, -3.3348067, 160.1834), (12.990883, -3.490883, 160.1834), (12.834806, -3.724468, 160.1834), (12.78, -4, 160.1834), (12.834806, -4.2755322, 160.1834), (12.990883, -4.5091166, 160.1834), (13.224468, -4.665193, 160.1834), (13.5, -4.72, 160.1834), (13.775532, -4.665193, 160.1834), (14.009117, -4.5091166, 160.1834), (14.165194, -4.2755322, 160.1834), (14.165194, -4, 159.90787), (14.114558, -3.7454417, 159.90787), (13.970363, -3.5296373, 159.90787), (13.754559, -3.3854415, 159.90787), (13.5, -3.3348067, 159.90787), (13.245441, -3.3854415, 159.90787), (13.029637, -3.5296373, 159.90787), (12.885442, -3.7454417, 159.90787), (12.834806, -4, 159.90787), (12.885442, -4.2545586, 159.90787), (13.029637, -4.4703627, 159.90787), (13.245441, -4.614558, 159.90787), (13.5, -4.665193, 159.90787), (13.754559, -4.614558, 159.90787), (13.970363, -4.4703627, 159.90787), (14.114558, -4.2545586, 159.90787), (14.009117, -4, 159.67427), (13.970363, -3.8051693, 159.67427), (13.86, -3.64, 159.67427), (13.694831, -3.5296373, 159.67427), (13.5, -3.490883, 159.67427), (13.305169, -3.5296373, 159.67427), (13.14, -3.64, 159.67427), (13.029637, -3.8051693, 159.67427), (12.990883, -4, 159.67427), (13.029637, -4.1948304, 159.67427), (13.14, -4.36, 159.67427), (13.305169, -4.4703627, 159.67427), (13.5, -4.5091166, 159.67427), (13.694831, -4.4703627, 159.67427), (13.86, -4.36, 159.67427), (13.970363, -4.1948304, 159.67427), (13.775532, -4, 159.5182), (13.754559, -3.8945584, 159.5182), (13.694831, -3.8051693, 159.5182), (13.605441, -3.7454417, 159.5182), (13.5, -3.724468, 159.5182), (13.394559, -3.7454417, 159.5182), (13.305169, -3.8051693, 159.5182), (13.245441, -3.8945584, 159.5182), (13.224468, -4, 159.5182), (13.245441, -4.1054416, 159.5182), (13.305169, -4.1948304, 159.5182), (13.394559, -4.2545586, 159.5182), (13.5, -4.2755322, 159.5182), (13.605441, -4.2545586, 159.5182), (13.694831, -4.1948304, 159.5182), (13.754559, -4.1054416, 159.5182), (13.5, -4, 159.4634)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical5"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (13.5, -4, 160.1833930298257)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket6"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (27, -4, 162.03457538086317, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb6" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(27, -4, 162.00458), (27.275532, -4, 161.94977), (27.254559, -3.8945584, 161.94977), (27.19483, -3.8051693, 161.94977), (27.105442, -3.7454417, 161.94977), (27, -3.724468, 161.94977), (26.894558, -3.7454417, 161.94977), (26.80517, -3.8051693, 161.94977), (26.745441, -3.8945584, 161.94977), (26.724468, -4, 161.94977), (26.745441, -4.1054416, 161.94977), (26.80517, -4.1948304, 161.94977), (26.894558, -4.2545586, 161.94977), (27, -4.2755322, 161.94977), (27.105442, -4.2545586, 161.94977), (27.19483, -4.1948304, 161.94977), (27.254559, -4.1054416, 161.94977), (27.509117, -4, 161.79369), (27.470364, -3.8051693, 161.79369), (27.36, -3.64, 161.79369), (27.19483, -3.5296373, 161.79369), (27, -3.490883, 161.79369), (26.80517, -3.5296373, 161.79369), (26.64, -3.64, 161.79369), (26.529636, -3.8051693, 161.79369), (26.490883, -4, 161.79369), (26.529636, -4.1948304, 161.79369), (26.64, -4.36, 161.79369), (26.80517, -4.4703627, 161.79369), (27, -4.5091166, 161.79369), (27.19483, -4.4703627, 161.79369), (27.36, -4.36, 161.79369), (27.470364, -4.1948304, 161.79369), (27.665194, -4, 161.5601), (27.61456, -3.7454417, 161.5601), (27.470364, -3.5296373, 161.5601), (27.254559, -3.3854415, 161.5601), (27, -3.3348067, 161.5601), (26.745441, -3.3854415, 161.5601), (26.529636, -3.5296373, 161.5601), (26.38544, -3.7454417, 161.5601), (26.334806, -4, 161.5601), (26.38544, -4.2545586, 161.5601), (26.529636, -4.4703627, 161.5601), (26.745441, -4.614558, 161.5601), (27, -4.665193, 161.5601), (27.254559, -4.614558, 161.5601), (27.470364, -4.4703627, 161.5601), (27.61456, -4.2545586, 161.5601), (27.72, -4, 161.28458), (27.665194, -3.724468, 161.28458), (27.509117, -3.490883, 161.28458), (27.275532, -3.3348067, 161.28458), (27, -3.28, 161.28458), (26.724468, -3.3348067, 161.28458), (26.490883, -3.490883, 161.28458), (26.334806, -3.724468, 161.28458), (26.28, -4, 161.28458), (26.334806, -4.2755322, 161.28458), (26.490883, -4.5091166, 161.28458), (26.724468, -4.665193, 161.28458), (27, -4.72, 161.28458), (27.275532, -4.665193, 161.28458), (27.509117, -4.5091166, 161.28458), (27.665194, -4.2755322, 161.28458), (27.665194, -4, 161.00905), (27.61456, -3.7454417, 161.00905), (27.470364, -3.5296373, 161.00905), (27.254559, -3.3854415, 161.00905), (27, -3.3348067, 161.00905), (26.745441, -3.3854415, 161.00905), (26.529636, -3.5296373, 161.00905), (26.38544, -3.7454417, 161.00905), (26.334806, -4, 161.00905), (26.38544, -4.2545586, 161.00905), (26.529636, -4.4703627, 161.00905), (26.745441, -4.614558, 161.00905), (27, -4.665193, 161.00905), (27.254559, -4.614558, 161.00905), (27.470364, -4.4703627, 161.00905), (27.61456, -4.2545586, 161.00905), (27.509117, -4, 160.77545), (27.470364, -3.8051693, 160.77545), (27.36, -3.64, 160.77545), (27.19483, -3.5296373, 160.77545), (27, -3.490883, 160.77545), (26.80517, -3.5296373, 160.77545), (26.64, -3.64, 160.77545), (26.529636, -3.8051693, 160.77545), (26.490883, -4, 160.77545), (26.529636, -4.1948304, 160.77545), (26.64, -4.36, 160.77545), (26.80517, -4.4703627, 160.77545), (27, -4.5091166, 160.77545), (27.19483, -4.4703627, 160.77545), (27.36, -4.36, 160.77545), (27.470364, -4.1948304, 160.77545), (27.275532, -4, 160.61938), (27.254559, -3.8945584, 160.61938), (27.19483, -3.8051693, 160.61938), (27.105442, -3.7454417, 160.61938), (27, -3.724468, 160.61938), (26.894558, -3.7454417, 160.61938), (26.80517, -3.8051693, 160.61938), (26.745441, -3.8945584, 160.61938), (26.724468, -4, 160.61938), (26.745441, -4.1054416, 160.61938), (26.80517, -4.1948304, 160.61938), (26.894558, -4.2545586, 160.61938), (27, -4.2755322, 160.61938), (27.105442, -4.2545586, 160.61938), (27.19483, -4.1948304, 160.61938), (27.254559, -4.1054416, 160.61938), (27, -4, 160.56458)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical6"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (27, -4, 161.28457538086317)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket7"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (40.5, -4, 163.71281850712745, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb7" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(40.5, -4, 163.68282), (40.77553, -4, 163.628), (40.75456, -3.8945584, 163.628), (40.69483, -3.8051693, 163.628), (40.605442, -3.7454417, 163.628), (40.5, -3.724468, 163.628), (40.394558, -3.7454417, 163.628), (40.30517, -3.8051693, 163.628), (40.24544, -3.8945584, 163.628), (40.22447, -4, 163.628), (40.24544, -4.1054416, 163.628), (40.30517, -4.1948304, 163.628), (40.394558, -4.2545586, 163.628), (40.5, -4.2755322, 163.628), (40.605442, -4.2545586, 163.628), (40.69483, -4.1948304, 163.628), (40.75456, -4.1054416, 163.628), (41.009117, -4, 163.47194), (40.970364, -3.8051693, 163.47194), (40.86, -3.64, 163.47194), (40.69483, -3.5296373, 163.47194), (40.5, -3.490883, 163.47194), (40.30517, -3.5296373, 163.47194), (40.14, -3.64, 163.47194), (40.029636, -3.8051693, 163.47194), (39.990883, -4, 163.47194), (40.029636, -4.1948304, 163.47194), (40.14, -4.36, 163.47194), (40.30517, -4.4703627, 163.47194), (40.5, -4.5091166, 163.47194), (40.69483, -4.4703627, 163.47194), (40.86, -4.36, 163.47194), (40.970364, -4.1948304, 163.47194), (41.16519, -4, 163.23836), (41.11456, -3.7454417, 163.23836), (40.970364, -3.5296373, 163.23836), (40.75456, -3.3854415, 163.23836), (40.5, -3.3348067, 163.23836), (40.24544, -3.3854415, 163.23836), (40.029636, -3.5296373, 163.23836), (39.88544, -3.7454417, 163.23836), (39.83481, -4, 163.23836), (39.88544, -4.2545586, 163.23836), (40.029636, -4.4703627, 163.23836), (40.24544, -4.614558, 163.23836), (40.5, -4.665193, 163.23836), (40.75456, -4.614558, 163.23836), (40.970364, -4.4703627, 163.23836), (41.11456, -4.2545586, 163.23836), (41.22, -4, 162.96281), (41.16519, -3.724468, 162.96281), (41.009117, -3.490883, 162.96281), (40.77553, -3.3348067, 162.96281), (40.5, -3.28, 162.96281), (40.22447, -3.3348067, 162.96281), (39.990883, -3.490883, 162.96281), (39.83481, -3.724468, 162.96281), (39.78, -4, 162.96281), (39.83481, -4.2755322, 162.96281), (39.990883, -4.5091166, 162.96281), (40.22447, -4.665193, 162.96281), (40.5, -4.72, 162.96281), (40.77553, -4.665193, 162.96281), (41.009117, -4.5091166, 162.96281), (41.16519, -4.2755322, 162.96281), (41.16519, -4, 162.68729), (41.11456, -3.7454417, 162.68729), (40.970364, -3.5296373, 162.68729), (40.75456, -3.3854415, 162.68729), (40.5, -3.3348067, 162.68729), (40.24544, -3.3854415, 162.68729), (40.029636, -3.5296373, 162.68729), (39.88544, -3.7454417, 162.68729), (39.83481, -4, 162.68729), (39.88544, -4.2545586, 162.68729), (40.029636, -4.4703627, 162.68729), (40.24544, -4.614558, 162.68729), (40.5, -4.665193, 162.68729), (40.75456, -4.614558, 162.68729), (40.970364, -4.4703627, 162.68729), (41.11456, -4.2545586, 162.68729), (41.009117, -4, 162.4537), (40.970364, -3.8051693, 162.4537), (40.86, -3.64, 162.4537), (40.69483, -3.5296373, 162.4537), (40.5, -3.490883, 162.4537), (40.30517, -3.5296373, 162.4537), (40.14, -3.64, 162.4537), (40.029636, -3.8051693, 162.4537), (39.990883, -4, 162.4537), (40.029636, -4.1948304, 162.4537), (40.14, -4.36, 162.4537), (40.30517, -4.4703627, 162.4537), (40.5, -4.5091166, 162.4537), (40.69483, -4.4703627, 162.4537), (40.86, -4.36, 162.4537), (40.970364, -4.1948304, 162.4537), (40.77553, -4, 162.29762), (40.75456, -3.8945584, 162.29762), (40.69483, -3.8051693, 162.29762), (40.605442, -3.7454417, 162.29762), (40.5, -3.724468, 162.29762), (40.394558, -3.7454417, 162.29762), (40.30517, -3.8051693, 162.29762), (40.24544, -3.8945584, 162.29762), (40.22447, -4, 162.29762), (40.24544, -4.1054416, 162.29762), (40.30517, -4.1948304, 162.29762), (40.394558, -4.2545586, 162.29762), (40.5, -4.2755322, 162.29762), (40.605442, -4.2545586, 162.29762), (40.69483, -4.1948304, 162.29762), (40.75456, -4.1054416, 162.29762), (40.5, -4, 162.24281)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical7"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (40.5, -4, 162.96281850712745)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Xform "Socket8"
+            {
+                matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (54, -4, 165.7536468362977, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                def Mesh "Geometry" (
+                    prepend apiSchemas = ["MaterialBindingAPI"]
+                )
+                {
+                    int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                    int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                    rel material:binding = </Root/ToyWorkshopR8/Looks/gold>
+                    point3f[] points = [(-0.55, -0.4, -0.35), (-0.4, -0.55, -0.35), (-0.4, -0.4, -0.5), (-0.55, -0.4, 0.35), (-0.4, -0.55, 0.35), (-0.4, -0.4, 0.5), (-0.55, 0.4, -0.35), (-0.4, 0.55, -0.35), (-0.4, 0.4, -0.5), (-0.55, 0.4, 0.35), (-0.4, 0.55, 0.35), (-0.4, 0.4, 0.5), (0.55, -0.4, -0.35), (0.4, -0.55, -0.35), (0.4, -0.4, -0.5), (0.55, -0.4, 0.35), (0.4, -0.55, 0.35), (0.4, -0.4, 0.5), (0.55, 0.4, -0.35), (0.4, 0.55, -0.35), (0.4, 0.4, -0.5), (0.55, 0.4, 0.35), (0.4, 0.55, 0.35), (0.4, 0.4, 0.5)]
+                    uniform token subdivisionScheme = "none"
+                }
+            }
+
+            def Mesh "Bulb8" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+                int[] faceVertexIndices = [0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 7, 0, 7, 8, 0, 8, 9, 0, 9, 10, 0, 10, 11, 0, 11, 12, 0, 12, 13, 0, 13, 14, 0, 14, 15, 0, 15, 16, 0, 16, 1, 17, 18, 2, 1, 18, 19, 3, 2, 19, 20, 4, 3, 20, 21, 5, 4, 21, 22, 6, 5, 22, 23, 7, 6, 23, 24, 8, 7, 24, 25, 9, 8, 25, 26, 10, 9, 26, 27, 11, 10, 27, 28, 12, 11, 28, 29, 13, 12, 29, 30, 14, 13, 30, 31, 15, 14, 31, 32, 16, 15, 32, 17, 1, 16, 33, 34, 18, 17, 34, 35, 19, 18, 35, 36, 20, 19, 36, 37, 21, 20, 37, 38, 22, 21, 38, 39, 23, 22, 39, 40, 24, 23, 40, 41, 25, 24, 41, 42, 26, 25, 42, 43, 27, 26, 43, 44, 28, 27, 44, 45, 29, 28, 45, 46, 30, 29, 46, 47, 31, 30, 47, 48, 32, 31, 48, 33, 17, 32, 49, 50, 34, 33, 50, 51, 35, 34, 51, 52, 36, 35, 52, 53, 37, 36, 53, 54, 38, 37, 54, 55, 39, 38, 55, 56, 40, 39, 56, 57, 41, 40, 57, 58, 42, 41, 58, 59, 43, 42, 59, 60, 44, 43, 60, 61, 45, 44, 61, 62, 46, 45, 62, 63, 47, 46, 63, 64, 48, 47, 64, 49, 33, 48, 65, 66, 50, 49, 66, 67, 51, 50, 67, 68, 52, 51, 68, 69, 53, 52, 69, 70, 54, 53, 70, 71, 55, 54, 71, 72, 56, 55, 72, 73, 57, 56, 73, 74, 58, 57, 74, 75, 59, 58, 75, 76, 60, 59, 76, 77, 61, 60, 77, 78, 62, 61, 78, 79, 63, 62, 79, 80, 64, 63, 80, 65, 49, 64, 81, 82, 66, 65, 82, 83, 67, 66, 83, 84, 68, 67, 84, 85, 69, 68, 85, 86, 70, 69, 86, 87, 71, 70, 87, 88, 72, 71, 88, 89, 73, 72, 89, 90, 74, 73, 90, 91, 75, 74, 91, 92, 76, 75, 92, 93, 77, 76, 93, 94, 78, 77, 94, 95, 79, 78, 95, 96, 80, 79, 96, 81, 65, 80, 97, 98, 82, 81, 98, 99, 83, 82, 99, 100, 84, 83, 100, 101, 85, 84, 101, 102, 86, 85, 102, 103, 87, 86, 103, 104, 88, 87, 104, 105, 89, 88, 105, 106, 90, 89, 106, 107, 91, 90, 107, 108, 92, 91, 108, 109, 93, 92, 109, 110, 94, 93, 110, 111, 95, 94, 111, 112, 96, 95, 112, 97, 81, 96, 98, 97, 113, 99, 98, 113, 100, 99, 113, 101, 100, 113, 102, 101, 113, 103, 102, 113, 104, 103, 113, 105, 104, 113, 106, 105, 113, 107, 106, 113, 108, 107, 113, 109, 108, 113, 110, 109, 113, 111, 110, 113, 112, 111, 113, 97, 112, 113]
+                rel material:binding = </Root/ToyWorkshopR8/Looks/WarmBulb>
+                point3f[] points = [(54, -4, 165.72365), (54.27553, -4, 165.66884), (54.25456, -3.8945584, 165.66884), (54.19483, -3.8051693, 165.66884), (54.105442, -3.7454417, 165.66884), (54, -3.724468, 165.66884), (53.894558, -3.7454417, 165.66884), (53.80517, -3.8051693, 165.66884), (53.74544, -3.8945584, 165.66884), (53.72447, -4, 165.66884), (53.74544, -4.1054416, 165.66884), (53.80517, -4.1948304, 165.66884), (53.894558, -4.2545586, 165.66884), (54, -4.2755322, 165.66884), (54.105442, -4.2545586, 165.66884), (54.19483, -4.1948304, 165.66884), (54.25456, -4.1054416, 165.66884), (54.509117, -4, 165.51276), (54.470364, -3.8051693, 165.51276), (54.36, -3.64, 165.51276), (54.19483, -3.5296373, 165.51276), (54, -3.490883, 165.51276), (53.80517, -3.5296373, 165.51276), (53.64, -3.64, 165.51276), (53.529636, -3.8051693, 165.51276), (53.490883, -4, 165.51276), (53.529636, -4.1948304, 165.51276), (53.64, -4.36, 165.51276), (53.80517, -4.4703627, 165.51276), (54, -4.5091166, 165.51276), (54.19483, -4.4703627, 165.51276), (54.36, -4.36, 165.51276), (54.470364, -4.1948304, 165.51276), (54.66519, -4, 165.27917), (54.61456, -3.7454417, 165.27917), (54.470364, -3.5296373, 165.27917), (54.25456, -3.3854415, 165.27917), (54, -3.3348067, 165.27917), (53.74544, -3.3854415, 165.27917), (53.529636, -3.5296373, 165.27917), (53.38544, -3.7454417, 165.27917), (53.33481, -4, 165.27917), (53.38544, -4.2545586, 165.27917), (53.529636, -4.4703627, 165.27917), (53.74544, -4.614558, 165.27917), (54, -4.665193, 165.27917), (54.25456, -4.614558, 165.27917), (54.470364, -4.4703627, 165.27917), (54.61456, -4.2545586, 165.27917), (54.72, -4, 165.00365), (54.66519, -3.724468, 165.00365), (54.509117, -3.490883, 165.00365), (54.27553, -3.3348067, 165.00365), (54, -3.28, 165.00365), (53.72447, -3.3348067, 165.00365), (53.490883, -3.490883, 165.00365), (53.33481, -3.724468, 165.00365), (53.28, -4, 165.00365), (53.33481, -4.2755322, 165.00365), (53.490883, -4.5091166, 165.00365), (53.72447, -4.665193, 165.00365), (54, -4.72, 165.00365), (54.27553, -4.665193, 165.00365), (54.509117, -4.5091166, 165.00365), (54.66519, -4.2755322, 165.00365), (54.66519, -4, 164.72812), (54.61456, -3.7454417, 164.72812), (54.470364, -3.5296373, 164.72812), (54.25456, -3.3854415, 164.72812), (54, -3.3348067, 164.72812), (53.74544, -3.3854415, 164.72812), (53.529636, -3.5296373, 164.72812), (53.38544, -3.7454417, 164.72812), (53.33481, -4, 164.72812), (53.38544, -4.2545586, 164.72812), (53.529636, -4.4703627, 164.72812), (53.74544, -4.614558, 164.72812), (54, -4.665193, 164.72812), (54.25456, -4.614558, 164.72812), (54.470364, -4.4703627, 164.72812), (54.61456, -4.2545586, 164.72812), (54.509117, -4, 164.49454), (54.470364, -3.8051693, 164.49454), (54.36, -3.64, 164.49454), (54.19483, -3.5296373, 164.49454), (54, -3.490883, 164.49454), (53.80517, -3.5296373, 164.49454), (53.64, -3.64, 164.49454), (53.529636, -3.8051693, 164.49454), (53.490883, -4, 164.49454), (53.529636, -4.1948304, 164.49454), (53.64, -4.36, 164.49454), (53.80517, -4.4703627, 164.49454), (54, -4.5091166, 164.49454), (54.19483, -4.4703627, 164.49454), (54.36, -4.36, 164.49454), (54.470364, -4.1948304, 164.49454), (54.27553, -4, 164.33846), (54.25456, -3.8945584, 164.33846), (54.19483, -3.8051693, 164.33846), (54.105442, -3.7454417, 164.33846), (54, -3.724468, 164.33846), (53.894558, -3.7454417, 164.33846), (53.80517, -3.8051693, 164.33846), (53.74544, -3.8945584, 164.33846), (53.72447, -4, 164.33846), (53.74544, -4.1054416, 164.33846), (53.80517, -4.1948304, 164.33846), (53.894558, -4.2545586, 164.33846), (54, -4.2755322, 164.33846), (54.105442, -4.2545586, 164.33846), (54.19483, -4.1948304, 164.33846), (54.25456, -4.1054416, 164.33846), (54, -4, 164.28365)]
+                uniform token subdivisionScheme = "none"
+            }
+
+            def SphereLight "Practical8"
+            {
+                float inputs:colorTemperature = 2600
+                bool inputs:enableColorTemperature = 1
+                float inputs:intensity = 300
+                bool inputs:normalize = 0
+                float inputs:radius = 0.65
+                double3 xformOp:translate = (54, -4, 165.0036468362977)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def Xform "ClockCompanion"
+        {
+            matrix4d xformOp:transform = ( (0.8307689823471984, -0.30237518112600437, 0, 0), (0.30237518112600437, 0.8307689823471984, 0, 0), (0, 0, 0.8840858850763219, 0), (146.37635213194125, -873.3909164752339, 4.918843810443991, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+
+            over "Asset" (
+                references = @../../../source-review/authored/Samples/OldAttic/Props/clock.usd@
+            )
+            {
+            }
+        }
+
+        def "WallGallery"
+        {
+            def Xform "WallInspirationA"
+            {
+                matrix4d xformOp:transform = ( (2.11056226076979e-16, -0.9505127411145058, 0, 0), (0.9505127411145058, 2.11056226076979e-16, 0, 0), (0, 0, 0.9505127411145058, 0), (600.4215224791153, -1130, 249.9999854963266, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/PictureFrameA.usd@
+                )
+                {
+                }
+
+                def Xform "WallPad0"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (6.312382507324401, 2.0345283417827886, 17.88509902954104, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                        point3f[] points = [(-0.4208255, -0.6842778, -0.40504456), (-0.40504456, -0.70005876, -0.40504456), (-0.40504456, -0.6842778, -0.4208255), (-0.4208255, -0.6842778, 0.40504456), (-0.40504456, -0.70005876, 0.40504456), (-0.40504456, -0.6842778, 0.4208255), (-0.4208255, 0.6842778, -0.40504456), (-0.40504456, 0.70005876, -0.40504456), (-0.40504456, 0.6842778, -0.4208255), (-0.4208255, 0.6842778, 0.40504456), (-0.40504456, 0.70005876, 0.40504456), (-0.40504456, 0.6842778, 0.4208255), (0.4208255, -0.6842778, -0.40504456), (0.40504456, -0.70005876, -0.40504456), (0.40504456, -0.6842778, -0.4208255), (0.4208255, -0.6842778, 0.40504456), (0.40504456, -0.70005876, 0.40504456), (0.40504456, -0.6842778, 0.4208255), (0.4208255, 0.6842778, -0.40504456), (0.40504456, 0.70005876, -0.40504456), (0.40504456, 0.6842778, -0.4208255), (0.4208255, 0.6842778, 0.40504456), (0.40504456, 0.70005876, 0.40504456), (0.40504456, 0.6842778, 0.4208255)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "WallPad1"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-6.312382507323946, 2.0274127480487323, 17.88509902954104, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                        point3f[] points = [(-0.4208255, -0.67716223, -0.40504456), (-0.40504456, -0.69294316, -0.40504456), (-0.40504456, -0.67716223, -0.4208255), (-0.4208255, -0.67716223, 0.40504456), (-0.40504456, -0.69294316, 0.40504456), (-0.40504456, -0.67716223, 0.4208255), (-0.4208255, 0.67716223, -0.40504456), (-0.40504456, 0.69294316, -0.40504456), (-0.40504456, 0.67716223, -0.4208255), (-0.4208255, 0.67716223, 0.40504456), (-0.40504456, 0.69294316, 0.40504456), (-0.40504456, 0.67716223, 0.4208255), (0.4208255, -0.67716223, -0.40504456), (0.40504456, -0.69294316, -0.40504456), (0.40504456, -0.67716223, -0.4208255), (0.4208255, -0.67716223, 0.40504456), (0.40504456, -0.69294316, 0.40504456), (0.40504456, -0.67716223, 0.4208255), (0.4208255, 0.67716223, -0.40504456), (0.40504456, 0.69294316, -0.40504456), (0.40504456, 0.67716223, -0.4208255), (0.4208255, 0.67716223, 0.40504456), (0.40504456, 0.69294316, 0.40504456), (0.40504456, 0.67716223, 0.4208255)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+            }
+
+            def Xform "WallInspirationB"
+            {
+                matrix4d xformOp:transform = ( (1.4307082887933278e-16, -0.6443337316285511, 0, 0), (0.6443337316285511, 1.4307082887933278e-16, 0, 0), (0, 0, 0.6443337316285511, 0), (598.1631115032953, -760, 250.0000098317525, 1) )
+                uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                over "Asset" (
+                    references = @../../../source-review/authored/Samples/OldAttic/Props/PictureFrameB.usd@
+                )
+                {
+                }
+
+                def Xform "WallPad0"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (9.311944580078261, 4.441630252333425, 18.623873901367233, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                        point3f[] points = [(-0.6207963, -3.096379, -0.5975164), (-0.5975164, -3.119659, -0.5975164), (-0.5975164, -3.096379, -0.6207963), (-0.6207963, -3.096379, 0.5975164), (-0.5975164, -3.119659, 0.5975164), (-0.5975164, -3.096379, 0.6207963), (-0.6207963, 3.096379, -0.5975164), (-0.5975164, 3.119659, -0.5975164), (-0.5975164, 3.096379, -0.6207963), (-0.6207963, 3.096379, 0.5975164), (-0.5975164, 3.119659, 0.5975164), (-0.5975164, 3.096379, 0.6207963), (0.6207963, -3.096379, -0.5975164), (0.5975164, -3.119659, -0.5975164), (0.5975164, -3.096379, -0.6207963), (0.6207963, -3.096379, 0.5975164), (0.5975164, -3.119659, 0.5975164), (0.5975164, -3.096379, 0.6207963), (0.6207963, 3.096379, -0.5975164), (0.5975164, 3.119659, -0.5975164), (0.5975164, 3.096379, -0.6207963), (0.6207963, 3.096379, 0.5975164), (0.5975164, 3.119659, 0.5975164), (0.5975164, 3.096379, 0.6207963)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+
+                def Xform "WallPad1"
+                {
+                    matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-9.311944580078034, 4.431133436886853, 18.623873901367233, 1) )
+                    uniform token[] xformOpOrder = ["xformOp:transform"]
+
+                    def Mesh "Geometry" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3]
+                        int[] faceVertexIndices = [3, 9, 6, 0, 12, 18, 21, 15, 1, 13, 16, 4, 10, 22, 19, 7, 8, 20, 14, 2, 5, 17, 23, 11, 0, 1, 4, 3, 9, 10, 7, 6, 15, 16, 13, 12, 18, 19, 22, 21, 6, 8, 2, 0, 3, 5, 11, 9, 12, 14, 20, 18, 21, 23, 17, 15, 1, 2, 14, 13, 16, 17, 5, 4, 19, 20, 8, 7, 10, 11, 23, 22, 2, 1, 0, 3, 4, 5, 6, 7, 8, 11, 10, 9, 12, 13, 14, 17, 16, 15, 20, 19, 18, 21, 22, 23]
+                        rel material:binding = </Root/ToyWorkshopR8/Looks/wood>
+                        point3f[] points = [(-0.6207963, -3.0858822, -0.5975164), (-0.5975164, -3.109162, -0.5975164), (-0.5975164, -3.0858822, -0.6207963), (-0.6207963, -3.0858822, 0.5975164), (-0.5975164, -3.109162, 0.5975164), (-0.5975164, -3.0858822, 0.6207963), (-0.6207963, 3.0858822, -0.5975164), (-0.5975164, 3.109162, -0.5975164), (-0.5975164, 3.0858822, -0.6207963), (-0.6207963, 3.0858822, 0.5975164), (-0.5975164, 3.109162, 0.5975164), (-0.5975164, 3.0858822, 0.6207963), (0.6207963, -3.0858822, -0.5975164), (0.5975164, -3.109162, -0.5975164), (0.5975164, -3.0858822, -0.6207963), (0.6207963, -3.0858822, 0.5975164), (0.5975164, -3.109162, 0.5975164), (0.5975164, -3.0858822, 0.6207963), (0.6207963, 3.0858822, -0.5975164), (0.5975164, 3.109162, -0.5975164), (0.5975164, 3.0858822, -0.6207963), (0.6207963, 3.0858822, 0.5975164), (0.5975164, 3.109162, 0.5975164), (0.5975164, 3.0858822, 0.6207963)]
+                        uniform token subdivisionScheme = "none"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,280 @@
+#usda 1.0
+(
+    customLayerData = {
+        bool collisionGeometryPreserved = 1
+        string purpose = "Freeze sample dynamics in the inspection/render profile only"
+        bool qualifiedForSimulation = 0
+    }
+)
+
+over "Root"
+{
+    over "Geometry"
+    {
+        over "Stars"
+        {
+            over "stars_02"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_03"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_04"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_05"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_06"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_07"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_08"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_09"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+
+            over "stars_01"
+            {
+                over "Stars"
+                {
+                    over "Star"
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                    }
+                }
+            }
+        }
+
+        over "Blocks"
+        {
+            over "block_a_01"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_a_02"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_b_01"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_b_02"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_b_03"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_c_01"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_d_01"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_d_02"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_d_03"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_e_01"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_e_02"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_e_03"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_f_01"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_f_02"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+
+            over "block_f_03"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+        }
+
+        over "TennisBall"
+        {
+            over "tennis_ball"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+        }
+
+        over "Ball"
+        {
+            over "ball"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+        }
+
+        over "Horse"
+        {
+            over "horse"
+            {
+                bool physics:rigidBodyEnabled = 0
+            }
+        }
+
+        over "Mirror"
+        {
+            over "Mirror"
+            {
+                over "MirrorBase"
+                {
+                    bool physics:rigidBodyEnabled = 0
+                }
+
+                over "MirrorFrame"
+                {
+                    bool physics:rigidBodyEnabled = 0
+
+                    over "RevoluteJoint"
+                    {
+                        bool physics:jointEnabled = 0
+                    }
+                }
+            }
+        }
+
+        over "Telescope"
+        {
+            over "Telescope"
+            {
+                over "Yoke"
+                {
+                    bool physics:rigidBodyEnabled = 0
+                }
+
+                over "YokeJoint"
+                {
+                    bool physics:jointEnabled = 0
+                }
+            }
+        }
+    }
+
+    over "WorkshopDressingR7"
+    {
+        over "OpticsStation"
+        {
+            over "Telescope"
+            {
+                over "Asset"
+                {
+                    over "Telescope"
+                    {
+                        over "Yoke"
+                        {
+                            bool physics:rigidBodyEnabled = 0
+                        }
+
+                        over "YokeJoint"
+                        {
+                            bool physics:jointEnabled = 0
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

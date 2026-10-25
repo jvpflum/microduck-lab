@@ -1,0 +1,22 @@
+#usda 1.0
+(
+    customLayerData = {
+        string purpose = "Proposed overview framing for bench and floor ducks; native review pending"
+    }
+)
+
+def "Root"
+{
+    def "WorkshopCameras"
+    {
+        def Camera "TwoDuckOverview"
+        {
+            float2 clippingRange = (1, 100000)
+            float focalLength = 26
+            float horizontalAperture = 36
+            float verticalAperture = 20.25
+            matrix4d xformOp:transform = ( (0.5931990380498502, -0.8050558373533682, 0, 0), (0.34640919482485044, 0.2552488803972582, 0.9026896913096687, 0), (-0.7267156053075584, -0.5354746565424114, 0.4302921347215807, 0), (-579.9999999999998, -1280, 250, 0.9999999999999998) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

@@ -1,0 +1,81 @@
+#usda 1.0
+(
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+over "Root"
+{
+    def Xform "ToymakerCanopyR10" (
+        customData = {
+            bool physicalQualification = 0
+            string role = "Source-authored light drape and hanging landing-net storage"
+            bool runtimeEligible = 0
+        }
+    )
+    {
+        def Xform "BeamLightDrape" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/string_lights_strand_01.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (0.5735764363510462, 0.8191520442889918, 0, 0), (0.8191520442889918, -0.5735764363510462, 0, 0), (0, 0, 1, 0), (-190, -30, 336, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def Xform "StoredLandingNet" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/fishing_net.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-270, -25, 423, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def Xform "DrapeAnchor1" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/WoodenPeg.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (8.881784197001252e-16, 4, 0, 0), (-4, 8.881784197001252e-16, 0, 0), (0, 0, 4, 0), (-237.11880952246796, -23.134046379911286, 412.75575534920307, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def Xform "DrapeAnchor2" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/WoodenPeg.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (8.881784197001252e-16, 4, 0, 0), (-4, 8.881784197001252e-16, 0, 0), (0, 0, 4, 0), (-111.59020593908492, -23.13402636643699, 432.91426312084883, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def Xform "DrapeAnchor3" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/WoodenPeg.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (8.881784197001252e-16, 4, 0, 0), (-4, 8.881784197001252e-16, 0, 0), (0, 0, 4, 0), (-23.345083280198367, -23.13401229720398, 425.87802917054245, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def Xform "CableReturnAnchor" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/WoodenPeg.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (1.7960512242138307, 1.796051224213831, 0, 0), (-1.796051224213831, 1.7960512242138307, 0, 0), (0, 0, 2.54, 0), (-26.22109965778376, -28.31166351303488, 234.01633906692766, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def Xform "NetHoopAnchor" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/WoodenPeg.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (6.661338147750939e-16, 3, 0, 0), (-3, 6.661338147750939e-16, 0, 0), (0, 0, 3, 0), (-325, -21.04838276737184, 438.05495899029506, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+
+        def Xform "NetHandleAnchor" (
+            references = @../../../source-review/authored/Samples/OldAttic/Props/WoodenPeg.usd@</Root>
+        )
+        {
+            matrix4d xformOp:transform = ( (6.661338147750939e-16, 3, 0, 0), (-3, 6.661338147750939e-16, 0, 0), (0, 0, 3, 0), (-215, -21.048365229681337, 419.9579806868458, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform"]
+        }
+    }
+}

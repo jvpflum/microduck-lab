@@ -1,0 +1,77 @@
+#usda 1.0
+(
+    customLayerData = {
+        dictionary audioSettings = {
+            double dopplerLimit = 2
+            double dopplerScale = 1
+            token enableDistanceDelay = "off"
+            token enableDoppler = "off"
+            double nonSpatialTimeScale = 1
+            double spatialTimeScale = 1
+            double speedOfSound = 340
+        }
+        dictionary cameraSettings = {
+            dictionary Front = {
+                double radius = 500
+                double3 target = (0, 0, 0)
+            }
+            dictionary Perspective = {
+                double3 position = (-870.0712904315487, -1390.4469569584148, 224.96392404192446)
+                double3 target = (-454.59818035759577, -635.4739242700534, 138.95337399824908)
+            }
+            dictionary Right = {
+                double radius = 500
+                double3 target = (0, 0, 0)
+            }
+            dictionary Top = {
+                double radius = 500
+                double3 target = (0, 0, 0)
+            }
+            string boundCamera = "/Root/Camera"
+        }
+        dictionary renderSettings = {
+            int "rtx:directLighting:domeLight:denoisingTechnique" = 1
+            bool "rtx:directLighting:domeLight:enabledInReflections" = 1
+            bool "rtx:fog:enabled" = 1
+            float3 "rtx:fog:fogColor" = (0.38818568, 0.34890935, 0.30628997)
+            float "rtx:fog:fogColorIntensity" = 0.5
+            bool "rtx:fog:fogDistanceBased:enabled" = 1
+            float "rtx:fog:fogDistanceDensity" = 0.1
+            float "rtx:fog:fogStartDist" = 1000
+            float "rtx:fog:fogStartHeight" = 0
+            bool "rtx:fog:fogZup:enabled" = 1
+            bool "rtx:indirectDiffuse:enabled" = 1
+            float "rtx:indirectDiffuse:scalingFactor" = 7
+            bool "rtx:pathtracing:ptfog:ZUp" = 1
+            float "rtx:pathtracing:ptfog:asymmetry" = -0.7
+            float "rtx:pathtracing:ptfog:density" = 0.55
+            bool "rtx:pathtracing:ptfog:enabled" = 1
+            int "rtx:pathtracing:ptfog:maxBounces" = 2
+            bool "rtx:pathtracing:svgf:enabled" = 1
+            int "rtx:post:aa:op" = 3
+            bool "rtx:post:colorcorr:enabled" = 1
+            int "rtx:post:dlss:execMode" = 1
+            float "rtx:post:lensDistortion:cameraFocalLength" = 18.147562
+            bool "rtx:post:lensFlares:enabled" = 1
+            float "rtx:post:lensFlares:flareScale" = 0.1
+            float "rtx:post:tonemap:fNumber" = 3.8
+            bool "rtx:reflections:sampledLighting:enabled" = 1
+            token "rtx:rendermode" = "PathTracing"
+            float3 "rtx:sceneDb:ambientLightColor" = (0.174, 0.112, 0.1)
+            float "rtx:sceneDb:ambientLightIntensity" = 0.1
+            float "rtx:translucency:reflectionCutoff" = 0.2
+        }
+    }
+    defaultPrim = "Root"
+    endTimeCode = 100
+    metersPerUnit = 0.009999999776482582
+    startTimeCode = 0
+    subLayers = [
+        @Layers/simulation.usda@,
+        @Layers/appearance.usda@,
+        @Layers/layout.usda@,
+        @../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@
+    ]
+    timeCodesPerSecond = 30
+    upAxis = "Z"
+)

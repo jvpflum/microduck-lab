@@ -1,0 +1,2257 @@
+#usda 1.0
+(
+    customLayerData = {
+        string scope = "Visual-only exact native MicroDuck authored CAD rest pose. No controller, articulation, rigid body, collider or walking execution."
+        string sourceSha256 = "c1acc45caabc9c6b5845574c79e2c9cd3ae94cdcf625aeacce2e8bddd79cf516"
+        string unitConversion = "Source metres to authored attic centimetres; no automatic reference-unit conversion assumed."
+    }
+    defaultPrim = "BenchMicroDuck"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def Xform "BenchMicroDuck" (
+    kind = "component"
+)
+{
+    def Xform "Units"
+    {
+        double3 xformOp:scale = (100.00000223517424, 100.00000223517424, 100.00000223517424)
+        uniform token[] xformOpOrder = ["xformOp:scale"]
+
+        def Xform "Support"
+        {
+            double3 xformOp:translate = (-0.020256457153182972, 1.3877787807814457e-17, 0.10652662061342251)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+
+            def Xform "Robot" (
+                delete apiSchemas = ["IsaacRobotAPI"]
+                prepend references = @source/microduck_allcollisions_backlash.usd@</microduck>
+            )
+            {
+                over "Geometry"
+                {
+                    over "trunk_base" (
+                        delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysicsArticulationRootAPI", "NewtonArticulationRootAPI", "IsaacLinkAPI"]
+                    )
+                    {
+                        bool physics:rigidBodyEnabled = 0
+                        bool physxArticulation:articulationEnabled = 0
+
+                        over "yaw2roll" (
+                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                        )
+                        {
+                            bool physics:rigidBodyEnabled = 0
+
+                            over "hip_l" (
+                                delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                            )
+                            {
+                                bool physics:rigidBodyEnabled = 0
+
+                                over "upper_leg_left" (
+                                    delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                                )
+                                {
+                                    bool physics:rigidBodyEnabled = 0
+
+                                    over "leg" (
+                                        delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI", "PhysicsFilteredPairsAPI"]
+                                    )
+                                    {
+                                        bool physics:rigidBodyEnabled = 0
+
+                                        over "ankle_left" (
+                                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                                        )
+                                        {
+                                            bool physics:rigidBodyEnabled = 0
+
+                                            over "sole_left" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "sole_left_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "sole_left" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "left_foot_collision" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "sole_left_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "sole_left" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "foot_left" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "foot_left_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "foot_left" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "seeed_bearing__configuration_default" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "seeed_bearing__configuration_default_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "seeed_bearing__configuration_default" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "ankle_left" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "ankle_left_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "ankle_left" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "left_ankle" (
+                                                active = false
+                                                delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                            )
+                                            {
+                                                bool physics:jointEnabled = 0
+                                            }
+
+                                            over "passive_left_ankle_backlash" (
+                                                active = false
+                                                delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                            )
+                                            {
+                                                bool physics:jointEnabled = 0
+                                            }
+                                        }
+
+                                        over "leg" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "leg_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "leg" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "leg_1" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "leg_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "leg" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "xl330_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "xl330" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "left_knee" (
+                                            active = false
+                                            delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                        )
+                                        {
+                                            bool physics:jointEnabled = 0
+                                        }
+
+                                        over "passive_left_knee_backlash" (
+                                            active = false
+                                            delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                        )
+                                        {
+                                            bool physics:jointEnabled = 0
+                                        }
+
+                                        over "passive_left_ankle_backlash_dummy" (
+                                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:rigidBodyEnabled = 0
+                                        }
+                                    }
+
+                                    over "upper_leg_left" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "upper_leg_left_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "upper_leg_left" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "xl330" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "xl330_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "upper_leg_rigidity_plate" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "upper_leg_rigidity_plate_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "upper_leg_rigidity_plate" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "seeed_bearing__configuration__22x16x4" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "seeed_bearing__configuration__22x16x4_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "seeed_bearing__configuration__22x16x4" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "xl330_1" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "xl330_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "left_hip_pitch" (
+                                        active = false
+                                        delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                    )
+                                    {
+                                        bool physics:jointEnabled = 0
+                                    }
+
+                                    over "passive_left_hip_pitch_backlash" (
+                                        active = false
+                                        delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                    )
+                                    {
+                                        bool physics:jointEnabled = 0
+                                    }
+
+                                    over "passive_left_knee_backlash_dummy" (
+                                        delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:rigidBodyEnabled = 0
+                                    }
+                                }
+
+                                over "seeed_bearing__configuration__22x16x4" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "seeed_bearing__configuration__22x16x4_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "seeed_bearing__configuration__22x16x4" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "hip_l" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "hip_l_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "hip_l" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "hip_l_1" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "hip_l_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "hip_l" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "left_hip_roll" (
+                                    active = false
+                                    delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                )
+                                {
+                                    bool physics:jointEnabled = 0
+                                }
+
+                                over "passive_left_hip_roll_backlash" (
+                                    active = false
+                                    delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                )
+                                {
+                                    bool physics:jointEnabled = 0
+                                }
+
+                                over "passive_left_hip_pitch_backlash_dummy" (
+                                    delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:rigidBodyEnabled = 0
+                                }
+                            }
+
+                            over "yaw2roll" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "yaw2roll_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "yaw2roll" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "xl330" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "xl330_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "xl330" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "seeed_bearing__configuration__22x16x4" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "seeed_bearing__configuration__22x16x4_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "seeed_bearing__configuration__22x16x4" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "bearing_roll" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "bearing_roll_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "bearing_roll" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "left_hip_yaw" (
+                                active = false
+                                delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                            )
+                            {
+                                bool physics:jointEnabled = 0
+                            }
+
+                            over "passive_left_hip_yaw_backlash" (
+                                active = false
+                                delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                            )
+                            {
+                                bool physics:jointEnabled = 0
+                            }
+
+                            over "passive_left_hip_roll_backlash_dummy" (
+                                delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:rigidBodyEnabled = 0
+                            }
+                        }
+
+                        over "neck" (
+                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                        )
+                        {
+                            bool physics:rigidBodyEnabled = 0
+
+                            over "neck_pitch_1" (
+                                delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                            )
+                            {
+                                bool physics:rigidBodyEnabled = 0
+
+                                over "yaw_roll_motion" (
+                                    delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                                )
+                                {
+                                    bool physics:rigidBodyEnabled = 0
+
+                                    over "jaw_soft" (
+                                        delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                                    )
+                                    {
+                                        bool physics:rigidBodyEnabled = 0
+
+                                        over "lens" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "lens_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "lens" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "face_part" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "face_part_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "face_part" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "xl330_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "xl330" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "jaw_soft" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "jaw_soft_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "jaw_soft" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "motor_support" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "motor_support_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "motor_support" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "top_head_shell" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "top_head_shell_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "top_head_shell" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "top_head_shell_1" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "top_head_shell_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "top_head_shell" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "xl330_1" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "xl330_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "xl330" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "seeed_bearing__configuration_default" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "seeed_bearing__configuration_default_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "seeed_bearing__configuration_default" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "elec_rpi_robot_hat_pcb" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "elec_rpi_robot_hat_pcb_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "elec_rpi_robot_hat_pcb" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "soft_mouth_top" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "soft_mouth_top_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "soft_mouth_top" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "noenoeil" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "noenoeil_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "noenoeil" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "jaw" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "jaw_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "jaw" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "jaw_1" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "jaw_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "jaw" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "bottom_head_shell" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "bottom_head_shell_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "bottom_head_shell" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "bottom_head_shell_1" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "bottom_head_shell_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "bottom_head_shell" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "m12_lens_holder" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "m12_lens_holder_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "m12_lens_holder" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "pcb__raspberry_pi_zero_2_w" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "pcb__raspberry_pi_zero_2_w_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "pcb__raspberry_pi_zero_2_w" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "speaker" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "speaker_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "speaker" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "head_roll" (
+                                            active = false
+                                            delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                        )
+                                        {
+                                            bool physics:jointEnabled = 0
+                                        }
+
+                                        over "passive_head_roll_backlash" (
+                                            active = false
+                                            delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                        )
+                                        {
+                                            bool physics:jointEnabled = 0
+                                        }
+                                    }
+
+                                    over "yaw_roll_motion" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "yaw_roll_motion_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "yaw_roll_motion" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "xl330" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "xl330_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "seeed_bearing__configuration__22x16x4" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "seeed_bearing__configuration__22x16x4_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "seeed_bearing__configuration__22x16x4" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "seeed_bearing__configuration__22x16x4_1" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "seeed_bearing__configuration__22x16x4_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "seeed_bearing__configuration__22x16x4" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "head_yaw" (
+                                        active = false
+                                        delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                    )
+                                    {
+                                        bool physics:jointEnabled = 0
+                                    }
+
+                                    over "passive_head_yaw_backlash" (
+                                        active = false
+                                        delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                    )
+                                    {
+                                        bool physics:jointEnabled = 0
+                                    }
+
+                                    over "passive_head_roll_backlash_dummy" (
+                                        delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:rigidBodyEnabled = 0
+                                    }
+                                }
+
+                                over "neck_pitch" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "neck_pitch_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "neck_pitch" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "seeed_bearing__configuration__22x16x4" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "seeed_bearing__configuration__22x16x4_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "seeed_bearing__configuration__22x16x4" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "head_pitch" (
+                                    active = false
+                                    delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                )
+                                {
+                                    bool physics:jointEnabled = 0
+                                }
+
+                                over "passive_head_pitch_backlash" (
+                                    active = false
+                                    delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                )
+                                {
+                                    bool physics:jointEnabled = 0
+                                }
+
+                                over "passive_head_yaw_backlash_dummy" (
+                                    delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:rigidBodyEnabled = 0
+                                }
+                            }
+
+                            over "neck" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "neck_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "neck" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "xl330" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "xl330_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "xl330" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "xl330_1" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "xl330_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "xl330" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "neck_1" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "neck_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "neck" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "neck_pitch" (
+                                active = false
+                                delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                            )
+                            {
+                                bool physics:jointEnabled = 0
+                            }
+
+                            over "passive_neck_pitch_backlash" (
+                                active = false
+                                delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                            )
+                            {
+                                bool physics:jointEnabled = 0
+                            }
+
+                            over "passive_head_pitch_backlash_dummy" (
+                                delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:rigidBodyEnabled = 0
+                            }
+                        }
+
+                        over "bearing_roll" (
+                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                        )
+                        {
+                            bool physics:rigidBodyEnabled = 0
+
+                            over "hip_l_2" (
+                                delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                            )
+                            {
+                                bool physics:rigidBodyEnabled = 0
+
+                                over "upper_leg_right" (
+                                    delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                                )
+                                {
+                                    bool physics:rigidBodyEnabled = 0
+
+                                    over "leg_2" (
+                                        delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI", "PhysicsFilteredPairsAPI"]
+                                    )
+                                    {
+                                        bool physics:rigidBodyEnabled = 0
+
+                                        over "ankle_right" (
+                                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "IsaacLinkAPI"]
+                                        )
+                                        {
+                                            bool physics:rigidBodyEnabled = 0
+
+                                            over "ankle_right" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "ankle_right_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "ankle_right" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "sole_right" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "sole_right_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "sole_right" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "right_foot_collision" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "sole_right_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "sole_right" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "seeed_bearing__configuration_default" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "seeed_bearing__configuration_default_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "seeed_bearing__configuration_default" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "foot_right" (
+                                                instanceable = false
+                                            )
+                                            {
+                                                over "VisualMaterials"
+                                                {
+                                                    over "foot_right_material" (
+                                                        instanceable = false
+                                                    )
+                                                    {
+                                                    }
+                                                }
+
+                                                over "foot_right" (
+                                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                                )
+                                                {
+                                                    bool physics:collisionEnabled = 0
+                                                }
+                                            }
+
+                                            over "right_ankle" (
+                                                active = false
+                                                delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                            )
+                                            {
+                                                bool physics:jointEnabled = 0
+                                            }
+
+                                            over "passive_right_ankle_backlash" (
+                                                active = false
+                                                delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                            )
+                                            {
+                                                bool physics:jointEnabled = 0
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "xl330_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "xl330" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "leg" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "leg_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "leg" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "leg_1" (
+                                            instanceable = false
+                                        )
+                                        {
+                                            over "VisualMaterials"
+                                            {
+                                                over "leg_material" (
+                                                    instanceable = false
+                                                )
+                                                {
+                                                }
+                                            }
+
+                                            over "leg" (
+                                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                            )
+                                            {
+                                                bool physics:collisionEnabled = 0
+                                            }
+                                        }
+
+                                        over "right_knee" (
+                                            active = false
+                                            delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                        )
+                                        {
+                                            bool physics:jointEnabled = 0
+                                        }
+
+                                        over "passive_right_knee_backlash" (
+                                            active = false
+                                            delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                        )
+                                        {
+                                            bool physics:jointEnabled = 0
+                                        }
+
+                                        over "passive_right_ankle_backlash_dummy" (
+                                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:rigidBodyEnabled = 0
+                                        }
+                                    }
+
+                                    over "xl330" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "xl330_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "seeed_bearing__configuration__22x16x4" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "seeed_bearing__configuration__22x16x4_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "seeed_bearing__configuration__22x16x4" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "upper_leg_rigidity_plate" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "upper_leg_rigidity_plate_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "upper_leg_rigidity_plate" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "upper_leg_right" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "upper_leg_right_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "upper_leg_right" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "xl330_1" (
+                                        instanceable = false
+                                    )
+                                    {
+                                        over "VisualMaterials"
+                                        {
+                                            over "xl330_material" (
+                                                instanceable = false
+                                            )
+                                            {
+                                            }
+                                        }
+
+                                        over "xl330" (
+                                            delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                        )
+                                        {
+                                            bool physics:collisionEnabled = 0
+                                        }
+                                    }
+
+                                    over "right_hip_pitch" (
+                                        active = false
+                                        delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                    )
+                                    {
+                                        bool physics:jointEnabled = 0
+                                    }
+
+                                    over "passive_right_hip_pitch_backlash" (
+                                        active = false
+                                        delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                    )
+                                    {
+                                        bool physics:jointEnabled = 0
+                                    }
+
+                                    over "passive_right_knee_backlash_dummy" (
+                                        delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:rigidBodyEnabled = 0
+                                    }
+                                }
+
+                                over "hip_l" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "hip_l_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "hip_l" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "hip_l_1" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "hip_l_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "hip_l" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "seeed_bearing__configuration__22x16x4" (
+                                    instanceable = false
+                                )
+                                {
+                                    over "VisualMaterials"
+                                    {
+                                        over "seeed_bearing__configuration__22x16x4_material" (
+                                            instanceable = false
+                                        )
+                                        {
+                                        }
+                                    }
+
+                                    over "seeed_bearing__configuration__22x16x4" (
+                                        delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                    )
+                                    {
+                                        bool physics:collisionEnabled = 0
+                                    }
+                                }
+
+                                over "right_hip_roll" (
+                                    active = false
+                                    delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                                )
+                                {
+                                    bool physics:jointEnabled = 0
+                                }
+
+                                over "passive_right_hip_roll_backlash" (
+                                    active = false
+                                    delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                                )
+                                {
+                                    bool physics:jointEnabled = 0
+                                }
+
+                                over "passive_right_hip_pitch_backlash_dummy" (
+                                    delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:rigidBodyEnabled = 0
+                                }
+                            }
+
+                            over "yaw2roll" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "yaw2roll_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "yaw2roll" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "xl330" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "xl330_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "xl330" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "bearing_roll" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "bearing_roll_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "bearing_roll" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "seeed_bearing__configuration__22x16x4" (
+                                instanceable = false
+                            )
+                            {
+                                over "VisualMaterials"
+                                {
+                                    over "seeed_bearing__configuration__22x16x4_material" (
+                                        instanceable = false
+                                    )
+                                    {
+                                    }
+                                }
+
+                                over "seeed_bearing__configuration__22x16x4" (
+                                    delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                                )
+                                {
+                                    bool physics:collisionEnabled = 0
+                                }
+                            }
+
+                            over "right_hip_yaw" (
+                                active = false
+                                delete apiSchemas = ["PhysxJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular", "IsaacJointAPI", "MjcJointAPI"]
+                            )
+                            {
+                                bool physics:jointEnabled = 0
+                            }
+
+                            over "passive_right_hip_yaw_backlash" (
+                                active = false
+                                delete apiSchemas = ["PhysicsDriveAPI:angular", "MjcJointAPI"]
+                            )
+                            {
+                                bool physics:jointEnabled = 0
+                            }
+
+                            over "passive_right_hip_roll_backlash_dummy" (
+                                delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:rigidBodyEnabled = 0
+                            }
+                        }
+
+                        over "seeed_bearing__configuration__22x16x4" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "seeed_bearing__configuration__22x16x4_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "seeed_bearing__configuration__22x16x4" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "right_shell" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "right_shell_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "right_shell" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "banana_pcb_locker" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "banana_pcb_locker_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "banana_pcb_locker" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "trunk_base" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "trunk_base_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "trunk_base" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "xl330" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "xl330_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "xl330" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "power_support" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "power_support_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "power_support" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "power_support_1"
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "power_support_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "power_support" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "np_f970" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "np_f970_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "np_f970" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "np_f970_1" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "np_f970_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "np_f970" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "xl330_1" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "xl330_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "xl330" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "left_shell" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "left_shell_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "left_shell" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "seeed_bearing__configuration__22x16x4_1" (
+                            instanceable = false
+                        )
+                        {
+                            over "VisualMaterials"
+                            {
+                                over "seeed_bearing__configuration__22x16x4_material" (
+                                    instanceable = false
+                                )
+                                {
+                                }
+                            }
+
+                            over "seeed_bearing__configuration__22x16x4" (
+                                delete apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI", "PhysicsMassAPI"]
+                            )
+                            {
+                                bool physics:collisionEnabled = 0
+                            }
+                        }
+
+                        over "passive_left_hip_yaw_backlash_dummy" (
+                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                        )
+                        {
+                            bool physics:rigidBodyEnabled = 0
+                        }
+
+                        over "passive_neck_pitch_backlash_dummy" (
+                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                        )
+                        {
+                            bool physics:rigidBodyEnabled = 0
+                        }
+
+                        over "passive_right_hip_yaw_backlash_dummy" (
+                            delete apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+                        )
+                        {
+                            bool physics:rigidBodyEnabled = 0
+                        }
+                    }
+                }
+
+                over "Physics"
+                {
+                    over "PhysicsMaterial" (
+                        delete apiSchemas = ["PhysicsMaterialAPI", "NewtonMaterialAPI"]
+                    )
+                    {
+                    }
+                }
+
+                over "servos_left_hip_yaw_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_left_hip_roll_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_left_hip_pitch_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_left_knee_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_left_ankle_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_neck_pitch_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_head_pitch_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_head_yaw_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_head_roll_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_right_hip_yaw_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_right_hip_roll_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_right_hip_pitch_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_right_knee_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+
+                over "servos_right_ankle_actuator" (
+                    delete apiSchemas = ["NewtonBamDriveAPI"]
+                )
+                {
+                }
+            }
+        }
+    }
+}

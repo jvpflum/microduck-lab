@@ -1,0 +1,25 @@
+#usda 1.0
+(
+    customLayerData = {
+        string nativeVisualAcceptance = "pending"
+        string onlyTarget = "/Root/Geometry/Ball"
+        string physicsQualification = "none"
+        string scope = "Render-only inherited soccer-ball grounding at time0; source geometry and physics unchanged."
+        string sourceEntrySha256 = "462115a9272ecc66e6caccaf6eb8feed9492dd6725ded18134be31822a298dca"
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+over "Root"
+{
+    over "Geometry"
+    {
+        over "Ball"
+        {
+            double3 xformOp:translate:workshopGrounding = (0, 0, -44.13570062893234)
+            uniform token[] xformOpOrder = ["xformOp:translate:workshopGrounding", "xformOp:translate", "xformOp:orient", "xformOp:scale"]
+        }
+    }
+}

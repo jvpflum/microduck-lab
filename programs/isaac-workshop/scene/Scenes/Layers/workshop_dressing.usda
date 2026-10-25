@@ -1,0 +1,224 @@
+#usda 1.0
+(
+    customLayerData = {
+        string physicalQualification = "unverified"
+        string purpose = "Reversible workshop dressing; source geometry/materials preserved; no simulation overrides."
+        string sourceRootSHA256 = "2835372847e721014a05a4a62625c59542591165f0a1e478b1cd56dc5594ce7b"
+    }
+    defaultPrim = "Root"
+    metersPerUnit = 0.009999999776482582
+    upAxis = "Z"
+)
+
+def "Root"
+{
+    def Xform "WorkshopDressing"
+    {
+        def "RepairTable_A" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/SideTable>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (2.5399999618530273, 0, 0, 0), (0, 2.5399999618530273, 0, 0), (0, 0, 2.5399999618530273, 0), (-380, -1049.999990310669, 5.137078123318057, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "RepairTable_B" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/Table>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (3.5999999046325684, 0, 0, 0), (0, 3.5999999046325684, 0, 0), (0, 0, 2.5399999618530273, 0), (-380, -900, 4.811383553468819, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "PartsCabinet" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/FileCabinetA>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (2.5399999618530273, 0, 0, 0), (0, 2.5399999618530273, 0, 0), (0, 0, 2.5399999618530273, 0), (240.0000096893309, -1150, 4.146670347781209, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "DeliveryCrate_Lower" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/Boxes/box_10>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1.5251999470146165, 2.0310949658638138, 0, 0), (-2.0310949658638138, 1.5251999470146165, 0, 0), (0, 0, 2.5399999618530273, 0), (234.8216084002488, -955.3661351951939, 4.189494727920724, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "DeliveryCrate_Upper" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/Boxes/box_12>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (-1.9976490219665348, -0.09694526825042679, 0, 0), (0.09694526825042679, -1.9976490219665348, 0, 0), (0, 0, 1.5, 0), (234.32995340024883, -945.2351101951939, 86.90522572792071, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "LibraryBooks" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/Books/BooksShelf>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-284.68301800000006, 846.6842820000002, 209.42405000000002, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "LibraryCradle" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/NewtonsCradle>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-238.946208, 866.1978370000002, 290.596008, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "LibraryGlass" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/GlassMug>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1.7960511972398472, -1.796051197239848, 0, 0), (1.796051197239848, 1.7960511972398472, 0, 0), (0, 0, 2.5399999618530273, 0), (-202.54, 875.0438530000001, 290.6268, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "WorkshopWallFrame_A" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/PictureFrames/PictureFrameC>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-476.832978, -19.323214000000007, 274.538862, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "WorkshopWallFrame_B" (
+            prepend references = @../../../source-review/authored/Samples/OldAttic/Attic_NVIDIA.usd@</Root/Geometry/PictureFrames/PictureFrameD>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-396.13299200000006, -17.475615000000005, 284.767062, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Pliers_A" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_pilers/SM_pilers.usd@</SM_pilers>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.9063077870366499, 0.42261826174069944, 0, 0), (-9.384010496231708e-17, 2.0124075451303235e-16, 1, 0), (0.42261826174069944, -0.9063077870366499, 2.220446049250313e-16, 0), (-396.5791192876138, -918.480055206385, 85.62381726606613, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Cutter_A" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_boxcutter/SM_boxcutter.usd@</SM_boxcutter>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.9396926207859084, -0.34202014332566877, 0, 0), (7.59437276011507e-17, 2.086536767333743e-16, 1, 0), (-0.34202014332566877, -0.9396926207859084, 2.220446049250313e-16, 0), (-410.07242282806885, -911.3868307101675, 84.88238747448085, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Battery_A" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_battery_9v/SM_battery_9v.usd@</SM_battery_9v>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.9659258262890683, 0.25881904510252074, 0, 0), (-5.746937261686308e-17, 2.144786184852406e-16, 1, 0), (0.25881904510252074, -0.9659258262890683, 2.220446049250313e-16, 0), (-381.95984108754465, -904.156850957298, 82.90131248110917, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Case_A" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_battery_case/SM_battery_case.usd@</SM_battery_case>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.9659258262890683, -0.25881904510252074, 0, 0), (5.746937261686308e-17, 2.144786184852406e-16, 1, 0), (-0.25881904510252074, -0.9659258262890683, 2.220446049250313e-16, 0), (-370.20602477099266, -886.610915307371, 82.91685386364578, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Tape_A" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_duct_tape_paper_roll/SM_duct_tape_paper_roll.usd@</SM_duct_tape_paper_roll>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 2.220446049250313e-16, 1, 0), (0, -1, 2.220446049250313e-16, 0), (-391.00645792484283, -878.9504348635674, 82.76406571011574, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Spray_A" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_spray_can_closed/SM_spray_can_closed.usd@</SM_spray_can_closed>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 2.220446049250313e-16, 1, 0), (0, -1, 2.220446049250313e-16, 0), (-361.00266897678375, -919.0014145374298, 83.23355961467877, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Pliers_B" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_pilers/SM_pilers.usd@</SM_pilers>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.5735764363510462, -0.8191520442889918, 0, 0), (1.8188829204768093e-16, 1.273595532038754e-16, 1, 0), (-0.8191520442889918, -0.5735764363510462, 2.220446049250313e-16, 0), (-390.01177493532873, -895.5015349753813, 83.75814742766045, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Cutter_B" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_boxcutter/SM_boxcutter.usd@</SM_boxcutter>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.8191520442889918, 0.573576436351046, 0, 0), (-1.2735955320387539e-16, 1.8188829204768093e-16, 1, 0), (0.573576436351046, -0.8191520442889918, 2.220446049250313e-16, 0), (-372.2573337481045, -917.6133549643802, 83.03286106542411, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Battery_B" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_battery_9v/SM_battery_9v.usd@</SM_battery_9v>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.8660254037844387, -0.49999999999999994, 0, 0), (1.1102230246251564e-16, 1.922962686383564e-16, 1, 0), (-0.49999999999999994, -0.8660254037844387, 2.220446049250313e-16, 0), (-361.0825137362186, -892.1393070148631, 82.97915008239558, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Case_B" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_battery_case/SM_battery_case.usd@</SM_battery_case>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (0.9396926207859084, 0.34202014332566877, 0, 0), (-7.59437276011507e-17, 2.086536767333743e-16, 1, 0), (0.34202014332566877, -0.9396926207859084, 2.220446049250313e-16, 0), (-377.81835898741866, -877.6186034768664, 83.03010898353915, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Tape_B" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_duct_tape_paper_roll/SM_duct_tape_paper_roll.usd@</SM_duct_tape_paper_roll>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 2.220446049250313e-16, 1, 0), (0, -1, 2.220446049250313e-16, 0), (-403.00645792484283, -879.9504348635674, 84.57699050208323, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "Spray_B" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_spray_can_closed/SM_spray_can_closed.usd@</SM_spray_can_closed>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 2.220446049250313e-16, 1, 0), (0, -1, 2.220446049250313e-16, 0), (-356.00266897678375, -905.0014145374298, 82.94705407363534, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "DeliveryToolBox" (
+            prepend references = @../../../source-review/authored/Samples/Marbles/assets/standalone/SM_shoebox/SM_shoebox.usd@</SM_shoebox>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1.0000000223517422, 0, 0, 0), (0, 2.220446098881151e-16, 1.0000000223517422, 0), (0, -1.0000000223517422, 2.220446098881151e-16, 0), (302.3343028873422, -1144.9906425473982, 4.5191650195641, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+
+        def "MicroDuckDock" (
+            prepend references = @../../Assets/MicroDuckDock/microduck_dock.usda@</MicroDuckDock>
+        )
+        {
+            matrix4d xformOp:transform:workshopPlacement = ( (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (-70, -430, 3.4541440071046696, 1) )
+            uniform token[] xformOpOrder = ["xformOp:transform:workshopPlacement"]
+        }
+    }
+
+    over "Geometry"
+    {
+        over "Chairs" (
+            active = false
+        )
+        {
+        }
+
+        over "Blanket_Fort" (
+            active = false
+        )
+        {
+        }
+    }
+}
