@@ -522,6 +522,31 @@
       "changes": [
         "New synthetic public-only tests; no native evidence fixture or source asset required."
       ]
+    },
+    {
+      "published_path": "src/isaac_workshop/film_excerpt_cameras.py",
+      "development_component": "attic-film-r1/excerpt-r1/film_cameras.py",
+      "original_sha256": "7fdbdafef0df40bf9c0e197943be32957e2e8191e4fd30112a14e20c9985524f",
+      "published_sha256": "7fdbdafef0df40bf9c0e197943be32957e2e8191e4fd30112a14e20c9985524f",
+      "changes": []
+    },
+    {
+      "published_path": "film-excerpt-shot-plan.json",
+      "development_component": "attic-film-r1/excerpt-r1/shot-plan.json",
+      "original_sha256": "846273b8185c628c891333734e813965efc1a0a0a7348aabbc99f22fe138ab9b",
+      "published_sha256": "6e34271a521ea624163fc01bb947b4d46ee78f18694fec63d6ca6e3f3d2b38a3",
+      "changes": [
+        "Remove private transport artifact budget and add public pending-movie disclosure; all camera geometry and timing unchanged."
+      ]
+    },
+    {
+      "published_path": "tests/test_film_excerpt.py",
+      "development_component": "portable-excerpt-publication/synthetic-tests",
+      "original_sha256": "ac3e66ff89241d81882f0ab0189f441b84b1089427aa1b915378f02bd94e85cd",
+      "published_sha256": "ac3e66ff89241d81882f0ab0189f441b84b1089427aa1b915378f02bd94e85cd",
+      "changes": [
+        "New synthetic public-only separate-horizon/camera-geometry tests; no raw poses or licensed assets."
+      ]
     }
   ],
   "unvendored": [

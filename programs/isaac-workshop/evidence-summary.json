@@ -290,7 +290,7 @@
       "normalization_applied_exactly_once": true,
       "native_critic_output_parity_claimed": false
     },
-    "full_20_second_recording": "queued_pending_actual_evidence",
+    "full_20_second_recording": "Later separate attempt failed at15.16seconds; see six_robot_excerpt",
     "movie_rendered": false,
     "robust_locomotion_qualified": false,
     "autonomous_navigation": false,
@@ -299,6 +299,88 @@
       "Planar progress was small and unequal across robots.",
       "No inter-duck contact occurred; collision response is untested.",
       "Stopping, full-horizon continuity and cinematic capture remain pending."
+    ]
+  },
+  "six_robot_excerpt": {
+    "scope": "Continuous first12seconds selected only after auditing the complete naturally terminated source",
+    "source_audit_sha256": "a9990cbef488be4eddde0135dd27050f511f49909a0f3bd6b58cdb8b56f71813",
+    "source_closeout_sha256": "f6450d12620e52623ef9f943c1daee0b18cc184c6ad3caa33a796e20c4369a39",
+    "excerpt_admission_sha256": "59099f6e41a76b0a51a4f0f58959e23f69d0a35be9fb39092ea1b0a2eac237d1",
+    "source_outcome": "FAILED",
+    "requested_controls": 1000,
+    "requested_seconds": 20,
+    "actual_controls": 758,
+    "actual_seconds": 15.16,
+    "solved_substeps": 3032,
+    "terminal_robot": "duck_1",
+    "terminal_reason": "fell_over",
+    "terminal_action_and_all_four_substeps_retained": true,
+    "source_control_returns": 757,
+    "source_pose_boundaries": 759,
+    "autoresets": 0,
+    "source_natural_close": true,
+    "source_integrity_audit_passed": true,
+    "requested_full_horizon_accepted": false,
+    "actor_cpu_replay": {
+      "actual_observations": 4548,
+      "maximum_absolute_difference": 9.5367431640625e-07,
+      "checkpoint_sha256": "f3d8d4dc156c3fe329d2e7a268a59c54a96ae65c8975195d609c93bed159d9e2",
+      "native_critic_outputs_not_retained": true
+    },
+    "excerpt": {
+      "start_control": 0,
+      "end_control": 600,
+      "controls": 600,
+      "seconds": 12.0,
+      "solved_substeps": 2400,
+      "pose_boundaries": 601,
+      "terminal_events": 0,
+      "commanded_walk_seconds": 8,
+      "commanded_stop_seconds": 4,
+      "per_duck_planar_endpoint_displacement_m": {
+        "duck_0": 0.5078426429055082,
+        "duck_1": 0.004359022251489199,
+        "duck_2": 0.49802255900602116,
+        "duck_3": 0.2582402651721717,
+        "duck_4": 0.5555969408736989,
+        "duck_5": 0.5953497227612766
+      },
+      "duck_1_maximum_planar_excursion_from_start_m": 0.011115887360317466,
+      "maximum_excursion_boundaries_checked": 601,
+      "metric_raw_controls_sha256": "05ff6ede462f9d43a4a4a2b81e78c2c7a2b7f743e2916700f88ff6128204260d",
+      "duck_3_nonsole_force_magnitude_integral_n_s": 0.9718934750556945,
+      "duck_3_first_self_contact_seconds": 1.395,
+      "duck_3_contact_parts": [
+        "right_lower_leg",
+        "battery_trunk"
+      ],
+      "contact_integral_definition": "Integral of native per-robot per-shape force magnitudes; self-contact has both signed body views. This is not net external impulse or a unique-pair impulse.",
+      "inter_duck_contact_events": 0,
+      "continuous_original_prefix": true,
+      "retiming": false,
+      "looping": false,
+      "splicing": false,
+      "pose_interpolation": false
+    },
+    "render_plan": {
+      "frames": 300,
+      "fps": 25,
+      "source_controls": "0,2,...,598",
+      "selected_end_state_validated": 600,
+      "camera_shots": 5,
+      "frames_per_shot": 60,
+      "preview_accepted": false,
+      "movie_captured": false
+    },
+    "behavior_qualified": false,
+    "autonomous_navigation": false,
+    "limits": [
+      "Full20second request failed; laterfall is not concealed by selecting an earlier excerpt.",
+      "Duck_1 remained nearly stationary; other ducks progressed by unequal amounts.",
+      "Measured leg/battery self-contact remains inside the selected prefix.",
+      "Force-magnitude sum counts both per-body views of self-contact; not net external or unique-pair impulse.",
+      "No inter-duck contact occurred, so response remains untested.",
+      "Native rendered framing and movie integrity remain pending."
     ]
   }
 }

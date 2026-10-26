@@ -16,8 +16,8 @@
   ],
   "public_bundle": "Authored kernels/integration hooks/tests plus curated evidence and two rendered media artifacts; no launch transport or licensed source assets",
   "six_robot_film": {
-    "revision": "shared-world-film-source-r1",
-    "status": "two_second_native_smoke_verified_full_recording_queued",
+    "revision": "shared-world-excerpt-source-r1",
+    "status": "full_attempt_failed_continuous12s_excerpt_audited_movie_pending",
     "film_captured": false,
     "full_continuous_episode_accepted": false,
     "physics_worlds": 1,
@@ -25,11 +25,21 @@
     "static_bench_robot": 1,
     "native_learning": false,
     "public_code_scope": "Portable schedule/history and pose/camera helpers only; not a native launch payload",
-    "acceptance": "Full continuous 20-second physics/contact audit, then measured-pose RTX capture and visual review",
+    "acceptance": "Actual five-camera preview, exact measured-pose RTX capture and visual review of the explicit12-second excerpt; no full-horizon or skill promotion",
     "bounded_smoke_verified": true,
     "verified_smoke_duration_seconds": 2,
     "verified_smoke_controls": 100,
     "verified_smoke_solved_substeps": 400,
-    "verified_controlled_robots": 6
+    "verified_controlled_robots": 6,
+    "requested_recording_seconds": 20,
+    "actual_recorded_seconds": 15.16,
+    "actual_recorded_controls": 758,
+    "actual_solved_substeps": 3032,
+    "source_outcome": "fell_over_duck_1_before_autoreset",
+    "excerpt_controls": 600,
+    "excerpt_seconds": 12,
+    "excerpt_admitted_for_visualization": true,
+    "excerpt_has_nonsole_self_contact": true,
+    "native_preview_accepted": false
   }
 }

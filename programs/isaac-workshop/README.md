@@ -14,8 +14,10 @@ showcase effort: six policy-controlled robots in one physical world, followed
 by exact measured-pose replay from several cameras. Its two-second native
 smoke passed independent audit: six robots, 100 controls, 400 solved substeps,
 floor contacts for all six, and no nonsole force, falls or resets. Progress was
-small and uneven. **The full 20-second recording and film remain pending.**
-Portable schedule, pose/camera helpers and synthetic tests are included.
+small and uneven. **The later 20-second attempt failed at 15.16 seconds when
+one duck fell.** Its continuous first 12 seconds are admitted for visualization,
+with self-contact and a nearly stationary duck disclosed. The movie remains
+pending. Portable helpers preserve the original and excerpt plans separately.
 
 ![Actual native workshop capture](media/workshop-cabinet-clearance.png)
 
@@ -110,7 +112,7 @@ geometry, contact-recorder and native lifecycle integration evidence exists.
 | `fresh_checkpoint`, `ppo_source_contract` | Exact model/normalizer/Adam and upstream-method verification helpers. No checkpoint or copied vendor PPO body is included. |
 | `curriculum`, `native_curriculum`, `evaluation_contract`, `prepare_trainer` | Next balanced stand/forward/reverse/turn/recovery curriculum and held-out contract. Native integration remains pending. |
 | `onnx_contract` | Exact-hash, no-pickle NumPy replay of the supported community export family. No automatic transfer or promotion. |
-| `film_motion`, `film_cameras` | Shared-world film schedule, per-robot action history, link-pose unit conversion and measured-root camera plan. Two-second native smoke verified; full episode/capture acceptance pending. |
+| `film_motion`, `film_cameras`, `film_excerpt_cameras` | Shared-world schedule, per-robot history, link-pose conversion and separate original/excerpt camera plans. Two-second smoke verified; full attempt failed; audited 12-second excerpt awaits capture. |
 
 [SOURCE_MAP.json](SOURCE_MAP.json) records original and public-copy hashes,
 import/path adaptations, extracted functions and unchanged definitions.

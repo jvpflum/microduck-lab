@@ -3,7 +3,7 @@
   "snapshot_date": "2026-10-25",
   "tests": {
     "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=programs/isaac-workshop/src python3 -B -m unittest discover -s programs/isaac-workshop/tests -p 'test_*.py'",
-    "passed": 111,
+    "passed": 116,
     "failed": 0,
     "skipped": 0,
     "native_execution": false
@@ -14,14 +14,15 @@
     "additional_machine_path_and_name_scan_findings": 0
   },
   "source_map_verified": true,
-  "mapped_files": 36,
+  "mapped_files": 39,
   "git_diff_check_passed": true,
   "public_files": {
-    "README.md": "f0ade7be5b829b41e2edb17d3d154fa9cfae4635c9f519b94a1a6a4eaaba8ae2",
-    "SIX_ROBOT_FILM.md": "3c5afb085c60531c9c8a6c1209076147d1b7dc841efd46b89d83814a6cbdfa1c",
-    "SOURCE_MAP.json": "85cec03d0d941cc3490231583332d3781672cc064014074aaefc391e78a7c70b",
-    "STATUS.json": "7c77e8add78859b5bb163a26212465063d9b752ed5aab4970a7dedc85f8679c8",
-    "evidence-summary.json": "b6cfe9a2e6e60985c235c18bacdfde29f6eb4e3ec2f866f827365c8fc7b296d9",
+    "README.md": "4a90d745e7412f379115e74d0a80a2e969f4442259ee86e38b9b1055a510caab",
+    "SIX_ROBOT_FILM.md": "aab98b153a1c0b39a9247ae441b864dccd81fc986af3ce3a2d8e764136c239af",
+    "SOURCE_MAP.json": "7168a41f4a645939c167577f9ff10d7cdc38e1aaa823db58256fc937ba003560",
+    "STATUS.json": "f16a9ac38b54c9f6b1334d9c3b458f2bee8020b7b057882a1fcaa28cf3deb6f5",
+    "evidence-summary.json": "355be2d3662bca4acbbf98fe0ceddd2bed9282dd5a1c7b38ae7ce3caf65b2a20",
+    "film-excerpt-shot-plan.json": "6e34271a521ea624163fc01bb947b4d46ee78f18694fec63d6ca6e3f3d2b38a3",
     "film-shot-plan.json": "2807e39f864032475f1d69bfc5688b6c366f7e18d7eacbc360c58e3ea26c34cd",
     "foundation-contracts.json": "b347e845a0eb4a1e0fc56663fb96d606b832a67e7d856cceb2eaf9577ec59084",
     "media/walk-turn-stop.mp4": "17634192e64c3eb25eebd321530da20151b042d64c3071c15ddfd7fbf63c6b2b",
@@ -38,6 +39,7 @@
     "src/isaac_workshop/curriculum.py": "5d2ee8384dba9e4a4ab8da3d60c0b2b240dbf86d1b19020aed2d3601eef9a27d",
     "src/isaac_workshop/evaluation_contract.py": "443373728608d1d56cb1f4edcf6dd933b130ce17c360df67ffba5f7b8c19f7fe",
     "src/isaac_workshop/film_cameras.py": "51fc4465374d82315e38a012023d1ecceef30a44bb3c43542d9cb6ea67a999be",
+    "src/isaac_workshop/film_excerpt_cameras.py": "7fdbdafef0df40bf9c0e197943be32957e2e8191e4fd30112a14e20c9985524f",
     "src/isaac_workshop/film_motion.py": "97d8739701f008f168bbebb0baba2b35814cdf682e8332e8cd8ac5084d638e29",
     "src/isaac_workshop/fresh_checkpoint.py": "ce6affe50d2ce1f8623dac714ab455c32c6e8d164524961b8925fed48b338271",
     "src/isaac_workshop/head_depth.py": "cadae1320b932bc0f5cb1227435c9b916247dc7f3c1adb9f25019837969b7f2d",
@@ -54,6 +56,7 @@
     "tests/test_camera_readiness.py": "2448c720a7990e1039850391b5d36a8e704797d2942e7ab5700606478c4dd980",
     "tests/test_capture_alignment.py": "99e0993228ca7e2fd9936d29860dc14af12ac162f1eadf18b504f6738601b5b5",
     "tests/test_curriculum.py": "220865897d42bca8e5b9b6af3413b256a8ad9884ce706db46bf96571602d9baf",
+    "tests/test_film_excerpt.py": "ac3e66ff89241d81882f0ab0189f441b84b1089427aa1b915378f02bd94e85cd",
     "tests/test_film_motion.py": "78d685d14aed463f963090a01fa21738be4a2d6c946ba0c1c9d7eeaef9cdb9a8",
     "tests/test_head_depth.py": "04ffc0e78ab3e4493db2b833e20f1e40bab113555cd4f3d25ef927c6a57d9b53",
     "tests/test_mixed_commands.py": "1bf85ec6c654f12630a838a0560bb27cd8c5d0b80981b4625e4fa30b77819bce",
@@ -91,5 +94,22 @@
     "native_smoke_evidence_verified": true,
     "native_smoke_source_audit_sha256": "e8b7251cd6a29363ba42edc111fffd77e05fe61b930d5cf61b7bd96bf410e648",
     "full_20_second_recording_accepted": false
+  },
+  "excerpt_publication_update": {
+    "base_commit": "c762014",
+    "tests_added": 5,
+    "full_native_attempt_failed": true,
+    "selected_seconds": 12,
+    "movie_captured": false,
+    "no_native_jobs_or_source_changes_by_publication": true,
+    "original_20_second_files_preserved": {
+      "film-shot-plan.json": "2807e39f864032475f1d69bfc5688b6c366f7e18d7eacbc360c58e3ea26c34cd",
+      "src/isaac_workshop/film_cameras.py": "51fc4465374d82315e38a012023d1ecceef30a44bb3c43542d9cb6ea67a999be",
+      "src/isaac_workshop/film_motion.py": "97d8739701f008f168bbebb0baba2b35814cdf682e8332e8cd8ac5084d638e29"
+    },
+    "exact_excerpt_camera_helper_source_copy": true,
+    "camera_geometry_preserved_duration_only": true,
+    "private_raw_inputs_excluded": true,
+    "new_markdown_local_links_missing": 0
   }
 }
