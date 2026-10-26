@@ -1,0 +1,166 @@
+{
+  "schema": "attic-physical-film-shot-plan-r1",
+  "scope": "Five camera views of contiguous sections of one actual six-robot physics episode; each frame replays recorded solved world body poses exactly. No placement animation, looping, phase shifting, blending or invented motion.",
+  "fps": 25,
+  "frames": 500,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "seconds": 20,
+  "camera_path": "/Root/AtticFilmCamera",
+  "stage_units": "centimetres; Z up",
+  "bench_role": "static",
+  "floor_roles": 6,
+  "shots": [
+    {
+      "id": "01-workshop-awakens",
+      "start": 0,
+      "stop": 100,
+      "lens_mm": 28,
+      "focus": "all",
+      "eye_offset_start_cm": [
+        -230,
+        -320,
+        125
+      ],
+      "eye_offset_stop_cm": [
+        -210,
+        -300,
+        115
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        6
+      ]
+    },
+    {
+      "id": "02-low-hero",
+      "start": 100,
+      "stop": 200,
+      "lens_mm": 45,
+      "focus": "duck_0",
+      "eye_offset_start_cm": [
+        0,
+        110,
+        24
+      ],
+      "eye_offset_stop_cm": [
+        0,
+        110,
+        24
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        4
+      ]
+    },
+    {
+      "id": "03-colour-crew",
+      "start": 200,
+      "stop": 300,
+      "lens_mm": 38,
+      "focus": "crew",
+      "eye_offset_start_cm": [
+        -140,
+        -190,
+        50
+      ],
+      "eye_offset_stop_cm": [
+        -130,
+        -180,
+        46
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        3
+      ]
+    },
+    {
+      "id": "04-side-step",
+      "start": 300,
+      "stop": 400,
+      "lens_mm": 50,
+      "focus": "duck_0",
+      "eye_offset_start_cm": [
+        -108,
+        0,
+        16
+      ],
+      "eye_offset_stop_cm": [
+        -108,
+        0,
+        16
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "05-room-to-play",
+      "start": 400,
+      "stop": 500,
+      "lens_mm": 30,
+      "focus": "all",
+      "eye_offset_start_cm": [
+        -220,
+        -290,
+        100
+      ],
+      "eye_offset_stop_cm": [
+        -250,
+        -320,
+        120
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        6
+      ]
+    }
+  ],
+  "status": "awaiting actual six-robot physical episode and source-bound world-body playback; camera framing must be validated",
+  "render": {
+    "mode": "PathTracing",
+    "requested_spp_per_update": 8,
+    "requested_total_spp": 64,
+    "first_frame_warmup_updates": 128,
+    "per_frame_hold_updates": 16,
+    "actual_accumulated_samples_unknown": true,
+    "motion_blur": false,
+    "preserve_source_lighting_and_materials": true
+  },
+  "delivery": {
+    "movie": "attic-microducks-film.mp4",
+    "codec": "H.264",
+    "bitrate": "6M",
+    "cover_frames": [
+      49,
+      249,
+      449
+    ],
+    "full_native_frame_hash_ledger": true
+  },
+  "source_control_indices": {
+    "start": 0,
+    "stride": 2,
+    "count": 500,
+    "source_control_dt_s": 0.02
+  },
+  "no_actor_relocation": true,
+  "no_episode_splicing": true,
+  "preview_frames": [
+    49,
+    149,
+    249,
+    349,
+    449
+  ],
+  "camera_tracking": "Per-frame measured native root positions; no extrapolation or altered actor poses.",
+  "public_note": "Two-second six-robot native smoke independently verified. Full 20-second recording and movie remain pending."
+}

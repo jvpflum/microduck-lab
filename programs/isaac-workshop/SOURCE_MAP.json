@@ -466,6 +466,62 @@
       "published_sha256": "17634192e64c3eb25eebd321530da20151b042d64c3071c15ddfd7fbf63c6b2b",
       "changes": [],
       "visual_scope": "Earlier native candidate400controls; failed turning/contact; two empty startup depth samples followed by399nonzero samples. Not autonomous or qualified."
+    },
+    {
+      "published_path": "src/isaac_workshop/film_cameras.py",
+      "development_component": "attic-film-r1/film_cameras.py",
+      "original_sha256": "51fc4465374d82315e38a012023d1ecceef30a44bb3c43542d9cb6ea67a999be",
+      "published_sha256": "51fc4465374d82315e38a012023d1ecceef30a44bb3c43542d9cb6ea67a999be",
+      "changes": [],
+      "unchanged_top_level_definitions": [
+        "require",
+        "load_plan",
+        "camera_sample",
+        "author_camera"
+      ],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "src/isaac_workshop/film_motion.py",
+      "development_component": "attic-film-r1/physics/film_runtime.py + physical_evidence.py + physical_playback.py",
+      "original_sha256": "b20a0b638330ea75217fdf7219b5865b6015f0e06e94274cab2066b86d00854e",
+      "published_sha256": "97d8739701f008f168bbebb0baba2b35814cdf682e8332e8cd8ac5084d638e29",
+      "changes": [
+        "Exact require, command_at and previous_action extraction from film_runtime; exact body_matrix from physical_evidence; extracted matrix conversion expression wrapped with explicit stage-unit validation. Omit native launch, asset admission, poses and compute transport."
+      ],
+      "unchanged_top_level_definitions": [
+        "require",
+        "command_at",
+        "previous_action",
+        "body_matrix"
+      ],
+      "modified_or_new_top_level_definitions": [
+        "stage_world_matrix"
+      ],
+      "additional_source_sha256": {
+        "physical_evidence.py": "d620e6c87dd30bf6222a4b5b15d054779a11d67f17f56d0ea7cd6d596052d527",
+        "physical_playback.py": "82cbf587b885d8e2f00f178f7d7a814ac53248e0d9cfe4bdd38a8827319e0192"
+      }
+    },
+    {
+      "published_path": "film-shot-plan.json",
+      "development_component": "attic-film-r1/shot-plan.json",
+      "original_sha256": "cc6969e0b87b0381bb3bee698d8334c493d404be2c2e44a6ec71f5612f1325ed",
+      "published_sha256": "2807e39f864032475f1d69bfc5688b6c366f7e18d7eacbc360c58e3ea26c34cd",
+      "changes": [
+        "Remove infrastructure-specific inline artifact budget; add explicit public pending-status note. Shot geometry and timing unchanged."
+      ],
+      "unchanged_top_level_definitions": [],
+      "modified_or_new_top_level_definitions": []
+    },
+    {
+      "published_path": "tests/test_film_motion.py",
+      "development_component": "portable-film-publication/synthetic-tests",
+      "original_sha256": "78d685d14aed463f963090a01fa21738be4a2d6c946ba0c1c9d7eeaef9cdb9a8",
+      "published_sha256": "78d685d14aed463f963090a01fa21738be4a2d6c946ba0c1c9d7eeaef9cdb9a8",
+      "changes": [
+        "New synthetic public-only tests; no native evidence fixture or source asset required."
+      ]
     }
   ],
   "unvendored": [

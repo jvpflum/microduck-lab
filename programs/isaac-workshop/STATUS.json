@@ -14,5 +14,22 @@
     "Learn and qualify visual bypass on held-out geometry, starts and goals",
     "Expand admitted collision domain beyond bounded aisle"
   ],
-  "public_bundle": "Authored kernels/integration hooks/tests plus curated evidence and two rendered media artifacts; no launch transport or licensed source assets"
+  "public_bundle": "Authored kernels/integration hooks/tests plus curated evidence and two rendered media artifacts; no launch transport or licensed source assets",
+  "six_robot_film": {
+    "revision": "shared-world-film-source-r1",
+    "status": "two_second_native_smoke_verified_full_recording_queued",
+    "film_captured": false,
+    "full_continuous_episode_accepted": false,
+    "physics_worlds": 1,
+    "planned_controlled_robots": 6,
+    "static_bench_robot": 1,
+    "native_learning": false,
+    "public_code_scope": "Portable schedule/history and pose/camera helpers only; not a native launch payload",
+    "acceptance": "Full continuous 20-second physics/contact audit, then measured-pose RTX capture and visual review",
+    "bounded_smoke_verified": true,
+    "verified_smoke_duration_seconds": 2,
+    "verified_smoke_controls": 100,
+    "verified_smoke_solved_substeps": 400,
+    "verified_controlled_robots": 6
+  }
 }

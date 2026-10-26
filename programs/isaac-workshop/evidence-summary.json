@@ -258,5 +258,47 @@
   "foundation_comparison": {
     "official_velstand_native_status": "Submitted; result pending at snapshot",
     "promoted": false
+  },
+  "six_robot_smoke": {
+    "scope": "Two-second native shared-world inference smoke; not the full movie or skill qualification",
+    "source_audit_sha256": "e8b7251cd6a29363ba42edc111fffd77e05fe61b930d5cf61b7bd96bf410e648",
+    "source_closeout_sha256": "dd21badc739c6f6e25b0bfd82c8278046e2534eed9b34c54a9544c526aecc010",
+    "independent_audit_passed": true,
+    "duration_seconds": 2,
+    "worlds": 1,
+    "active_robots": 6,
+    "controls": 100,
+    "solved_substeps": 400,
+    "all_six_sole_floor_contacts": true,
+    "nonsole_force_magnitude_integral_n_s": 0.0,
+    "falls": 0,
+    "autoresets": 0,
+    "inter_duck_contact_events": 0,
+    "inter_duck_collision_response_exercised": false,
+    "per_duck_planar_displacement_m": {
+      "duck_0": 0.07964997406458268,
+      "duck_1": 0.010684054026681144,
+      "duck_2": 0.11517951091572659,
+      "duck_3": 0.05521214967703681,
+      "duck_4": 0.13019003397961498,
+      "duck_5": 0.07622910637376912
+    },
+    "actor_cpu_replay": {
+      "actual_outputs": 600,
+      "maximum_absolute_native_vs_cpu_error": 2.682209014892578e-07,
+      "checkpoint_sha256": "f3d8d4dc156c3fe329d2e7a268a59c54a96ae65c8975195d609c93bed159d9e2",
+      "normalization_applied_exactly_once": true,
+      "native_critic_output_parity_claimed": false
+    },
+    "full_20_second_recording": "queued_pending_actual_evidence",
+    "movie_rendered": false,
+    "robust_locomotion_qualified": false,
+    "autonomous_navigation": false,
+    "limits": [
+      "Only two seconds and the first walking segment were observed.",
+      "Planar progress was small and unequal across robots.",
+      "No inter-duck contact occurred; collision response is untested.",
+      "Stopping, full-horizon continuity and cinematic capture remain pending."
+    ]
   }
 }

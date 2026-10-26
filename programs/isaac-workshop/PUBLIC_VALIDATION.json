@@ -3,7 +3,7 @@
   "snapshot_date": "2026-10-25",
   "tests": {
     "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=programs/isaac-workshop/src python3 -B -m unittest discover -s programs/isaac-workshop/tests -p 'test_*.py'",
-    "passed": 98,
+    "passed": 111,
     "failed": 0,
     "skipped": 0,
     "native_execution": false
@@ -14,13 +14,15 @@
     "additional_machine_path_and_name_scan_findings": 0
   },
   "source_map_verified": true,
-  "mapped_files": 32,
+  "mapped_files": 36,
   "git_diff_check_passed": true,
   "public_files": {
-    "README.md": "828eb564aa096a2ac56127102ee16038e7fb7d35795be0cfe80ca3d1222b4096",
-    "SOURCE_MAP.json": "c8f716a9adaf49dc6e005bfaadf65a2bd9fad46b9cc63db6476eb35ae6ebff0f",
-    "STATUS.json": "52cf6b6a1e0fc83f29e5ed8fb4addada5c0a9399cc585b43387114cebe2af74b",
-    "evidence-summary.json": "3ddd46f8a5109be4f44211d4872f41d40cd6d0af87eef8d289ff3d0f9b7205cf",
+    "README.md": "f0ade7be5b829b41e2edb17d3d154fa9cfae4635c9f519b94a1a6a4eaaba8ae2",
+    "SIX_ROBOT_FILM.md": "3c5afb085c60531c9c8a6c1209076147d1b7dc841efd46b89d83814a6cbdfa1c",
+    "SOURCE_MAP.json": "85cec03d0d941cc3490231583332d3781672cc064014074aaefc391e78a7c70b",
+    "STATUS.json": "7c77e8add78859b5bb163a26212465063d9b752ed5aab4970a7dedc85f8679c8",
+    "evidence-summary.json": "b6cfe9a2e6e60985c235c18bacdfde29f6eb4e3ec2f866f827365c8fc7b296d9",
+    "film-shot-plan.json": "2807e39f864032475f1d69bfc5688b6c366f7e18d7eacbc360c58e3ea26c34cd",
     "foundation-contracts.json": "b347e845a0eb4a1e0fc56663fb96d606b832a67e7d856cceb2eaf9577ec59084",
     "media/walk-turn-stop.mp4": "17634192e64c3eb25eebd321530da20151b042d64c3071c15ddfd7fbf63c6b2b",
     "media/workshop-cabinet-clearance.png": "97d8fecba4e2e9693e121b41ba81a1ba467420f08d5a67ad2ca0172abbba2705",
@@ -35,6 +37,8 @@
     "src/isaac_workshop/contact_metrics.py": "6cfac053440513bb911db0b907622744db0e69b2cc428dce608bd9e9b3a8b8f6",
     "src/isaac_workshop/curriculum.py": "5d2ee8384dba9e4a4ab8da3d60c0b2b240dbf86d1b19020aed2d3601eef9a27d",
     "src/isaac_workshop/evaluation_contract.py": "443373728608d1d56cb1f4edcf6dd933b130ce17c360df67ffba5f7b8c19f7fe",
+    "src/isaac_workshop/film_cameras.py": "51fc4465374d82315e38a012023d1ecceef30a44bb3c43542d9cb6ea67a999be",
+    "src/isaac_workshop/film_motion.py": "97d8739701f008f168bbebb0baba2b35814cdf682e8332e8cd8ac5084d638e29",
     "src/isaac_workshop/fresh_checkpoint.py": "ce6affe50d2ce1f8623dac714ab455c32c6e8d164524961b8925fed48b338271",
     "src/isaac_workshop/head_depth.py": "cadae1320b932bc0f5cb1227435c9b916247dc7f3c1adb9f25019837969b7f2d",
     "src/isaac_workshop/mixed_commands.py": "8ef17930bf035aee17cbb0b23f74eee4da0d053f2b7140f04b70a8989d2ee247",
@@ -50,6 +54,7 @@
     "tests/test_camera_readiness.py": "2448c720a7990e1039850391b5d36a8e704797d2942e7ab5700606478c4dd980",
     "tests/test_capture_alignment.py": "99e0993228ca7e2fd9936d29860dc14af12ac162f1eadf18b504f6738601b5b5",
     "tests/test_curriculum.py": "220865897d42bca8e5b9b6af3413b256a8ad9884ce706db46bf96571602d9baf",
+    "tests/test_film_motion.py": "78d685d14aed463f963090a01fa21738be4a2d6c946ba0c1c9d7eeaef9cdb9a8",
     "tests/test_head_depth.py": "04ffc0e78ab3e4493db2b833e20f1e40bab113555cd4f3d25ef927c6a57d9b53",
     "tests/test_mixed_commands.py": "1bf85ec6c654f12630a838a0560bb27cd8c5d0b80981b4625e4fa30b77819bce",
     "tests/test_navigation_bridge.py": "54e09ff4b5ea2cf3a186a51bd6a890baaf68b389133a9a7562b23692e791488f",
@@ -65,5 +70,26 @@
     "No checkpoints, licensed source geometry, private endpoint/machine config or raw jobs are published.",
     "Native scene and benchmark status are dated snapshots, not live telemetry."
   ],
-  "final_packaging_note": "Staged diff check identified trailing blank lines in exact source copies; normalized EOF whitespace only, updated provenance hashes, then repeated staged diff check. Scene provenance is separate."
+  "final_packaging_note": "Staged diff check identified trailing blank lines in exact source copies; normalized EOF whitespace only, updated provenance hashes, then repeated staged diff check. Scene provenance is separate.",
+  "film_publication_update": {
+    "revision": "shared-world-film-source-r1",
+    "tests_added": 13,
+    "synthetic_only": true,
+    "new_native_execution": false,
+    "film_captured": false,
+    "protected_programs_or_release_files_changed": false,
+    "exact_extracted_function_ast_checks": [
+      "require",
+      "command_at",
+      "previous_action",
+      "body_matrix"
+    ],
+    "film_cameras_exact_source_copy": true,
+    "camera_plan_revision": "front-hero-r2",
+    "private_transports_assets_checkpoints_and_pose_movie_blobs_excluded": true,
+    "new_markdown_local_links_missing": 0,
+    "native_smoke_evidence_verified": true,
+    "native_smoke_source_audit_sha256": "e8b7251cd6a29363ba42edc111fffd77e05fe61b930d5cf61b7bd96bf410e648",
+    "full_20_second_recording_accepted": false
+  }
 }

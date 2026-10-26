@@ -9,6 +9,14 @@ This directory publishes authored research code, tests, source provenance and
 compact evidence. It does not contain a complete launch package, pretrained
 weights, robot/scene assets, private compute configuration or vendor software.
 
+The [six-robot attic film prototype](SIX_ROBOT_FILM.md) is a separate current
+showcase effort: six policy-controlled robots in one physical world, followed
+by exact measured-pose replay from several cameras. Its two-second native
+smoke passed independent audit: six robots, 100 controls, 400 solved substeps,
+floor contacts for all six, and no nonsole force, falls or resets. Progress was
+small and uneven. **The full 20-second recording and film remain pending.**
+Portable schedule, pose/camera helpers and synthetic tests are included.
+
 ![Actual native workshop capture](media/workshop-cabinet-clearance.png)
 
 This is an unedited native stopped-timeline render after a cabinet-clearance
@@ -102,6 +110,7 @@ geometry, contact-recorder and native lifecycle integration evidence exists.
 | `fresh_checkpoint`, `ppo_source_contract` | Exact model/normalizer/Adam and upstream-method verification helpers. No checkpoint or copied vendor PPO body is included. |
 | `curriculum`, `native_curriculum`, `evaluation_contract`, `prepare_trainer` | Next balanced stand/forward/reverse/turn/recovery curriculum and held-out contract. Native integration remains pending. |
 | `onnx_contract` | Exact-hash, no-pickle NumPy replay of the supported community export family. No automatic transfer or promotion. |
+| `film_motion`, `film_cameras` | Shared-world film schedule, per-robot action history, link-pose unit conversion and measured-root camera plan. Two-second native smoke verified; full episode/capture acceptance pending. |
 
 [SOURCE_MAP.json](SOURCE_MAP.json) records original and public-copy hashes,
 import/path adaptations, extracted functions and unchanged definitions.
@@ -122,8 +131,10 @@ The native workflow composes OpenUSD layers, verifies source geometry and
 support surfaces, separates decorative meshes from the Newton collision domain,
 and attaches stripped visuals after physics model creation. A bounded walking
 lane currently has source-derived collision coverage; a rendered full room does
-not imply that every visible prop participates in physics. Parked display robots
-are visual-only and excluded from the controlled walker.
+not imply that every visible prop participates in physics. In that earlier single-walker setup, parked display robots
+are visual-only and excluded from the controlled walker. The new six-robot film
+prototype replaces the floor display roles with actual controlled articulations;
+its native acceptance remains pending.
 
 RTX captures preserve a stopped timeline and frozen robot/scene poses. Render
 mode and sample settings are read back, but configured sample counts and repeated
