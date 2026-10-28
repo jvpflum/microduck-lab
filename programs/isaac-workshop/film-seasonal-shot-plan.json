@@ -1,0 +1,189 @@
+{
+  "schema": "attic-physical-film-excerpt-camera-polish-r2",
+  "scope": "Five views of actual contiguous sourcecontrols0..600 before the sourcefall at758. No pose changes, reset splice, loops, blends or retiming.",
+  "fps": 25,
+  "frames": 300,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "seconds": 12,
+  "camera_path": "/Root/AtticFilmCamera",
+  "stage_units": "centimetres; Z up",
+  "bench_role": "static",
+  "floor_roles": 6,
+  "shots": [
+    {
+      "id": "01-workshop-awakens",
+      "start": 0,
+      "stop": 60,
+      "lens_mm": 28,
+      "focus": "all",
+      "eye_offset_start_cm": [
+        -230,
+        -320,
+        125
+      ],
+      "eye_offset_stop_cm": [
+        -210,
+        -300,
+        115
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        6
+      ],
+      "camera_mode": "measured_root_xyz"
+    },
+    {
+      "id": "02-low-hero",
+      "start": 60,
+      "stop": 120,
+      "lens_mm": 45,
+      "focus": "duck_0",
+      "eye_offset_start_cm": [
+        -55,
+        100,
+        28
+      ],
+      "eye_offset_stop_cm": [
+        -55,
+        100,
+        28
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        4
+      ],
+      "camera_mode": "measured_root_xy_fixed_z",
+      "fixed_focus_z_cm": 14.73909202379939
+    },
+    {
+      "id": "03-colour-crew-faces",
+      "start": 120,
+      "stop": 180,
+      "lens_mm": 35,
+      "focus": "crew",
+      "eye_offset_start_cm": [
+        -120,
+        220,
+        60
+      ],
+      "eye_offset_stop_cm": [
+        -110,
+        215,
+        58
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        3
+      ],
+      "camera_mode": "measured_root_xyz"
+    },
+    {
+      "id": "04-two-ducks-together",
+      "start": 180,
+      "stop": 240,
+      "lens_mm": 45,
+      "focus": "duck_0",
+      "eye_offset_start_cm": [
+        -50,
+        195,
+        27
+      ],
+      "eye_offset_stop_cm": [
+        -50,
+        195,
+        27
+      ],
+      "target_offset_cm": [
+        40,
+        -5,
+        1
+      ],
+      "camera_mode": "measured_root_xy_fixed_z",
+      "fixed_focus_z_cm": 14.352409862408264
+    },
+    {
+      "id": "05-inventors-workshop",
+      "start": 240,
+      "stop": 300,
+      "lens_mm": 21,
+      "focus": "all",
+      "eye_offset_start_cm": [
+        -220,
+        -290,
+        100
+      ],
+      "eye_offset_stop_cm": [
+        -250,
+        -320,
+        120
+      ],
+      "target_offset_cm": [
+        0,
+        0,
+        6
+      ],
+      "camera_mode": "fixed_world",
+      "fixed_eye_cm": [
+        -570,
+        -1400,
+        260
+      ],
+      "fixed_target_cm": [
+        -158.40937369192667,
+        -997.5558320543283,
+        90.79052029556988
+      ]
+    }
+  ],
+  "status": "Five Halloween preview views passed capture-integrity and parent-agent image inspection. Full 300-frame film pending. Raw motion and vendor scene not included.",
+  "render": {
+    "mode": "PathTracing",
+    "requested_spp_per_update": 8,
+    "requested_total_spp": 64,
+    "first_frame_warmup_updates": 128,
+    "per_frame_hold_updates": 16,
+    "actual_accumulated_samples_unknown": true,
+    "motion_blur": false,
+    "preserve_source_lighting_and_materials": true
+  },
+  "delivery": {
+    "movie": "attic-microducks-excerpt.mp4",
+    "codec": "H.264",
+    "cover_frames": [
+      29,
+      149,
+      269
+    ],
+    "full_native_frame_hash_ledger": true,
+    "scope": "Camera example only; encoder configuration belongs to the separate reviewed delivery."
+  },
+  "source_control_indices": {
+    "start": 0,
+    "stride": 2,
+    "count": 300,
+    "source_control_dt_s": 0.02
+  },
+  "no_actor_relocation": true,
+  "no_episode_splicing": true,
+  "preview_frames": [
+    29,
+    89,
+    149,
+    209,
+    269
+  ],
+  "camera_tracking": "Exact measured XY retained in tight shots; per-shot fixed camera Z removes camera-only vertical bob. Final room view fixed in source-stage coordinates. Robot poses and time mapping unchanged.",
+  "camera_design": {
+    "shot_01": "Unchanged opening, all six robots in physical shared room.",
+    "shot_02": "Front-left three-quarter hero, unchanged lighting; face readability still requires native pixels.",
+    "shot_03": "Front three-quarter five-crew view; no actor rotations.",
+    "shot_04": "Hero and cyan framed side by side by moving camera only; cyan is mostly stationary in this source prefix.",
+    "shot_05": "Source R10 overview eye/orientation/lens restored as a fixed world room view: workbench, toys, sofa, shelves and windows."
+  }
+}

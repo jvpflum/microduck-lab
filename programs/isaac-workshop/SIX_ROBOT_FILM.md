@@ -2,7 +2,7 @@
 
 **The two-second smoke passed; the later 20-second attempt failed when
 `duck_1` fell at 15.16 seconds.** A continuous 12-second prefix has passed
-source-evidence review for visualization. The movie remains pending.
+source-evidence review for visualization. Five Halloween preview views passed all 13 capture-integrity checks and parent-agent image inspection on 2026-10-28; the full movie remains pending.
 Neither attempt establishes robust walking, autonomous behavior or locomotion
 qualification. Earlier failures remain retained. The existing
 `media/walk-turn-stop.mp4` is the earlier single-robot experiment.
@@ -123,9 +123,7 @@ the partial recording. The separate [12-second excerpt plan](film-excerpt-shot-p
 selects five contiguous 60-frame views. At 25 fps it samples controls
 0, 2, …, 598 for 300 frames; state 600 at 12 seconds is validated beyond the
 last displayed sample at 11.96 seconds. Camera motion follows measured robot
-roots without altering actor poses. Actual framing, lighting, capture integrity
-and achieved rendering quality still need native verification. Requested
-path-tracing settings are not measured sample counts.
+roots without altering actor poses. A separate [seasonal camera plan](film-seasonal-shot-plan.json) adds fixed-height close shots and a wider room view. Its five Halloween previews passed native capture-integrity and parent-agent framing inspection; the complete 300-frame film remains pending. Requested path-tracing settings are not measured sample counts.
 
 ## Portable source boundary
 
@@ -147,3 +145,7 @@ private orchestration and admissions, raw poses, per-job logs and generated
 film. Obtain licensed source assets separately. The existing public scene
 layers remain unchanged. No DuckWing release, Arena policy or protected
 interface is changed by this work.
+
+## Seasonal presentation
+
+[Seasonal themes](SEASONAL_THEMES.md) are an additive presentation layer. Halloween uses supported painted-toy decorations, warm practicals and reversible named-light overrides. The recorded robot motion is unchanged. Neutral removes the theme; Christmas is a starter, without accepted native appearance or supplied audio. No source packs, recordings, soundtrack or model weights are added to this publication.

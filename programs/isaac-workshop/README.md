@@ -17,7 +17,7 @@ floor contacts for all six, and no nonsole force, falls or resets. Progress was
 small and uneven. **The later 20-second attempt failed at 15.16 seconds when
 one duck fell.** Its continuous first 12 seconds are admitted for visualization,
 with self-contact and a nearly stationary duck disclosed. The movie remains
-pending. Portable helpers preserve the original and excerpt plans separately.
+pending. Five actual Halloween preview views passed all 13 capture-integrity checks and parent-agent image inspection on 2026-10-28. The [swappable seasonal overlay](SEASONAL_THEMES.md) adds reversible props and lighting; Christmas is a starter. Portable helpers preserve the original and excerpt plans separately.
 
 ![Actual native workshop capture](media/workshop-cabinet-clearance.png)
 
@@ -112,7 +112,8 @@ geometry, contact-recorder and native lifecycle integration evidence exists.
 | `fresh_checkpoint`, `ppo_source_contract` | Exact model/normalizer/Adam and upstream-method verification helpers. No checkpoint or copied vendor PPO body is included. |
 | `curriculum`, `native_curriculum`, `evaluation_contract`, `prepare_trainer` | Next balanced stand/forward/reverse/turn/recovery curriculum and held-out contract. Native integration remains pending. |
 | `onnx_contract` | Exact-hash, no-pickle NumPy replay of the supported community export family. No automatic transfer or promotion. |
-| `film_motion`, `film_cameras`, `film_excerpt_cameras` | Shared-world schedule, per-robot history, link-pose conversion and separate original/excerpt camera plans. Two-second smoke verified; full attempt failed; audited 12-second excerpt awaits capture. |
+| `film_motion`, `film_cameras`, `film_excerpt_cameras`, `film_seasonal_cameras` | Shared-world schedule, per-robot history, link-pose conversion and separate original/excerpt camera plans. Two-second smoke verified; full attempt failed; five Halloween excerpt views verified; full film pending. |
+| `seasonal_theme`, `seasonal_runtime` | Explicit-root, hash-bound seasonal overlays and disposable light clocks. Halloween five-view preview verified; Christmas starter; external assets and native integration required. |
 
 [SOURCE_MAP.json](SOURCE_MAP.json) records original and public-copy hashes,
 import/path adaptations, extracted functions and unchanged definitions.
@@ -136,7 +137,7 @@ lane currently has source-derived collision coverage; a rendered full room does
 not imply that every visible prop participates in physics. In that earlier single-walker setup, parked display robots
 are visual-only and excluded from the controlled walker. The new six-robot film
 prototype replaces the floor display roles with actual controlled articulations;
-its native acceptance remains pending.
+its two-second smoke and selected partial-source evidence have been audited, while robust locomotion remains unqualified.
 
 RTX captures preserve a stopped timeline and frozen robot/scene poses. Render
 mode and sample settings are read back, but configured sample counts and repeated

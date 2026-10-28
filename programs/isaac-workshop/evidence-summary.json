@@ -369,7 +369,7 @@
       "selected_end_state_validated": 600,
       "camera_shots": 5,
       "frames_per_shot": 60,
-      "preview_accepted": false,
+      "preview_accepted": true,
       "movie_captured": false
     },
     "behavior_qualified": false,
@@ -380,7 +380,36 @@
       "Measured leg/battery self-contact remains inside the selected prefix.",
       "Force-magnitude sum counts both per-body views of self-contact; not net external or unique-pair impulse.",
       "No inter-duck contact occurred, so response remains untested.",
-      "Native rendered framing and movie integrity remain pending."
+      "Five Halloween preview views passed capture-integrity and parent-agent image inspection; full movie capture/integrity remain pending."
+    ]
+  },
+  "seasonal_preview": {
+    "snapshot_date": "2026-10-28",
+    "scope": "Five actual Halloween preview images only, from the unchanged admitted 12-second source prefix",
+    "frame_indices": [
+      29,
+      89,
+      149,
+      209,
+      269
+    ],
+    "capture_integrity_checks_passed": 13,
+    "capture_integrity_checks_total": 13,
+    "capture_integrity_audit_sha256": "63560dc4894958921521edb0b2b7e5ddf78fc6ce24c824ec7c4ddf8b774260a7",
+    "parent_agent_visual_approval_sha256": "791c46b3bace230bf9c2807f03d49b6d80176d416148673626b661fbd928dafc",
+    "preview_source_review_sha256": "04d79696668c5fe947619d6297b25ea3314866f4abdf0763a6e51e53daa7bb24",
+    "parent_agent_visual_preview_approved": true,
+    "full_film_verified": false,
+    "robot_motion_modified": false,
+    "seasonal_imported_props": 4,
+    "owned_modulated_practical_lights": 11,
+    "named_base_light_overrides": 6,
+    "christmas": "starter_not_native_reviewed",
+    "limits": [
+      "Five midpoint images do not establish all-frame capture integrity.",
+      "Original full physical attempt still failed; selected prefix includes known self-contact and a nearly stationary duck.",
+      "No locomotion or autonomy promotion.",
+      "No new native execution by this portable publication task."
     ]
   }
 }

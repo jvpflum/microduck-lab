@@ -1,0 +1,56 @@
+{
+  "schema": "seasonal-existing-light-allowlist-r1",
+  "paths": {
+    "/Root/LightsNight/DistantLightMoon": {
+      "type": "DistantLight",
+      "attributes": [
+        "intensity",
+        "exposure",
+        "color",
+        "inputs:intensity",
+        "inputs:exposure",
+        "inputs:color"
+      ]
+    },
+    "/Root/LightsNight/DomeLightNight": {
+      "type": "DomeLight",
+      "attributes": [
+        "intensity",
+        "exposure",
+        "color",
+        "inputs:intensity",
+        "inputs:exposure",
+        "inputs:color"
+      ]
+    },
+    "/Root/WorkshopLighting/WorkshopSoftFill": {
+      "type": "RectLight",
+      "attributes": [
+        "inputs:intensity",
+        "inputs:colorTemperature"
+      ]
+    },
+    "/Root/WorkshopToyLighting/SoftWindowBounce": {
+      "type": "RectLight",
+      "attributes": [
+        "inputs:intensity",
+        "inputs:colorTemperature"
+      ]
+    },
+    "/Root/WorkshopBackgroundFill/WindowSideStorageFill": {
+      "type": "RectLight",
+      "attributes": [
+        "inputs:intensity",
+        "inputs:colorTemperature"
+      ]
+    },
+    "/Root/WorkshopLighting/BenchWarmKey": {
+      "type": "RectLight",
+      "attributes": [
+        "inputs:intensity",
+        "inputs:colorTemperature"
+      ]
+    }
+  },
+  "reason": "Reversible exact named light values only; no exposure/camera/robot/material overrides. Legacy LightsNight attrs verified from actual native USD flatten. Canonical inputs are authored alongside the exact legacy fields; effectiveness still needs native readback."
+}

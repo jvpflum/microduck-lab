@@ -17,7 +17,7 @@
   "public_bundle": "Authored kernels/integration hooks/tests plus curated evidence and two rendered media artifacts; no launch transport or licensed source assets",
   "six_robot_film": {
     "revision": "shared-world-excerpt-source-r1",
-    "status": "full_attempt_failed_continuous12s_excerpt_audited_movie_pending",
+    "status": "continuous12s_excerpt_five_halloween_views_verified_full_movie_pending",
     "film_captured": false,
     "full_continuous_episode_accepted": false,
     "physics_worlds": 1,
@@ -40,6 +40,20 @@
     "excerpt_seconds": 12,
     "excerpt_admitted_for_visualization": true,
     "excerpt_has_nonsole_self_contact": true,
-    "native_preview_accepted": false
+    "native_preview_accepted": true,
+    "seasonal_preview_verified": true,
+    "last_updated": "2026-10-28",
+    "preview_scope": "Five Halloween midpoint views; full 300-frame movie pending."
+  },
+  "seasonal_themes": {
+    "snapshot_date": "2026-10-28",
+    "halloween_five_view_native_checks_passed": 13,
+    "halloween_five_view_native_checks_total": 13,
+    "parent_agent_visual_preview_approved": true,
+    "full_film_pending": true,
+    "christmas": "starter_not_native_reviewed",
+    "neutral": "source_build_and_swap_tested",
+    "public_package": "Portable authored source and synthetic tests; external assets/scene/media required",
+    "motion_modified": false
   }
 }

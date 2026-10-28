@@ -1,0 +1,137 @@
+{
+  "schema": "seasonal-public-asset-provenance-v1",
+  "repository": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+  "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+  "license": "CC0-1.0",
+  "source_files": [
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/LICENSE.txt",
+      "bytes": 877,
+      "sha256": "a514c41d8d5f2a07c94c55acd29ba94f50b86837f972e37edb4cbdeb7ba0e0e0"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/pumpkin_orange.gltf",
+      "bytes": 3072,
+      "sha256": "24dfa16da34b7a1b742a016f2005f480cae04aea2f9ede421b7f700282b19934"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/pumpkin_orange.bin",
+      "bytes": 8620,
+      "sha256": "1fef3bb917a745dd76b89550b7a3003ea6f902a8dd1d0ebeace8817a77f0cf69"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/pumpkin_orange_jackolantern.gltf",
+      "bytes": 3089,
+      "sha256": "c4e5b93034bef551664517da7ac0c86b2d315e833ef54444e3ad50f21f6501ec"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/pumpkin_orange_jackolantern.bin",
+      "bytes": 13348,
+      "sha256": "9e9cd94a6a979604193f6f06de353548f20b875700637f7b375a1c63053e78a6"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/candle_triple.gltf",
+      "bytes": 3056,
+      "sha256": "e7b0f28c03e4b19fde8af713f952660ad786bd3a80932a2bbe48dfe0d0edede5"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/candle_triple.bin",
+      "bytes": 9924,
+      "sha256": "387e220f5c4367aae3025aea7ddbfccf987513da52276dc3833faa669b183c43"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/skull_candle.gltf",
+      "bytes": 3072,
+      "sha256": "5557e747345570bee8382c44da10aab4625ef9132571ac90cc522bdd9c2cf80a"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/skull_candle.bin",
+      "bytes": 23604,
+      "sha256": "ba25af2225e6f4861bac9b293fd3cf82362e291b19f006c89879200a33803620"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0/6dc69bf6b2fa766a985754f35ec6a0324090e6c6/addons/kaykit_halloween_bits/Assets/gltf/halloweenbits_texture.png",
+      "bytes": 15093,
+      "sha256": "1e671e9b176b290a35ce8f5f22c773b3f5e9c7a9cf0e1991de51e44dd3a23e7c"
+    }
+  ],
+  "conversion": {
+    "source": "glTF float32 positions/normals/UVs and topology",
+    "coordinates": "Rigid (x,y,z) -> (x,-z,y), Y-up to Z-up",
+    "texture_coordinates": "t -> 1-t",
+    "output_units": "metres",
+    "default_prim": "/Asset",
+    "physics": false,
+    "source_size_preserved": true,
+    "material": "Single atlas PBR, metallic0, roughness0.600000024; imported props have no emission."
+  },
+  "derived_assets": [
+    {
+      "id": "pumpkin_orange",
+      "sha256": "ff93aee464962b3848ae77aefc95444699d36d8e569e25dd3f734fd23bb1df83",
+      "local_bounds": {
+        "min": [
+          -0.5008690357208252,
+          -0.5008698105812073,
+          -0.0033829715102910995
+        ],
+        "max": [
+          0.5008706450462341,
+          0.5008701682090759,
+          0.696617066860199
+        ]
+      }
+    },
+    {
+      "id": "pumpkin_orange_jackolantern",
+      "sha256": "bd05f609c158ccf42d8fda05e56fe9600319f329edb8bf2183f313a99b75887a",
+      "local_bounds": {
+        "min": [
+          -0.7499999403953552,
+          -0.6995904445648193,
+          -0.0036717504262924194
+        ],
+        "max": [
+          0.75,
+          0.700409471988678,
+          1.2963281869888306
+        ]
+      }
+    },
+    {
+      "id": "candle_triple",
+      "sha256": "f1604843a4a92a00add21dc95fa8dfe3a335150041990a6666f38a0bcc27da3a",
+      "local_bounds": {
+        "min": [
+          -0.15046696364879608,
+          -0.20735780894756317,
+          0.0
+        ],
+        "max": [
+          0.3005937933921814,
+          0.14357392489910126,
+          0.785683810710907
+        ]
+      }
+    },
+    {
+      "id": "skull_candle",
+      "sha256": "7de537b18ad812bc65564403a814ab0a889d063a38544c552336547c6bf3cd6c",
+      "local_bounds": {
+        "min": [
+          -0.45877718925476074,
+          -0.4172418713569641,
+          0.057455405592918396
+        ],
+        "max": [
+          0.4587917625904083,
+          0.5188949704170227,
+          1.2447770833969116
+        ]
+      }
+    }
+  ],
+  "bundled_source_or_derived_assets": false,
+  "complete_converter_included": false,
+  "reproduction_limit": "Provenance and external catalog contract only; supply independently verified converted USD assets. No automatic acquisition or conversion."
+}

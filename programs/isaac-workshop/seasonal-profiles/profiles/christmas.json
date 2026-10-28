@@ -1,0 +1,19 @@
+{
+  "schema": "seasonal-theme-profile-r1",
+  "id": "christmas",
+  "status": "draft_not_native_reviewed",
+  "title": "MicroDuck: The Toymaker\u2019s Christmas",
+  "audio": null,
+  "placements": [],
+  "decorations": [
+    {
+      "id": "HolidayGarland",
+      "kind": "holiday_garland",
+      "anchor": "display_mount"
+    }
+  ],
+  "new_lights": [],
+  "existing_light_overrides": {},
+  "asset_catalogs": [],
+  "publication_note": "External measured scene contract required. No assets or media bundled. Christmas is a starter; new builds are not native-verified."
+}

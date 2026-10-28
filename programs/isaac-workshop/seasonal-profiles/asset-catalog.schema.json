@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "External seasonal imported USD catalog",
+  "type": "object",
+  "required": [
+    "schema",
+    "assets"
+  ],
+  "properties": {
+    "schema": {
+      "const": "seasonal-imported-assets-r1"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "path",
+          "sha256",
+          "meters_per_unit",
+          "up_axis",
+          "default_prim",
+          "physics_present",
+          "local_bounds",
+          "dependencies"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "meters_per_unit": {
+            "const": 1
+          },
+          "up_axis": {
+            "const": "Z"
+          },
+          "default_prim": {
+            "const": "/Asset"
+          },
+          "physics_present": {
+            "const": false
+          },
+          "local_bounds": {
+            "type": "object",
+            "required": [
+              "min",
+              "max"
+            ],
+            "properties": {
+              "min": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "max": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "description": "All paths relative to supplied asset_root. Hash every USD, texture and other dependency. Numerical bounds are supplied inspection evidence, not recomputed by the stdlib builder."
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "seasonal-theme-profile-r1",
+  "id": "neutral",
+  "status": "ready_for_source_build",
+  "title": "MicroDuck Workshop",
+  "audio": null,
+  "placements": [],
+  "decorations": [],
+  "new_lights": [],
+  "existing_light_overrides": {},
+  "asset_catalogs": [],
+  "publication_note": "External measured scene contract required. No assets or media bundled. Christmas is a starter; new builds are not native-verified."
+}

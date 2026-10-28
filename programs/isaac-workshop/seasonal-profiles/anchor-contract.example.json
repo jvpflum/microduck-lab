@@ -1,0 +1,294 @@
+{
+  "schema": "seasonal-source-contract-v1",
+  "stage_meters_per_unit": 0.009999999776482582,
+  "stage_up_axis": "Z",
+  "base_scene": "workshop.usda",
+  "base_sha256": "REPLACE_WITH_SUPPLIED_BASE_SHA256",
+  "anchors": {
+    "bench_back": {
+      "kind": "horizontal",
+      "origin_cm": [
+        -380,
+        -1050,
+        93.81816519242346
+      ],
+      "yaw_deg": 0,
+      "surface_z": 0,
+      "rectangle": [
+        -25,
+        20,
+        25,
+        50
+      ],
+      "blocked": [],
+      "source_prim": "/Root/WorkshopDressing/RepairTable_A",
+      "method": "Saved measured flat tabletop, rear strip outside protected maintenance patch; current lamp excluded separately."
+    },
+    "shelf_middle": {
+      "kind": "horizontal",
+      "origin_cm": [
+        550,
+        -965,
+        4.162084489711958
+      ],
+      "yaw_deg": -90,
+      "surface_z": 91,
+      "rectangle": [
+        -62.65,
+        -27.65,
+        62.65,
+        -0.35
+      ],
+      "blocked": [
+        {
+          "min": [
+            -51.43781959569469,
+            -19.642898425237263,
+            91.0
+          ],
+          "max": [
+            -48.56218040430531,
+            -8.35710157476285,
+            106.0
+          ]
+        },
+        {
+          "min": [
+            -47.51052153999052,
+            -19.925055332305874,
+            91.0
+          ],
+          "max": [
+            -44.48947846000948,
+            -8.074944667694012,
+            107.0
+          ]
+        },
+        {
+          "min": [
+            -43.43781959569469,
+            -19.642898425237263,
+            91.0
+          ],
+          "max": [
+            -40.56218040430531,
+            -8.35710157476285,
+            106.0
+          ]
+        },
+        {
+          "min": [
+            -39.51052153999052,
+            -19.925055332305874,
+            91.0
+          ],
+          "max": [
+            -36.48947846000948,
+            -8.074944667694012,
+            107.0
+          ]
+        },
+        {
+          "min": [
+            -35.43781959569469,
+            -19.642898425237263,
+            91.0
+          ],
+          "max": [
+            -32.56218040430531,
+            -8.35710157476285,
+            106.0
+          ]
+        },
+        {
+          "min": [
+            -6.930993142023397,
+            -19.412152648223696,
+            91.0
+          ],
+          "max": [
+            20.93099314202334,
+            -8.587847351776304,
+            116.0
+          ]
+        },
+        {
+          "min": [
+            32.78146866550509,
+            -23.07711180411104,
+            91.0
+          ],
+          "max": [
+            53.21853133449497,
+            -4.922888195888959,
+            113.0
+          ]
+        }
+      ],
+      "source_prim": "/Root/ToyWorkshopR8/StorymakerDisplay/Shelf1",
+      "method": "Exact authored shelf plane/local rectangle plus saved local source-object bounds and R9 whole-group rigid transform."
+    },
+    "display_mount": {
+      "kind": "mount",
+      "origin_cm": [
+        550,
+        -965,
+        4.162084489711958
+      ],
+      "yaw_deg": -90,
+      "source_prim": "/Root/ToyWorkshopR8/StorymakerDisplay",
+      "mount_points_local_cm": [
+        [
+          -59,
+          0,
+          168
+        ],
+        [
+          59,
+          0,
+          168
+        ]
+      ],
+      "method": "Exact authored post top centers; theme cords connect these support points."
+    }
+  },
+  "protected_bounds_cm": {
+    "recorded_robot_planning_zone": {
+      "min": [
+        -180,
+        -1230,
+        -100
+      ],
+      "max": [
+        290,
+        -780,
+        150
+      ]
+    },
+    "bench_duck_maintenance": {
+      "min": [
+        -405,
+        -1070,
+        90
+      ],
+      "max": [
+        -355,
+        -1030,
+        140
+      ]
+    }
+  },
+  "bench_existing_bounds": [
+    {
+      "max": [
+        -372.94999971129,
+        -1042.796643093278,
+        120.21576518784326
+      ],
+      "min": [
+        -387.05000028871,
+        -1057.2033569067228,
+        93.81816519242346
+      ],
+      "size": [
+        14.100000577420019,
+        14.406713813444867,
+        26.397599995419796
+      ]
+    },
+    {
+      "max": [
+        -385.6881703348478,
+        -1073.7938623087384,
+        95.28984821778357
+      ],
+      "min": [
+        -396.31182966515223,
+        -1092.2061376912616,
+        93.81816519242346
+      ],
+      "size": [
+        10.623659330304406,
+        18.41227538252315,
+        1.4716830253601074
+      ]
+    },
+    {
+      "max": [
+        -366.4661640304428,
+        -1079.0410068360798,
+        94.60740650635779
+      ],
+      "min": [
+        -371.53383596955723,
+        -1090.9589931639205,
+        93.81816519242346
+      ],
+      "size": [
+        5.067671939114405,
+        11.917986327840708,
+        0.7892413139343262
+      ]
+    },
+    {
+      "max": [
+        -377.08524091411596,
+        -1084.1994734470006,
+        95.56928736907065
+      ],
+      "min": [
+        -380.91475908588404,
+        -1089.8005265529994,
+        93.81816519242346
+      ],
+      "size": [
+        3.829518171768086,
+        5.601053105998744,
+        1.7511221766471863
+      ]
+    },
+    {
+      "max": [
+        -358.56522250175476,
+        -1076.510958969593,
+        94.33009917479575
+      ],
+      "min": [
+        -361.43477749824524,
+        -1079.489041030407,
+        93.81816519242346
+      ],
+      "size": [
+        2.8695549964904785,
+        2.978082060813904,
+        0.5119339823722839
+      ]
+    },
+    {
+      "max": [
+        -361.3788146972656,
+        -1009.3792381286621,
+        109.2701763008219
+      ],
+      "min": [
+        -368.6211853027344,
+        -1016.6207618713379,
+        93.81816519242346
+      ],
+      "size": [
+        7.24237060546875,
+        7.241523742675781,
+        15.452011108398438
+      ]
+    }
+  ],
+  "limits": [
+    "Coordinate example from measured attic supports; remeasure for your supplied scene. This template intentionally fails until source hashes are supplied.",
+    "Protected bounds are conservative planning exclusion volumes, not swept-triangle or physical qualification. Declare every source dependency in source_pins; generator verifies the declaration, not automatic USD dependency discovery."
+  ],
+  "source_pins": {
+    "workshop.usda": "REPLACE_WITH_SUPPLIED_BASE_SHA256"
+  },
+  "root_transform_identity": true,
+  "root_coordinate_requirement": "The measured composed /Root transform must be identity so authored Root-local anchors and protected world bounds coincide. Verify the full composition, not only this metadata."
+}
